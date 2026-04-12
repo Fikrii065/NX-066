@@ -9,6 +9,7 @@ async function migrate() {
     port:     parseInt(process.env.DB_PORT) || 3306,
     user:     process.env.DB_USER || 'root',
     password: process.env.DB_PASS || '',
+    database: process.env.DB_NAME || 'railway',
   });
 
   console.log('🔌 Terhubung ke MySQL...');
@@ -21,7 +22,6 @@ async function migrate() {
 
   const sql = fs.readFileSync(sqlFile, 'utf8');
 
-  // Split per statement dan jalankan satu-satu
   const statements = sql
     .split(';')
     .map(s => s.trim())

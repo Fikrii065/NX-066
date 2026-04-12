@@ -11,9 +11,10 @@ router.get('/dashboard', auth, async (req, res) => {
     const [[today]] = await db.query(`
       SELECT
         COUNT(*) AS total_orders,
-        SUM(payment_status = 'paid') AS paid_orders,
-        SUM(topup_status = 'success') AS success_orders,
-        SUM(topup_status = 'failed') AS failed_orders,
+        // SESUDAH
+        COALESCE(SUM(payment_status = 'paid'), 0) AS paid_orders,
+        COALESCE(SUM(topup_status = 'success'), 0) AS success_orders,
+        COALESCE(SUM(topup_status = 'failed'), 0) AS failed_orders,
         COALESCE(SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END),0) AS revenue
       FROM orders
       WHERE DATE(created_at) = CURDATE()`);

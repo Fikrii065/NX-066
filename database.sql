@@ -1,21 +1,14 @@
 -- ============================================================
 --  GameFlash — Database Schema
 --  MySQL 8.0+
---  Jalankan: mysql -u root -p gameflash < database.sql
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS gameflash
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE gameflash;
-
 -- ─── ADMIN USERS ─────────────────────────────────────────────────────────────
-CREATE TABLE admins (
+CREATE TABLE IF NOT EXISTS admins (
   id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   username   VARCHAR(60)     NOT NULL UNIQUE,
   email      VARCHAR(120)    NOT NULL UNIQUE,
-  password   VARCHAR(255)    NOT NULL,          -- bcrypt hash
+  password   VARCHAR(255)    NOT NULL,
   role       ENUM('superadmin','admin','cs') NOT NULL DEFAULT 'admin',
   is_active  TINYINT(1)      NOT NULL DEFAULT 1,
   last_login DATETIME        NULL,
@@ -23,21 +16,20 @@ CREATE TABLE admins (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
--- Default admin: password = "admin123" (ganti setelah pertama login)
-INSERT INTO admins (username, email, password, role)
+INSERT IGNORE INTO admins (username, email, password, role)
 VALUES ('admin', 'admin@gameflash.id',
         '$2a$12$KIX3xWd8R1g.2/0OqvpXzekW5qRGJH7Vx5HHUxpXjLaC2Y1RHxvOy',
         'superadmin');
 
 -- ─── GAMES ───────────────────────────────────────────────────────────────────
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
   id             INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  code           VARCHAR(60)     NOT NULL UNIQUE,   -- 'mobile-legends'
+  code           VARCHAR(60)     NOT NULL UNIQUE,
   name           VARCHAR(100)    NOT NULL,
   icon           VARCHAR(10)     NOT NULL DEFAULT '🎮',
-  params         VARCHAR(60)     NOT NULL DEFAULT 'userId',  -- 'userId' | 'userId,zoneId' | 'userId,zone'
-  zone_label     VARCHAR(40)     NULL,              -- 'Zone ID', 'Zone', NULL
-  vip_code       VARCHAR(60)     NOT NULL,          -- kode untuk VIP Reseller
+  params         VARCHAR(60)     NOT NULL DEFAULT 'userId',
+  zone_label     VARCHAR(40)     NULL,
+  vip_code       VARCHAR(60)     NOT NULL,
   sort_order     TINYINT UNSIGNED NOT NULL DEFAULT 0,
   is_active      TINYINT(1)      NOT NULL DEFAULT 1,
   created_at     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -46,7 +38,7 @@ CREATE TABLE games (
   INDEX idx_active (is_active, sort_order)
 ) ENGINE=InnoDB;
 
-INSERT INTO games (code, name, icon, params, zone_label, vip_code, sort_order, is_active) VALUES
+INSERT IGNORE INTO games (code, name, icon, params, zone_label, vip_code, sort_order, is_active) VALUES
   ('mobile-legends',        'Mobile Legends: Bang Bang', '⚔️',  'userId,zoneId', 'Zone ID', 'mobile-legends',        1,  1),
   ('mobile-legends-region', 'Mobile Legends Region',     '🗺️',  'userId,zoneId', 'Zone ID', 'mobile-legends-region', 2,  1),
   ('free-fire',             'Free Fire',                 '🔥',  'userId',        NULL,      'free-fire',             3,  1),
@@ -58,13 +50,13 @@ INSERT INTO games (code, name, icon, params, zone_label, vip_code, sort_order, i
   ('pointblank',            'Point Blank',               '🎮',  'userId',        NULL,      'pointblank',            9,  0);
 
 -- ─── PACKAGES ────────────────────────────────────────────────────────────────
-CREATE TABLE packages (
+CREATE TABLE IF NOT EXISTS packages (
   id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   game_id         INT UNSIGNED    NOT NULL,
-  sku             VARCHAR(60)     NOT NULL UNIQUE,   -- 'ML-344'
-  name            VARCHAR(100)    NOT NULL,          -- '344 Diamonds'
-  digiflazz_sku   VARCHAR(100)    NOT NULL,          -- SKU di Digiflazz
-  base_price      INT UNSIGNED    NOT NULL,          -- harga modal dari Digiflazz (Rp)
+  sku             VARCHAR(60)     NOT NULL UNIQUE,
+  name            VARCHAR(100)    NOT NULL,
+  digiflazz_sku   VARCHAR(100)    NOT NULL,
+  base_price      INT UNSIGNED    NOT NULL,
   is_hot          TINYINT(1)      NOT NULL DEFAULT 0,
   is_active       TINYINT(1)      NOT NULL DEFAULT 1,
   sort_order      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
@@ -75,7 +67,7 @@ CREATE TABLE packages (
   CONSTRAINT fk_pkg_game FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO packages (game_id, sku, name, digiflazz_sku, base_price, is_hot, sort_order) VALUES
+INSERT IGNORE INTO packages (game_id, sku, name, digiflazz_sku, base_price, is_hot, sort_order) VALUES
   (1, 'ML-11',    '11 Diamonds',  'MLBB-11',    3000,  0, 1),
   (1, 'ML-22',    '22 Diamonds',  'MLBB-22',    5800,  0, 2),
   (1, 'ML-56',    '56 Diamonds',  'MLBB-56',    14000, 0, 3),
@@ -92,7 +84,7 @@ INSERT INTO packages (game_id, sku, name, digiflazz_sku, base_price, is_hot, sor
   (5, 'PUBG-660', '660 UC',       'PUBGM-660',  140000,0, 3);
 
 -- ─── BANNERS ─────────────────────────────────────────────────────────────────
-CREATE TABLE banners (
+CREATE TABLE IF NOT EXISTS banners (
   id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   title       VARCHAR(120)    NOT NULL,
   image_url   TEXT            NOT NULL,
@@ -105,14 +97,14 @@ CREATE TABLE banners (
 ) ENGINE=InnoDB;
 
 -- ─── SITE SETTINGS ───────────────────────────────────────────────────────────
-CREATE TABLE settings (
+CREATE TABLE IF NOT EXISTS settings (
   key_name    VARCHAR(100)    NOT NULL,
   value       TEXT            NULL,
   updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (key_name)
 ) ENGINE=InnoDB;
 
-INSERT INTO settings (key_name, value) VALUES
+INSERT IGNORE INTO settings (key_name, value) VALUES
   ('site_name',        'GameFlash'),
   ('site_tagline',     'Top Up Game Instan'),
   ('logo_url',         ''),
@@ -139,27 +131,27 @@ INSERT INTO settings (key_name, value) VALUES
   ('footer_text',      '© 2025 GameFlash. Semua hak dilindungi.');
 
 -- ─── ORDERS ──────────────────────────────────────────────────────────────────
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
   id               INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  order_id         VARCHAR(30)     NOT NULL UNIQUE,   -- 'GF1A2B3C4D'
+  order_id         VARCHAR(30)     NOT NULL UNIQUE,
   game_id          INT UNSIGNED    NOT NULL,
   package_id       INT UNSIGNED    NOT NULL,
-  customer_no      VARCHAR(60)     NOT NULL,          -- userId|zoneId
-  customer_name    VARCHAR(100)    NULL,              -- dari cek nickname
+  customer_no      VARCHAR(60)     NOT NULL,
+  customer_name    VARCHAR(100)    NULL,
   customer_email   VARCHAR(120)    NULL,
   customer_wa      VARCHAR(20)     NULL,
   base_price       INT UNSIGNED    NOT NULL,
   sell_price       INT UNSIGNED    NOT NULL,
   service_fee      INT UNSIGNED    NOT NULL DEFAULT 0,
   total_amount     INT UNSIGNED    NOT NULL,
-  payment_method   VARCHAR(30)     NOT NULL,          -- 'bca_va' | 'gopay' dst
+  payment_method   VARCHAR(30)     NOT NULL,
   payment_url      TEXT            NULL,
   va_number        VARCHAR(30)     NULL,
   expired_at       DATETIME        NULL,
   payment_status   ENUM('unpaid','paid','expired','failed') NOT NULL DEFAULT 'unpaid',
   topup_status     ENUM('pending','processing','success','failed','refunded') NOT NULL DEFAULT 'pending',
-  digiflazz_ref    VARCHAR(60)     NULL UNIQUE,       -- ref_id ke Digiflazz
-  sn               VARCHAR(200)    NULL,              -- serial number dari Digiflazz
+  digiflazz_ref    VARCHAR(60)     NULL UNIQUE,
+  sn               VARCHAR(200)    NULL,
   notes            TEXT            NULL,
   paid_at          DATETIME        NULL,
   completed_at     DATETIME        NULL,
@@ -174,25 +166,24 @@ CREATE TABLE orders (
   CONSTRAINT fk_order_package FOREIGN KEY (package_id) REFERENCES packages(id)
 ) ENGINE=InnoDB;
 
--- ─── TOPUP LOG ────────────────────────────────────────────────────────────────
--- Menyimpan semua hit ke Digiflazz (retry, callback, dsb)
-CREATE TABLE topup_logs (
+-- ─── TOPUP LOG ───────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS topup_logs (
   id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   order_id    VARCHAR(30)     NOT NULL,
-  event       VARCHAR(40)     NOT NULL,   -- 'request' | 'callback' | 'retry' | 'manual'
-  status      VARCHAR(20)     NULL,       -- 'Sukses' | 'Pending' | 'Gagal'
-  payload     JSON            NULL,       -- request payload
-  response    JSON            NULL,       -- response dari Digiflazz
+  event       VARCHAR(40)     NOT NULL,
+  status      VARCHAR(20)     NULL,
+  payload     JSON            NULL,
+  response    JSON            NULL,
   created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   INDEX idx_order (order_id)
 ) ENGINE=InnoDB;
 
 -- ─── PAYMENT LOG ─────────────────────────────────────────────────────────────
-CREATE TABLE payment_logs (
+CREATE TABLE IF NOT EXISTS payment_logs (
   id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   order_id    VARCHAR(30)     NOT NULL,
-  event       VARCHAR(40)     NOT NULL,   -- 'create' | 'callback' | 'check'
+  event       VARCHAR(40)     NOT NULL,
   provider    VARCHAR(20)     NOT NULL DEFAULT 'tokopay',
   payload     JSON            NULL,
   response    JSON            NULL,
@@ -201,35 +192,27 @@ CREATE TABLE payment_logs (
   INDEX idx_order (order_id)
 ) ENGINE=InnoDB;
 
--- ─── VIEWS (opsional, memudahkan query dashboard) ─────────────────────────────
+-- ─── VIEWS ───────────────────────────────────────────────────────────────────
 CREATE OR REPLACE VIEW v_order_detail AS
 SELECT
-  o.order_id,
-  o.created_at,
-  g.name            AS game_name,
-  g.icon            AS game_icon,
-  p.name            AS package_name,
-  p.sku,
-  o.customer_no,
-  o.customer_name,
-  o.total_amount,
-  o.payment_method,
-  o.payment_status,
-  o.topup_status,
-  o.sn,
-  o.paid_at,
-  o.completed_at
+  o.order_id, o.created_at,
+  g.name AS game_name, g.icon AS game_icon,
+  p.name AS package_name, p.sku,
+  o.customer_no, o.customer_name,
+  o.total_amount, o.payment_method,
+  o.payment_status, o.topup_status,
+  o.sn, o.paid_at, o.completed_at
 FROM orders o
 JOIN games    g ON o.game_id    = g.id
 JOIN packages p ON o.package_id = p.id;
 
 CREATE OR REPLACE VIEW v_daily_stats AS
 SELECT
-  DATE(created_at)                            AS date,
-  COUNT(*)                                    AS total_orders,
-  SUM(payment_status = 'paid')                AS paid_orders,
-  SUM(topup_status = 'success')               AS success_orders,
-  SUM(topup_status = 'failed')                AS failed_orders,
+  DATE(created_at) AS date,
+  COUNT(*) AS total_orders,
+  SUM(payment_status = 'paid') AS paid_orders,
+  SUM(topup_status = 'success') AS success_orders,
+  SUM(topup_status = 'failed') AS failed_orders,
   SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END) AS revenue
 FROM orders
 GROUP BY DATE(created_at)

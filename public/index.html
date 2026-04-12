@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameFlash — Top Up Game Instan</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#141420;
+  --surface2:#1c1c2a;
+  --surface3:#242435;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#f0f0f5;
+  --text2:#a0a0b8;
+  --text3:#606078;
+  --accent:#ff6b1a;
+  --accent2:#ff8c42;
+  --accent-glow:rgba(255,107,26,0.3);
+  --accent-dim:rgba(255,107,26,0.12);
+  --green:#22c55e;
+  --radius:14px;
+  --radius-sm:10px;
+  --radius-xs:8px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:24px;}
+
+/* HEADER */
+.header{background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 14px;height:58px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ff4500);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px var(--accent-glow);}
+.logo-icon svg{width:20px;height:20px;fill:#fff;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px;}
+.logo-name span{color:var(--accent);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.hdr-icon-btn{width:38px;height:38px;background:transparent;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:color .2s;}
+.hdr-icon-btn:hover{color:var(--text);}
+.hdr-flag-btn{display:flex;align-items:center;gap:6px;padding:6px 11px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;text-decoration:none;transition:all .2s;cursor:pointer;}
+.hdr-flag-btn:hover{border-color:var(--accent);}
+.hdr-flag-text{font-size:12px;font-weight:600;color:var(--text2);}
+
+/* HERO SLIDER */
+.hero-slider{margin:12px 14px 0;border-radius:var(--radius);overflow:hidden;position:relative;height:170px;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;border-radius:var(--radius);overflow:hidden;}
+.hero-slide.active{opacity:1;}
+.hero-slide-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;}
+.hero-slide-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.2) 60%,transparent 100%);}
+.hero-slide-content{position:absolute;bottom:0;left:0;right:0;padding:16px;}
+.hero-slide-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:6px;letter-spacing:.3px;}
+.hero-slide-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;line-height:1.1;color:#fff;text-transform:uppercase;}
+.hero-slide-title span{color:var(--accent);}
+.hero-slide-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;}
+.hero-dots{position:absolute;bottom:10px;right:14px;display:flex;gap:5px;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.35);transition:all .3s;cursor:pointer;}
+.hero-dot.active{background:#fff;width:18px;border-radius:3px;}
+
+/* SECTION LABEL */
+.sec-label{display:flex;align-items:flex-start;gap:10px;padding:18px 14px 12px;}
+.sec-label-icon{font-size:22px;line-height:1;margin-top:1px;flex-shrink:0;}
+.sec-label-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;letter-spacing:.3px;line-height:1.1;}
+.sec-label-sub{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4;}
+
+/* TRENDING 2-COLUMN GRID */
+.trending-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px;}
+.trending-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:all .22s;user-select:none;display:flex;align-items:center;gap:10px;padding:10px 12px;}
+.trending-card:hover{border-color:var(--accent);background:rgba(255,107,26,0.06);}
+.tc-img{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.tc-info{flex:1;min-width:0;}
+.tc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tc-publisher{font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* CATEGORY TABS */
+.cat-tabs-wrap{display:flex;align-items:center;margin:18px 0 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);}
+.cat-tabs{display:flex;overflow-x:auto;scrollbar-width:none;flex:1;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{flex:0 0 auto;padding:13px 18px;background:transparent;border:none;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;position:relative;transition:color .2s;}
+.cat-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:transparent;transition:background .2s;}
+.cat-tab.active{color:var(--accent);}
+.cat-tab.active::after{background:var(--accent);}
+.cat-arr{width:34px;height:100%;background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cat-arr:hover{color:var(--accent);}
+
+/* ALL GAMES 3-COL CARD GRID */
+.all-games-section{padding:10px 10px 4px;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.game-card-v{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .22s;user-select:none;position:relative;}
+.game-card-v:hover{border-color:var(--accent);}
+.gcv-thumb{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;overflow:hidden;}
+.gcv-thumb img{width:100%;height:100%;object-fit:cover;border-radius:0;}
+.gcv-badge{position:absolute;top:5px;right:5px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.gcv-info{padding:6px 7px 8px;}
+.gcv-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gcv-pub{font-size:9px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-xs);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* GAME COVER COLORS */
+.gg-ml{background:linear-gradient(135deg,#1a237e,#283593,#1565c0);}
+.gg-ff{background:linear-gradient(135deg,#bf360c,#e64a19,#ff6f00);}
+.gg-pubg{background:linear-gradient(135deg,#33691e,#558b2f,#827717);}
+.gg-val{background:linear-gradient(135deg,#880e4f,#ad1457,#c62828);}
+.gg-gi{background:linear-gradient(135deg,#0d47a1,#1565c0,#006064);}
+.gg-hsr{background:linear-gradient(135deg,#311b92,#4527a0,#1a237e);}
+.gg-def{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);}
+
+/* MAINTENANCE */
+.maint{text-align:center;padding:80px 20px;}
+.maint h2{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;margin:12px 0 8px;}
+.maint p{font-size:14px;color:var(--text2);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div class="logo-name" id="site-name">Game<span>Flash</span></div>
+  </a>
+  <div class="header-right">
+    <button class="hdr-icon-btn" onclick="document.getElementById('search-overlay').style.display='flex'" aria-label="Cari">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <div class="hdr-flag-btn" onclick="toggleMenu()">
+      <span style="font-size:18px">🇮🇩</span>
+      <span class="hdr-flag-text">ID / IDR</span>
+    </div>
+    <button class="hdr-icon-btn" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:flex-start;padding:60px 16px 20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="width:100%;max-width:600px;margin:0 auto;">
+    <div style="display:flex;gap:10px;">
+      <input id="search-inp" type="text" placeholder="Cari game..." style="flex:1;height:48px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 16px;font-size:15px;color:var(--text);outline:none;font-family:'Inter',sans-serif;" oninput="filterGames(this.value)" onfocus="this.style.borderColor='var(--accent)'">
+      <button onclick="document.getElementById('search-overlay').style.display='none'" style="height:48px;padding:0 16px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Tutup</button>
+    </div>
+    <div id="search-results" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- SIDE MENU -->
+<div id="side-menu" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.5);" onclick="if(event.target===this)closeMenu()">
+  <div id="side-panel" style="position:absolute;right:0;top:0;bottom:0;width:75%;max-width:280px;background:var(--surface);border-left:1px solid var(--border);padding:20px 0;transform:translateX(100%);transition:transform .3s ease;overflow-y:auto;">
+    <div style="padding:0 20px 16px;border-bottom:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;" id="menu-site-name">GameFlash</div>
+    <a href="/cek-order" style="display:flex;align-items:center;gap:12px;padding:14px 20px;color:var(--text);text-decoration:none;font-size:14px;border-bottom:1px solid var(--border);">📦 Cek Order</a>
+    <a href="/login" style="display:flex;align-items:center;gap:12px;padding:14px 20px;color:var(--text);text-decoration:none;font-size:14px;border-bottom:1px solid var(--border);">🔑 Admin Login</a>
+  </div>
+</div>
+
+<!-- MAINTENANCE -->
+<div id="maint-screen" class="maint" style="display:none">
+  <div style="font-size:48px">🔧</div>
+  <h2>Sedang Maintenance</h2>
+  <p>Kami sedang melakukan pemeliharaan sistem.<br>Silakan kembali beberapa saat lagi.</p>
+</div>
+
+<div id="main-wrap">
+
+  <!-- HERO SLIDER BANNER -->
+  <div class="hero-slider" id="hero-slider">
+    <div class="hero-slide active" style="background:linear-gradient(135deg,#1a0820 0%,#2d0a3e 40%,#0d1a3a 100%);">
+      <div class="hero-slide-bg">⚡</div>
+      <div class="hero-slide-overlay"></div>
+      <div class="hero-slide-content">
+        <div class="hero-slide-badge">🔥 PROMO AKTIF</div>
+        <div class="hero-slide-title">TOP UP GAME<br><span>CEPAT DAN MURAH</span></div>
+        <div class="hero-slide-sub">Buka 24 jam · Proses otomatis instan</div>
+      </div>
+    </div>
+    <div class="hero-dots" id="hero-dots">
+      <div class="hero-dot active" onclick="goSlide(0)"></div>
+    </div>
+  </div>
+
+  <!-- TRENDING -->
+  <div class="sec-label">
+    <div class="sec-label-icon">🔥</div>
+    <div>
+      <div class="sec-label-title">TRENDING</div>
+      <div class="sec-label-sub">Berikut adalah beberapa produk yang paling populer saat ini.</div>
+    </div>
+  </div>
+  <div class="trending-grid" id="trending-grid">
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="cat-tabs-wrap">
+    <button class="cat-arr" onclick="scrollCats(-1)">&#8249;</button>
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab active" onclick="setCat(this)">Top Up Game</button>
+      <button class="cat-tab" onclick="setCat(this)">Live Streaming</button>
+      <button class="cat-tab" onclick="setCat(this)">Voucher</button>
+      <button class="cat-tab" onclick="setCat(this)">Pulsa &amp; Data</button>
+      <button class="cat-tab" onclick="setCat(this)">Entertainment</button>
+    </div>
+    <button class="cat-arr" onclick="scrollCats(1)">&#8250;</button>
+  </div>
+
+  <!-- ALL GAMES 3-COL GRID -->
+  <div class="all-games-section">
+    <div class="games-grid" id="games-grid">
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+    </div>
+  </div>
+
+</div><!-- #main-wrap -->
+
+<script>
+let GAMES = [], CFG = {};
+
+const GAME_THEMES = {
+  'mobile-legends':        { cls:'gg-ml',  emoji:'⚔️' },
+  'mobile-legends-region': { cls:'gg-ml',  emoji:'🗺️' },
+  'free-fire':             { cls:'gg-ff',  emoji:'🔥' },
+  'free-fire-max':         { cls:'gg-ff',  emoji:'💥' },
+  'pubgm':                 { cls:'gg-pubg',emoji:'🪖' },
+  'valorant':              { cls:'gg-val', emoji:'🎯' },
+  'genshin-impact':        { cls:'gg-gi',  emoji:'🌸' },
+  'honkai-star-rail':      { cls:'gg-hsr', emoji:'🚂' },
+  'roblox':                { cls:'gg-def', emoji:'🟥' },
+  'one-punch-man':         { cls:'gg-def', emoji:'👊' },
+  'blood-strike':          { cls:'gg-def', emoji:'🔫' },
+};
+
+const PUBLISHERS = {
+  'ml':'Moonton','ff':'Garena','ffmax':'Garena','pubg':'Tencent Games',
+  'val':'Riot Games','gi':'miHoYo','hsr':'HoYoverse','roblox':'Roblox Corporation',
+  'cod':'Activision','fc':'Electronic Arts','opm':'FingerFun','blood':'NetEase',
+  'ragna':'Gravity Game Hub'
+};
+
+function getTheme(g){
+  // Cari match by code exact, lalu by substring
+  if(GAME_THEMES[g.code]) return GAME_THEMES[g.code];
+  const k = Object.keys(GAME_THEMES).find(k=>g.code&&g.code.toLowerCase().includes(k.replace(/-/g,'').substring(0,6)));
+  return k ? GAME_THEMES[k] : {cls:'gg-def',emoji:g.icon||'🎮'};
+}
+
+function gameImg(g, size='54px'){
+  const t = getTheme(g);
+  const imgUrl = g.icon_url || null;
+  if(imgUrl){
+    const isBig = size==='100%';
+    if(isBig){
+      return `<img src="${imgUrl}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <span style="display:none;font-size:38px">${t.emoji}</span>`;
+    }
+    return `<img src="${imgUrl}" alt="${g.name}" style="width:${size};height:${size};border-radius:12px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <span style="display:none;width:${size};height:${size};align-items:center;justify-content:center;font-size:calc(${size} * 0.5)">${t.emoji}</span>`;
+  }
+  return `<span style="font-size:${size==='100%'?'38px':'calc('+size+' * 0.5)'}">${t.emoji}</span>`;
+}
+
+function getPublisher(g){
+  const k = Object.keys(PUBLISHERS).find(k=>g.code&&g.code.toLowerCase().includes(k));
+  return k ? PUBLISHERS[k] : (g.publisher||'Publisher');
+}
+
+async function init(){
+  try{
+    const [sRes,gRes,bRes]=await Promise.all([fetch('/api/settings'),fetch('/api/games'),fetch('/api/banners')]);
+    const [sD,gD,bD]=await Promise.all([sRes.json(),gRes.json(),bRes.json()]);
+    if(sD.success){
+      CFG=sD.settings;
+      if(CFG.site_name){
+        const nm = CFG.site_name;
+        document.getElementById('site-name').innerHTML = nm.replace(/Flash/i,'<span>Flash</span>');
+        document.getElementById('menu-site-name').textContent = nm;
+      }
+      if(CFG.feature_maintenance==='1'){
+        document.getElementById('main-wrap').style.display='none';
+        document.getElementById('maint-screen').style.display='';
+        return;
+      }
+    }
+    if(bD.success && bD.banners && bD.banners.length) renderBanners(bD.banners);
+    if(gD.success){ GAMES=gD.games; renderAll(); }
+  }catch(e){ console.error(e); }
+}
+
+function renderBanners(banners) {
+  const slider = document.getElementById('hero-slider');
+  const dotsEl = document.getElementById('hero-dots');
+  // Hapus semua slide lama kecuali dots
+  slider.querySelectorAll('.hero-slide').forEach(s=>s.remove());
+  // Render slide baru dari database
+  banners.forEach((b, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-slide' + (i===0?' active':'');
+    if(b.image_url) {
+      slide.style.cssText = `background:linear-gradient(135deg,#1a0820 0%,#0d1a3a 100%)`;
+      slide.innerHTML = `
+        <img src="${b.image_url}" alt="${b.title}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.remove()">
+        <div class="hero-slide-overlay"></div>
+        <div class="hero-slide-content">
+          <div class="hero-slide-title"><span>${b.title}</span></div>
+        </div>`;
+    } else {
+      slide.style.cssText = `background:linear-gradient(135deg,#1a0820 0%,#2d0a3e 40%,#0d1a3a 100%)`;
+      slide.innerHTML = `
+        <div class="hero-slide-bg">🎮</div>
+        <div class="hero-slide-overlay"></div>
+        <div class="hero-slide-content">
+          <div class="hero-slide-title"><span>${b.title}</span></div>
+        </div>`;
+    }
+    if(b.link_url) slide.style.cursor='pointer', slide.onclick=()=>window.open(b.link_url,'_blank');
+    slider.insertBefore(slide, dotsEl);
+  });
+  // Render dots
+  dotsEl.innerHTML = banners.map((_,i)=>`<div class="hero-dot${i===0?' active':''}" onclick="goSlide(${i})"></div>`).join('');
+  // Reset slider interval
+  slideIdx=0;
+  clearInterval(sliderTimer);
+  sliderTimer = setInterval(()=>goSlide((slideIdx+1)%banners.length), 4000);
+}
+
+function renderAll(){
+  // Trending: first 8 as 2-col row cards
+  const tGrid = document.getElementById('trending-grid');
+  if(!GAMES.length){
+    tGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text3)">Belum ada game tersedia</div>';
+    return;
+  }
+  tGrid.innerHTML = GAMES.slice(0,8).map(g=>{
+    const t=getTheme(g);
+    return `<div class="trending-card" onclick="goOrder('${g.code}')">
+      <div class="tc-img ${t.cls}" style="overflow:hidden;">${gameImg(g,'54px')}</div>
+      <div class="tc-info">
+        <div class="tc-name">${g.name.split(':')[0]}</div>
+        <div class="tc-publisher">${getPublisher(g)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // All games: 3-col card grid
+  const gGrid = document.getElementById('games-grid');
+  gGrid.innerHTML = GAMES.map(g=>{
+    const t=getTheme(g);
+    return `<div class="game-card-v" onclick="goOrder('${g.code}')">
+      <div class="gcv-thumb ${t.cls}" style="overflow:hidden;position:relative;">${gameImg(g,'100%')}
+        <div class="gcv-badge">TOP UP</div>
+      </div>
+      <div class="gcv-info">
+        <div class="gcv-name">${g.name.split(':')[0]}</div>
+        <div class="gcv-pub">${getPublisher(g)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function goOrder(code){
+  window.location.href = '/order?game=' + code;
+}
+
+function filterGames(q){
+  const res=document.getElementById('search-results');
+  if(!q.trim()||!GAMES.length){res.innerHTML='';return;}
+  const filtered=GAMES.filter(g=>g.name.toLowerCase().includes(q.toLowerCase()));
+  res.innerHTML=filtered.map(g=>{
+    const t=getTheme(g);
+    return `<div onclick="document.getElementById('search-overlay').style.display='none';goOrder('${g.code}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;">
+      <div class="tc-img ${t.cls}" style="width:42px;height:42px;border-radius:10px;font-size:20px;flex-shrink:0;">${t.emoji}</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">${g.name.split(':')[0]}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${getPublisher(g)}</div>
+      </div>
+    </div>`;
+  }).join('')||'<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px">Tidak ada game ditemukan</div>';
+}
+
+function setCat(el){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function scrollCats(dir){
+  document.getElementById('cat-tabs').scrollBy({left:dir*120,behavior:'smooth'});
+}
+
+function toggleMenu(){
+  const menu=document.getElementById('side-menu');
+  const panel=document.getElementById('side-panel');
+  if(menu.style.display==='none'||!menu.style.display){
+    menu.style.display='block';
+    setTimeout(()=>panel.style.transform='translateX(0)',10);
+  } else { closeMenu(); }
+}
+
+function closeMenu(){
+  const panel=document.getElementById('side-panel');
+  panel.style.transform='translateX(100%)';
+  setTimeout(()=>document.getElementById('side-menu').style.display='none',300);
+}
+
+// Hero slider
+let slideIdx=0, sliderTimer;
+const slides=()=>document.querySelectorAll('.hero-slide');
+const dots=()=>document.querySelectorAll('.hero-dot');
+function goSlide(n){
+  slides().forEach((s,i)=>s.classList.toggle('active',i===n));
+  dots().forEach((d,i)=>d.classList.toggle('active',i===n));
+  slideIdx=n;
+}
+sliderTimer = setInterval(()=>goSlide((slideIdx+1)%Math.max(slides().length,1)),4000);
+
+init();
+</script>
+</body>
+</html>

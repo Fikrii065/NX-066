@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — GameFlash</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f0;--surface:#fff;--surface2:#f8f8f5;--surface3:#f0f0ea;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --accent:#6c47ff;--accent-bg:#eeebff;--accent-text:#3d1fa8;
+  --green:#0f6e56;--green-bg:#e1f5ee;
+  --red:#a32d2d;--red-bg:#fcebeb;
+  --amber:#854f0b;--amber-bg:#faeeda;
+  --sidebar:220px;--radius:10px;--radius-sm:7px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:18px 16px 14px;display:flex;align-items:center;gap:9px;border-bottom:.5px solid var(--border)}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:16px;height:16px;fill:#fff}
+.logo-name{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--text3)}
+.nav{padding:10px 8px;flex:1}
+.nav-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:background .12s,color .12s;user-select:none;margin-bottom:1px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent-text)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:12px;border-top:.5px solid var(--border)}
+.admin-badge{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer}
+.admin-badge:hover{background:var(--surface3)}
+.admin-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.admin-name{font-size:12px;font-weight:500}
+.admin-role{font-size:10px;color:var(--text3)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:.5px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn{height:32px;padding:0 14px;border:.5px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text);transition:background .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{opacity:.9}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2)}
+.btn svg{width:13px;height:13px}
+.page{display:none;padding:24px;flex:1;overflow-y:auto;min-height:0}
+.page.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500}
+.stat-value{font-size:22px;font-weight:600;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.stat-up{color:var(--green)}
+.stat-down{color:var(--red)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:14px;font-weight:600}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.card-pad{padding:16px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:var(--surface2);border-bottom:.5px solid var(--border)}
+td{padding:10px 12px;border-bottom:.5px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.red{background:var(--red-bg);color:var(--red)}
+.badge.amber{background:var(--amber-bg);color:var(--amber)}
+.badge.blue{background:#e6f1fb;color:#185fa5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-full{grid-column:1/-1}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:12px;font-weight:500;color:var(--text2)}
+.field-hint{font-size:11px;color:var(--text3)}
+input[type=text],input[type=number],input[type=url],input[type=email],input[type=password],select,textarea{height:34px;border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 10px;font-size:13px;color:var(--text);background:var(--surface);width:100%;outline:none;transition:border-color .15s;font-family:inherit}
+textarea{height:72px;padding:8px 10px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,71,255,.1)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:.5px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info .tname{font-size:13px;font-weight:500}
+.toggle-info .tdesc{font-size:12px;color:var(--text3);margin-top:2px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:20px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+.banner-list{display:flex;flex-direction:column;gap:10px}
+.banner-item{border:.5px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:12px;background:var(--surface)}
+.banner-preview{width:80px;height:44px;border-radius:6px;background:var(--surface3);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border:.5px solid var(--border)}
+.banner-preview img{width:100%;height:100%;object-fit:cover}
+.banner-meta{flex:1;min-width:0}
+.banner-name{font-size:13px;font-weight:500}
+.banner-url{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.banner-actions{display:flex;gap:6px;flex-shrink:0}
+.game-icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.game-icon-item{border:.5px solid var(--border);border-radius:var(--radius);padding:12px 8px;text-align:center;background:var(--surface)}
+.game-icon-box{width:48px;height:48px;border-radius:12px;background:var(--surface3);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;border:.5px solid var(--border);transition:border-color .15s}
+.game-icon-box:hover{border-color:var(--accent)}
+.game-icon-name{font-size:11px;color:var(--text2);font-weight:500}
+.game-icon-active{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);border:.5px solid var(--border);padding:20px;width:460px;max-width:calc(100vw - 32px)}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:.5px solid var(--border)}
+.spinner-sm{width:14px;height:14px;border:2px solid rgba(0,0,0,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{position:fixed;inset:0;background:rgba(245,245,240,.8);display:flex;align-items:center;justify-content:center;z-index:500;font-size:14px;gap:10px}
+@media(max-width:768px){.sidebar{display:none}.stats-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner-sm"></div> Memuat...
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div><div class="logo-name">GameFlash</div><div class="logo-sub">Admin Panel</div></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('transactions',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 5H2V3h12v2zm0 4H2V7h12v2zM2 13h7v-2H2v2z"/></svg>Transaksi
+    </div>
+    <div class="nav-section">Konten</div>
+    <div class="nav-item" onclick="showPage('banners',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v10H1V3zm1 1v8h12V4H2zm2 1h8v2H4V5zm0 3h5v1H4V8z"/></svg>Banner
+    </div>
+    <div class="nav-item" onclick="showPage('games',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 2a4 4 0 00-4 4v4a4 4 0 004 4h4a4 4 0 004-4V6a4 4 0 00-4-4H6zm1 3h2v1h1v2h-1v1H7v-1H6V6h1V5z"/></svg>Daftar Game
+    </div>
+    <div class="nav-item" onclick="showPage('packages',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 4v1l7 3 7-3V4L8 1zM1 8l7 3 7-3v1l-7 3-7-3V8zm0 3l7 3 7-3v1l-7 3-7-3v-1z"/></svg>Paket & Harga
+    </div>
+    <div class="nav-section">Pengaturan</div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a3 3 0 100 6A3 3 0 008 5zm-1 3a1 1 0 112 0 1 1 0 01-2 0zm6.5-.5h-1a5.5 5.5 0 00-.4-1.6l.7-.7-1.5-1.5-.7.7A5.5 5.5 0 008.5 4V3h-1v1a5.5 5.5 0 00-1.6.4l-.7-.7-1.4 1.5.7.7A5.5 5.5 0 004 7.5H3v1h1a5.5 5.5 0 00.4 1.6l-.7.7 1.4 1.4.7-.7a5.5 5.5 0 001.7.5v1h1v-1a5.5 5.5 0 001.6-.5l.7.7 1.5-1.4-.7-.7a5.5 5.5 0 00.4-1.6h1v-1z"/></svg>Pengaturan
+    </div>
+    <div class="nav-item" onclick="showPage('markup',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 4v1.5h1.5v1.5h-1.5V10h-1.5V8H5.75V6.5h1.5V5h1.5z"/></svg>Markup Harga
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-badge" onclick="logout()">
+      <div class="admin-avatar" id="admin-avatar">AD</div>
+      <div><div class="admin-name" id="admin-username">Admin</div><div class="admin-role" id="admin-role">Super Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="window.open('/','_blank')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4h1.5v4h-1.5V5zm0 5h1.5v1.5h-1.5V10z"/></svg>
+        Lihat Toko
+      </button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Pendapatan Hari Ini</div><div class="stat-value" id="s-revenue">—</div><div class="stat-sub" id="s-revenue-sub"></div></div>
+      <div class="stat-card"><div class="stat-label">Transaksi Hari Ini</div><div class="stat-value" id="s-orders">—</div><div class="stat-sub" id="s-orders-sub"></div></div>
+      <div class="stat-card"><div class="stat-label">Saldo Digiflazz</div><div class="stat-value" id="s-balance">—</div><div class="stat-sub stat-down" id="s-balance-sub"></div></div>
+      <div class="stat-card"><div class="stat-label">Transaksi Gagal</div><div class="stat-value" id="s-failed">—</div><div class="stat-sub" id="s-failed-sub"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-pad sec-head">
+        <div class="sec-title">Transaksi Terbaru</div>
+        <button class="btn" onclick="showPage('transactions',document.querySelector('.nav-item:nth-child(2)'))">Lihat Semua</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Game</th><th>Paket</th><th>Total</th><th>Status Bayar</th><th>Status Top Up</th><th>Waktu</th></tr></thead>
+          <tbody id="recent-trx"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSAKSI -->
+  <div class="page" id="page-transactions">
+    <div class="card">
+      <div class="card-pad" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="text" placeholder="Cari order ID / akun..." style="width:220px" id="trx-search" oninput="loadTransactions()">
+        <select id="trx-status" onchange="loadTransactions()" style="width:130px">
+          <option value="">Semua Status</option>
+          <option value="success">Sukses</option>
+          <option value="processing">Diproses</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Gagal</option>
+        </select>
+        <button class="btn primary" onclick="loadTransactions()">Refresh</button>
+        <span style="font-size:12px;color:var(--text3);margin-left:auto" id="trx-count"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Game</th><th>Akun</th><th>Paket</th><th>Total</th><th>Bayar</th><th>Status</th><th>Waktu</th><th></th></tr></thead>
+          <tbody id="trx-tbody"></tbody>
+        </table>
+      </div>
+      <div class="card-pad" style="display:flex;gap:8px;align-items:center" id="trx-pagination"></div>
+    </div>
+  </div>
+
+  <!-- BANNER -->
+  <div class="page" id="page-banners">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div class="sec-title">Banner Aktif</div>
+        <button class="btn primary" onclick="openBannerModal()">+ Tambah Banner</button>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Ukuran ideal: 1200×400px.</p>
+      <div class="banner-list" id="banner-list"></div>
+    </div>
+  </div>
+
+  <!-- GAMES -->
+  <div class="page" id="page-games">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div class="sec-title">Daftar Game</div>
+        <button class="btn primary" onclick="openGameModal()">+ Tambah Game</button>
+      </div>
+      <div class="game-icon-grid" id="game-icon-grid"></div>
+    </div>
+  </div>
+
+  <!-- PACKAGES -->
+  <div class="page" id="page-packages">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div class="sec-title">Paket & Harga</div>
+        <div style="display:flex;gap:8px">
+          <select id="pkg-game-filter" onchange="loadPackages()" style="width:160px">
+            <option value="">Semua Game</option>
+          </select>
+          <button class="btn primary" onclick="openPkgModal()">+ Tambah Paket</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>SKU</th><th>Nama</th><th>Modal</th><th>Jual</th><th>Hot</th><th>Aktif</th><th></th></tr></thead>
+          <tbody id="pkg-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="card card-pad" style="margin-bottom:20px">
+          <div class="sec-title" style="margin-bottom:14px">Informasi Situs</div>
+          <div class="form-grid">
+            <div class="field-group form-full"><label class="field-label">Nama Situs</label><input type="text" id="s-site_name"></div>
+            <div class="field-group form-full"><label class="field-label">Tagline</label><input type="text" id="s-site_tagline"></div>
+            <div class="field-group form-full"><label class="field-label">Logo URL</label><input type="url" id="s-logo_url" placeholder="https://..."></div>
+            <div class="field-group"><label class="field-label">Warna Aksen</label><input type="text" id="s-accent_color" placeholder="#6c47ff"></div>
+          </div>
+        </div>
+        <div class="card card-pad">
+          <div class="sec-title" style="margin-bottom:14px">Kontak & Sosial Media</div>
+          <div class="form-grid">
+            <div class="field-group"><label class="field-label">WhatsApp CS</label><input type="text" id="s-contact_wa" placeholder="628xxxx"></div>
+            <div class="field-group"><label class="field-label">Email CS</label><input type="email" id="s-contact_email"></div>
+            <div class="field-group"><label class="field-label">Instagram</label><input type="text" id="s-social_instagram" placeholder="@gameflash"></div>
+            <div class="field-group"><label class="field-label">Telegram</label><input type="text" id="s-social_telegram" placeholder="@gameflash"></div>
+            <div class="field-group form-full"><label class="field-label">Footer Text</label><input type="text" id="s-footer_text"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-pad" style="margin-bottom:20px">
+          <div class="sec-title" style="margin-bottom:14px">Fitur</div>
+          <div id="feature-toggles"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="sec-title" style="margin-bottom:14px">Biaya Layanan Pembayaran</div>
+          <div id="fee-table"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn primary" style="height:40px;padding:0 24px;font-size:14px" onclick="saveSettings()">💾 Simpan Semua Pengaturan</button>
+  </div>
+
+  <!-- MARKUP -->
+  <div class="page" id="page-markup">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card card-pad">
+        <div class="sec-title" style="margin-bottom:14px">Konfigurasi Markup</div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label">Markup (%)</label>
+            <input type="number" id="markup-pct" value="5" min="0" max="100" step="0.5" oninput="calcMarkup()">
+            <span class="field-hint">Persentase keuntungan dari harga modal</span>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Minimum Markup (Rp)</label>
+            <input type="number" id="markup-min" value="500" min="0" step="100" oninput="calcMarkup()">
+            <span class="field-hint">Minimal profit per transaksi</span>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px">Preview Harga</div>
+          <div id="markup-preview"></div>
+        </div>
+        <button class="btn primary" style="margin-top:16px" onclick="saveMarkup()">Simpan Markup</button>
+      </div>
+      <div class="card card-pad">
+        <div class="sec-title" style="margin-bottom:4px">Cara Kerja Markup</div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:14px">Harga jual = Modal + max(Modal × %, Minimum)</p>
+        <div id="markup-pkg-preview">
+          <div style="font-size:13px;color:var(--text2)">Pilih filter game di halaman Paket untuk melihat preview harga per paket.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-banner">
+  <div class="modal">
+    <div class="modal-title" id="modal-banner-title">Tambah Banner</div>
+    <div class="form-grid">
+      <div class="field-group form-full"><label class="field-label">Judul</label><input type="text" id="b-title" placeholder="Promo Ramadan MLBB"></div>
+      <div class="field-group form-full">
+        <label class="field-label">URL Gambar</label>
+        <input type="url" id="b-img" placeholder="https://..." oninput="previewBanner()">
+      </div>
+      <div class="field-group form-full" style="display:flex;align-items:center;justify-content:center;background:var(--surface2);border-radius:8px;height:80px;overflow:hidden" id="b-preview">
+        <span style="font-size:12px;color:var(--text3)">Preview gambar</span>
+      </div>
+      <div class="field-group"><label class="field-label">URL Link (opsional)</label><input type="url" id="b-link" placeholder="https://..."></div>
+      <div class="field-group"><label class="field-label">Status</label>
+        <select id="b-status"><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-banner')">Batal</button>
+      <button class="btn primary" onclick="saveBanner()">Simpan Banner</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-game">
+  <div class="modal">
+    <div class="modal-title">Tambah Game Baru</div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Nama Game</label><input type="text" id="g-name" placeholder="Mobile Legends"></div>
+      <div class="field-group"><label class="field-label">Kode Game</label><input type="text" id="g-code" placeholder="mobile-legends"></div>
+      <div class="field-group"><label class="field-label">Ikon (emoji)</label><input type="text" id="g-icon" placeholder="🎮" maxlength="4"></div>
+      <div class="field-group"><label class="field-label">Params</label>
+        <select id="g-params">
+          <option value="userId">userId saja</option>
+          <option value="userId,zoneId">userId + zoneId</option>
+          <option value="userId,zone">userId + zone</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Label Zone (jika ada)</label><input type="text" id="g-zone-label" placeholder="Zone ID"></div>
+      <div class="field-group"><label class="field-label">VIP Reseller Code</label><input type="text" id="g-vip-code" placeholder="mobile-legends"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-game')">Batal</button>
+      <button class="btn primary" onclick="saveGame()">Tambah Game</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-pkg">
+  <div class="modal">
+    <div class="modal-title" id="modal-pkg-title">Tambah Paket</div>
+    <div class="form-grid">
+      <div class="field-group"><label class="field-label">Game</label>
+        <select id="p-game"></select>
+      </div>
+      <div class="field-group"><label class="field-label">SKU Internal</label><input type="text" id="p-sku" placeholder="ML-344"></div>
+      <div class="field-group form-full"><label class="field-label">Nama Paket</label><input type="text" id="p-name" placeholder="344 Diamonds"></div>
+      <div class="field-group"><label class="field-label">Harga Modal (Rp)</label><input type="number" id="p-base" placeholder="88000"></div>
+      <div class="field-group"><label class="field-label">SKU Digiflazz</label><input type="text" id="p-digi" placeholder="MLBBDIAMOND344"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-pkg')">Batal</button>
+      <button class="btn primary" onclick="savePkg()">Simpan Paket</button>
+    </div>
+  </div>
+</div>
+
+<!-- Order detail modal -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal" style="width:520px">
+    <div class="modal-title">Detail Transaksi</div>
+    <div id="modal-order-content"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-order')">Tutup</button>
+      <button class="btn primary" id="btn-retry" onclick="retryOrder()" style="display:none">🔄 Retry Top Up</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = async (path, opt={}) => {
+  const token = localStorage.getItem('gf_token');
+  const res   = await fetch('/api' + path, {
+    ...opt,
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token, ...(opt.headers||{}) },
+    body: opt.body ? JSON.stringify(opt.body) : undefined,
+  });
+  const data = await res.json();
+  if (res.status === 401) { localStorage.removeItem('gf_token'); window.location.href='/login'; }
+  return data;
+};
+
+const fmt = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+
+// ── Auth check ──────────────────────────────────────────────────────────────
+async function init() {
+  const token = localStorage.getItem('gf_token');
+  if (!token) { window.location.href = '/login'; return; }
+  try {
+    const data = await API('/auth/me');
+    if (!data.success) { window.location.href = '/login'; return; }
+    const a = data.admin;
+    document.getElementById('admin-username').textContent = a.username;
+    document.getElementById('admin-role').textContent     = a.role;
+    document.getElementById('admin-avatar').textContent   = a.username.slice(0,2).toUpperCase();
+  } catch(e) { window.location.href = '/login'; return; }
+
+  document.getElementById('loading-overlay').style.display = 'none';
+  loadDashboard();
+  loadGames();
+}
+
+function logout() {
+  if (!confirm('Keluar dari admin panel?')) return;
+  localStorage.removeItem('gf_token');
+  localStorage.removeItem('gf_admin');
+  window.location.href = '/login';
+}
+
+// ── Nav ─────────────────────────────────────────────────────────────────────
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = {dashboard:'Dashboard',transactions:'Transaksi',banners:'Banner',games:'Daftar Game',packages:'Paket & Harga',settings:'Pengaturan',markup:'Markup Harga'};
+  document.getElementById('page-title').textContent = titles[name] || name;
+  if(name==='transactions') loadTransactions();
+  if(name==='banners') loadBanners();
+  if(name==='packages') { loadPackages(); populatePkgGameFilter(); }
+  if(name==='settings') loadSettings();
+  if(name==='markup') { loadMarkupSettings(); calcMarkup(); }
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  const data = await API('/admin/dashboard');
+  if (!data.success) return;
+  const t = data.today;
+  const y = data.yesterday;
+
+  document.getElementById('s-revenue').textContent = t.revenue >= 1000000
+    ? 'Rp '+((t.revenue/1000000).toFixed(1))+'jt'
+    : fmt(t.revenue);
+  const revDiff = y.revenue > 0 ? ((t.revenue - y.revenue)/y.revenue*100).toFixed(0) : 0;
+  document.getElementById('s-revenue-sub').innerHTML = revDiff >= 0
+    ? `<span class="stat-up">↑ ${revDiff}% vs kemarin</span>`
+    : `<span class="stat-down">↓ ${Math.abs(revDiff)}% vs kemarin</span>`;
+
+  document.getElementById('s-orders').textContent  = t.total_orders;
+  document.getElementById('s-orders-sub').textContent = `${t.paid_orders} terbayar`;
+  document.getElementById('s-failed').textContent  = t.failed_orders;
+  document.getElementById('s-failed-sub').textContent = `Dari ${t.total_orders} hari ini`;
+
+  if (data.digiflazz_balance !== null) {
+    document.getElementById('s-balance').textContent = fmt(data.digiflazz_balance);
+    document.getElementById('s-balance-sub').textContent = data.digiflazz_balance < 50000 ? 'Segera isi ulang!' : 'Saldo cukup';
+  } else {
+    document.getElementById('s-balance').textContent = '—';
+    document.getElementById('s-balance-sub').textContent = 'Tidak terhubung';
+  }
+
+  const payBadge   = { paid:'green', unpaid:'amber', expired:'red', failed:'red' };
+  const topupBadge = { success:'green', processing:'blue', pending:'amber', failed:'red' };
+  const payLabel   = { paid:'Lunas', unpaid:'Belum', expired:'Kadaluarsa', failed:'Gagal' };
+  const topupLabel = { success:'Sukses', processing:'Proses', pending:'Pending', failed:'Gagal', refunded:'Refund' };
+
+  document.getElementById('recent-trx').innerHTML = data.recent_orders.map(o => `
+    <tr>
+      <td style="font-family:monospace;font-size:12px">${o.order_id}</td>
+      <td>${o.game_icon} ${o.game_name}</td>
+      <td>${o.package_name}</td>
+      <td style="font-weight:500">${fmt(o.total_amount)}</td>
+      <td><span class="badge ${payBadge[o.payment_status]||'amber'}">${payLabel[o.payment_status]||o.payment_status}</span></td>
+      <td><span class="badge ${topupBadge[o.topup_status]||'amber'}">${topupLabel[o.topup_status]||o.topup_status}</span></td>
+      <td style="color:var(--text3);font-size:12px">${new Date(o.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+    </tr>`).join('');
+}
+
+// ── Transactions ─────────────────────────────────────────────────────────────
+let trxPage = 1;
+async function loadTransactions() {
+  trxPage = 1;
+  await fetchTransactions();
+}
+async function fetchTransactions() {
+  const search = document.getElementById('trx-search').value;
+  const status = document.getElementById('trx-status').value;
+  const params = new URLSearchParams({ page:trxPage, limit:20, search, status });
+  const data   = await API('/orders?' + params);
+  if (!data.success) return;
+
+  document.getElementById('trx-count').textContent = `${data.total} transaksi`;
+
+  const payBadge   = { paid:'green', unpaid:'amber', expired:'red', failed:'red' };
+  const topupBadge = { success:'green', processing:'blue', pending:'amber', failed:'red' };
+  const topupLabel = { success:'Sukses', processing:'Proses', pending:'Pending', failed:'Gagal' };
+
+  document.getElementById('trx-tbody').innerHTML = data.orders.map(o => `
+    <tr>
+      <td style="font-family:monospace;font-size:11px">${o.order_id}</td>
+      <td>${o.game_name}</td>
+      <td style="font-size:12px;color:var(--text3)">${o.customer_no}</td>
+      <td>${o.package_name}</td>
+      <td style="font-weight:500">${fmt(o.total_amount)}</td>
+      <td>${o.payment_method}</td>
+      <td>
+        <span class="badge ${payBadge[o.payment_status]||'amber'}">${o.payment_status}</span>
+        <span class="badge ${topupBadge[o.topup_status]||'amber'}" style="margin-left:4px">${topupLabel[o.topup_status]||o.topup_status}</span>
+      </td>
+      <td style="color:var(--text3);font-size:12px">${new Date(o.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+      <td><button class="btn" style="height:26px;padding:0 8px;font-size:11px" onclick="showOrderDetail('${o.order_id}')">Detail</button></td>
+    </tr>`).join('');
+
+  // Pagination
+  const totalPages = Math.ceil(data.total / data.limit);
+  let pag = '';
+  if (trxPage > 1) pag += `<button class="btn" onclick="trxPage--;fetchTransactions()">← Prev</button>`;
+  pag += `<span style="font-size:12px;color:var(--text3)">Hal ${trxPage} / ${totalPages}</span>`;
+  if (trxPage < totalPages) pag += `<button class="btn" onclick="trxPage++;fetchTransactions()">Next →</button>`;
+  document.getElementById('trx-pagination').innerHTML = pag;
+}
+
+let currentOrderId = null;
+async function showOrderDetail(orderId) {
+  currentOrderId = orderId;
+  const data = await API('/orders/'+orderId);
+  if (!data.success) return toast('Gagal memuat detail','error');
+  const o = data.order;
+
+  const rows = [
+    ['Order ID',    `<code>${o.order_id}</code>`],
+    ['Game',        `${o.game_icon} ${o.game_name}`],
+    ['Paket',       o.package_name],
+    ['Akun',        o.customer_no + (o.customer_name?` (${o.customer_name})`:'')],
+    ['Total',       `<strong>${fmt(o.total_amount)}</strong>`],
+    ['Metode',      o.payment_method],
+    ['Status Bayar', o.payment_status],
+    ['Status TopUp', o.topup_status],
+    ['SN',          o.sn || '—'],
+    ['Dibuat',      new Date(o.created_at).toLocaleString('id-ID')],
+    ['Dibayar',     o.paid_at ? new Date(o.paid_at).toLocaleString('id-ID') : '—'],
+    ['Selesai',     o.completed_at ? new Date(o.completed_at).toLocaleString('id-ID') : '—'],
+  ];
+
+  document.getElementById('modal-order-content').innerHTML =
+    `<table style="width:100%">${rows.map(([k,v])=>`<tr><td style="padding:7px 0;font-size:12px;color:var(--text3);width:40%">${k}</td><td style="padding:7px 0;font-size:13px">${v}</td></tr>`).join('')}</table>`;
+
+  const retryBtn = document.getElementById('btn-retry');
+  retryBtn.style.display = (o.payment_status === 'paid' && o.topup_status !== 'success') ? '' : 'none';
+
+  document.getElementById('modal-order').classList.add('open');
+}
+
+async function retryOrder() {
+  if (!currentOrderId) return;
+  const data = await API('/orders/'+currentOrderId+'/retry', { method:'POST' });
+  if (data.success) {
+    toast(`Retry berhasil: ${data.status}`);
+    closeModal('modal-order');
+    loadTransactions();
+  } else {
+    toast(data.message || 'Retry gagal','error');
+  }
+}
+
+// ── Games ────────────────────────────────────────────────────────────────────
+let GAMES_DATA = [];
+async function loadGames() {
+  const data = await API('/games/all');
+  if (!data.success) return;
+  GAMES_DATA = data.games;
+  renderGameGrid();
+  populatePkgGameFilter();
+}
+
+function renderGameGrid() {
+  document.getElementById('game-icon-grid').innerHTML = GAMES_DATA.map(g => `
+    <div class="game-icon-item">
+      <div class="game-icon-box" onclick="changeIcon(${g.id},'${g.icon}')">${g.icon}</div>
+      <div class="game-icon-name">${g.name}</div>
+      <div class="game-icon-active">
+        <label class="toggle"><input type="checkbox" ${g.is_active?'checked':''} onchange="toggleGame(${g.id},this.checked)"><span class="toggle-slider"></span></label>
+        <span style="font-size:10px;color:var(--text3)">${g.is_active?'Aktif':'Off'}</span>
+      </div>
+    </div>`).join('');
+}
+
+async function changeIcon(id, current) {
+  const e = prompt('Masukkan emoji baru:', current);
+  if (!e) return;
+  const data = await API('/games/'+id, { method:'PUT', body:{ ...GAMES_DATA.find(g=>g.id===id), icon:e.trim() } });
+  if (data.success) { toast('Ikon diperbarui'); loadGames(); }
+}
+
+async function toggleGame(id, val) {
+  const g    = GAMES_DATA.find(x=>x.id===id);
+  const data = await API('/games/'+id, { method:'PUT', body:{ ...g, is_active:val } });
+  if (data.success) toast((val?'Game diaktifkan':'Game dinonaktifkan') + ': ' + g.name);
+  else toast('Gagal update','error');
+}
+
+function openGameModal() { document.getElementById('modal-game').classList.add('open'); }
+
+async function saveGame() {
+  const name = document.getElementById('g-name').value.trim();
+  const code = document.getElementById('g-code').value.trim();
+  if (!name||!code) { toast('Nama dan kode wajib diisi','error'); return; }
+  const data = await API('/games', { method:'POST', body:{
+    name, code,
+    icon: document.getElementById('g-icon').value || '🎮',
+    params: document.getElementById('g-params').value,
+    zone_label: document.getElementById('g-zone-label').value || null,
+    vip_code: document.getElementById('g-vip-code').value || code,
+  }});
+  if (data.success) { toast('Game ditambahkan'); closeModal('modal-game'); loadGames(); }
+  else toast(data.message || 'Gagal menambah game','error');
+}
+
+// ── Packages ─────────────────────────────────────────────────────────────────
+let PACKAGES_DATA = [];
+async function loadPackages() {
+  const gameId = document.getElementById('pkg-game-filter').value;
+  const data   = await API('/packages' + (gameId?'?game_id='+gameId:''));
+  if (!data.success) return;
+  PACKAGES_DATA = data.packages;
+
+  const [settingsData] = await Promise.all([API('/settings/all')]);
+  const pct = parseFloat(settingsData.settings?.markup_percent) || 5;
+  const min = parseInt(settingsData.settings?.markup_minimum) || 500;
+  const sell = b => b + Math.max(Math.round(b*pct/100), min);
+
+  document.getElementById('pkg-tbody').innerHTML = PACKAGES_DATA.map((p,i) => `
+    <tr>
+      <td style="font-family:monospace;font-size:12px">${p.sku}</td>
+      <td style="font-weight:500">${p.name} <span style="font-size:11px;color:var(--text3)">(${p.game_name})</span></td>
+      <td>${fmt(p.base_price)}</td>
+      <td style="color:var(--accent-text);font-weight:500">${fmt(sell(p.base_price))}</td>
+      <td><label class="toggle" style="display:inline-flex"><input type="checkbox" ${p.is_hot?'checked':''} onchange="togglePkg(${p.id},'is_hot',this.checked)"><span class="toggle-slider"></span></label></td>
+      <td><label class="toggle" style="display:inline-flex"><input type="checkbox" ${p.is_active?'checked':''} onchange="togglePkg(${p.id},'is_active',this.checked)"><span class="toggle-slider"></span></label></td>
+      <td style="display:flex;gap:4px;padding:6px 12px">
+        <button class="btn danger" style="height:26px;padding:0 8px;font-size:11px" onclick="deletePkg(${p.id})">Hapus</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function togglePkg(id, field, val) {
+  const p = PACKAGES_DATA.find(x=>x.id===id);
+  await API('/packages/'+id, { method:'PUT', body:{ ...p, [field]:val } });
+}
+
+async function deletePkg(id) {
+  if (!confirm('Hapus paket ini?')) return;
+  const data = await API('/packages/'+id, { method:'DELETE' });
+  if (data.success) { toast('Paket dihapus'); loadPackages(); }
+}
+
+function openPkgModal() {
+  const select = document.getElementById('p-game');
+  select.innerHTML = GAMES_DATA.filter(g=>g.is_active).map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  document.getElementById('modal-pkg').classList.add('open');
+}
+
+async function savePkg() {
+  const sku  = document.getElementById('p-sku').value.trim();
+  const name = document.getElementById('p-name').value.trim();
+  const base = parseInt(document.getElementById('p-base').value);
+  if (!sku||!name||!base) { toast('Isi semua field','error'); return; }
+  const data = await API('/packages', { method:'POST', body:{
+    game_id: parseInt(document.getElementById('p-game').value),
+    sku, name, base_price: base,
+    digiflazz_sku: document.getElementById('p-digi').value || sku,
+  }});
+  if (data.success) { toast('Paket ditambahkan'); closeModal('modal-pkg'); loadPackages(); }
+  else toast(data.message || 'Gagal','error');
+}
+
+function populatePkgGameFilter() {
+  const sel = document.getElementById('pkg-game-filter');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Semua Game</option>' + GAMES_DATA.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  sel.value = current;
+}
+
+// ── Banners ──────────────────────────────────────────────────────────────────
+let BANNERS_DATA = [];
+let editBannerId = null;
+async function loadBanners() {
+  const data = await API('/banners/all');
+  if (!data.success) return;
+  BANNERS_DATA = data.banners;
+  renderBanners();
+}
+function renderBanners() {
+  document.getElementById('banner-list').innerHTML = BANNERS_DATA.map(b=>`
+    <div class="banner-item">
+      <div class="banner-preview">${b.image_url?`<img src="${b.image_url}">`:'<span style="font-size:10px;color:var(--text3)">No img</span>'}</div>
+      <div class="banner-meta">
+        <div class="banner-name">${b.title}</div>
+        <div class="banner-url">${b.link_url||'—'}</div>
+      </div>
+      <span class="badge ${b.is_active?'green':'amber'}">${b.is_active?'Aktif':'Nonaktif'}</span>
+      <div class="banner-actions">
+        <button class="btn" onclick="editBanner(${b.id})">Edit</button>
+        <button class="btn danger" onclick="deleteBanner(${b.id})">Hapus</button>
+      </div>
+    </div>`).join('');
+}
+function openBannerModal() {
+  editBannerId = null;
+  ['b-title','b-img','b-link'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('b-status').value='active';
+  document.getElementById('modal-banner-title').textContent='Tambah Banner';
+  document.getElementById('b-preview').innerHTML='<span style="font-size:12px;color:var(--text3)">Preview gambar</span>';
+  document.getElementById('modal-banner').classList.add('open');
+}
+function editBanner(id) {
+  const b = BANNERS_DATA.find(x=>x.id===id); if(!b)return;
+  editBannerId = id;
+  document.getElementById('b-title').value = b.title;
+  document.getElementById('b-img').value   = b.image_url;
+  document.getElementById('b-link').value  = b.link_url||'';
+  document.getElementById('b-status').value = b.is_active?'active':'inactive';
+  document.getElementById('modal-banner-title').textContent = 'Edit Banner';
+  previewBanner();
+  document.getElementById('modal-banner').classList.add('open');
+}
+function previewBanner() {
+  const url = document.getElementById('b-img').value;
+  const p   = document.getElementById('b-preview');
+  p.innerHTML = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<span style=font-size:12px;color:var(--text3)>Gambar gagal dimuat</span>'">` : '<span style="font-size:12px;color:var(--text3)">Preview gambar</span>';
+}
+async function saveBanner() {
+  const title  = document.getElementById('b-title').value.trim();
+  const active = document.getElementById('b-status').value === 'active';
+  if (!title) { toast('Judul wajib diisi','error'); return; }
+  const body = { title, image_url:document.getElementById('b-img').value, link_url:document.getElementById('b-link').value, is_active:active };
+  const data = editBannerId
+    ? await API('/banners/'+editBannerId, {method:'PUT', body})
+    : await API('/banners', {method:'POST', body});
+  if (data.success) { toast('Banner disimpan'); closeModal('modal-banner'); loadBanners(); }
+  else toast(data.message||'Gagal','error');
+}
+async function deleteBanner(id) {
+  if (!confirm('Hapus banner ini?')) return;
+  const data = await API('/banners/'+id, {method:'DELETE'});
+  if (data.success) { toast('Banner dihapus'); loadBanners(); }
+}
+
+// ── Settings ──────────────────────────────────────────────────────────────────
+const FEATURES = [
+  { key:'feature_check_nickname', name:'Cek Nickname', desc:'Validasi akun sebelum order' },
+  { key:'feature_guest_checkout', name:'Guest Checkout', desc:'Order tanpa login' },
+  { key:'feature_whatsapp_notif', name:'Notif WhatsApp', desc:'Kirim notifikasi via Fonnte' },
+  { key:'feature_maintenance',    name:'Mode Maintenance', desc:'Tutup toko sementara' },
+];
+const FEES = [
+  {id:'fee_bca_va',name:'BCA Virtual Account'},{id:'fee_bni_va',name:'BNI Virtual Account'},
+  {id:'fee_bri_va',name:'BRI Virtual Account'},{id:'fee_mandiri_va',name:'Mandiri VA'},
+  {id:'fee_dana',name:'DANA'},{id:'fee_ovo',name:'OVO'},
+  {id:'fee_gopay',name:'GoPay'},{id:'fee_shopeepay',name:'ShopeePay'},{id:'fee_qris',name:'QRIS'},
+];
+
+async function loadSettings() {
+  const data = await API('/settings/all');
+  if (!data.success) return;
+  const s = data.settings;
+  ['site_name','site_tagline','logo_url','accent_color','contact_wa','contact_email','social_instagram','social_telegram','footer_text'].forEach(k=>{
+    const el = document.getElementById('s-'+k);
+    if (el) el.value = s[k] || '';
+  });
+  const ft = document.getElementById('feature-toggles');
+  ft.innerHTML = '';
+  FEATURES.forEach(f=>{
+    ft.innerHTML += `<div class="toggle-row">
+      <div class="toggle-info"><div class="tname">${f.name}</div><div class="tdesc">${f.desc}</div></div>
+      <label class="toggle"><input type="checkbox" id="f-${f.key}" ${s[f.key]==='1'?'checked':''}><span class="toggle-slider"></span></label>
+    </div>`;
+  });
+  const feeEl = document.getElementById('fee-table');
+  feeEl.innerHTML = FEES.map(f=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--border)">
+      <span style="font-size:13px;font-weight:500">${f.name}</span>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="font-size:12px;color:var(--text3)">Rp</span>
+        <input type="number" id="f-${f.id}" value="${s[f.id]||0}" style="width:80px;text-align:right;height:28px">
+      </div>
+    </div>`).join('');
+}
+
+async function saveSettings() {
+  const updates = {};
+  ['site_name','site_tagline','logo_url','accent_color','contact_wa','contact_email','social_instagram','social_telegram','footer_text'].forEach(k=>{
+    const el = document.getElementById('s-'+k);
+    if (el) updates[k] = el.value;
+  });
+  FEATURES.forEach(f=>{
+    const el = document.getElementById('f-'+f.key);
+    if (el) updates[f.key] = el.checked ? '1' : '0';
+  });
+  FEES.forEach(f=>{
+    const el = document.getElementById('f-'+f.id);
+    if (el) updates[f.id] = el.value;
+  });
+  const data = await API('/settings', { method:'PUT', body:updates });
+  if (data.success) toast('Pengaturan disimpan');
+  else toast(data.message||'Gagal','error');
+}
+
+// ── Markup ────────────────────────────────────────────────────────────────────
+async function loadMarkupSettings() {
+  const data = await API('/settings/all');
+  if (!data.success) return;
+  document.getElementById('markup-pct').value = data.settings.markup_percent || 5;
+  document.getElementById('markup-min').value = data.settings.markup_minimum || 500;
+}
+
+function calcMarkup() {
+  const pct  = parseFloat(document.getElementById('markup-pct').value||5)/100;
+  const min  = parseInt(document.getElementById('markup-min').value||500);
+  const prev = document.getElementById('markup-preview');
+  const samples = [3000,14000,50000,100000,200000];
+  prev.innerHTML = samples.map(b=>{
+    const sell = b + Math.max(Math.round(b*pct), min);
+    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--border);font-size:13px">
+      <span style="color:var(--text3)">${fmt(b)}</span>
+      <span style="font-weight:500;color:var(--accent-text)">→ ${fmt(sell)} (+${fmt(sell-b)})</span>
+    </div>`;
+  }).join('') + `<div style="font-size:11px;color:var(--text3);margin-top:6px">Modal → Harga Jual</div>`;
+}
+
+async function saveMarkup() {
+  const data = await API('/settings', { method:'PUT', body:{
+    markup_percent: document.getElementById('markup-pct').value,
+    markup_minimum: document.getElementById('markup-min').value,
+  }});
+  if (data.success) toast('Markup disimpan');
+  else toast('Gagal menyimpan markup','error');
+}
+
+// ── Modal & Toast ─────────────────────────────────────────────────────────────
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+let toastTimer;
+function toast(msg, type){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type==='error' ? '#a32d2d' : '#1a1a1a';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>

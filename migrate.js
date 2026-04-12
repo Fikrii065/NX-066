@@ -5,11 +5,10 @@ const mysql = require('mysql2/promise');
 
 async function migrate() {
   const conn = await mysql.createConnection({
-    host:             process.env.DB_HOST || 'localhost',
-    port:             parseInt(process.env.DB_PORT) || 3306,
-    user:             process.env.DB_USER || 'root',
-    password:         process.env.DB_PASS || '',
-    multiStatements:  true,
+    host:     process.env.DB_HOST || 'localhost',
+    port:     parseInt(process.env.DB_PORT) || 3306,
+    user:     process.env.DB_USER || 'root',
+    password: process.env.DB_PASS || '',
   });
 
   console.log('🔌 Terhubung ke MySQL...');
@@ -22,20 +21,36 @@ async function migrate() {
 
   const sql = fs.readFileSync(sqlFile, 'utf8');
 
-  try {
-    await conn.query(sql);
-    console.log('✅ Migrasi database berhasil!');
-    console.log('   Default admin: admin / admin123');
-  } catch (err) {
-    if (err.message && err.message.includes('already exists')) {
-      console.log('✅ Tabel sudah ada, skip migrasi.');
-    } else {
-      console.error('❌ Migrasi gagal:', err.message);
-      process.exit(1);
+  // Split per statement dan jalankan satu-satu
+  const statements = sql
+    .split(';')
+    .map(s => s.trim())
+    .filter(s => s.length > 0 && !s.startsWith('--'));
+
+  let ok = 0, skip = 0;
+  for (const stmt of statements) {
+    try {
+      await conn.query(stmt);
+      ok++;
+    } catch (err) {
+      if (
+        err.message.includes('already exists') ||
+        err.message.includes('Duplicate entry')
+      ) {
+        skip++;
+      } else {
+        console.error('❌ Error:', err.message);
+        console.error('   Statement:', stmt.substring(0, 80));
+      }
     }
-  } finally {
-    await conn.end();
   }
+
+  console.log(`✅ Migrasi selesai! (${ok} sukses, ${skip} dilewati)`);
+  console.log('   Default admin: admin / admin123');
+  await conn.end();
 }
 
-migrate();
+migrate().catch(err => {
+  console.error('❌ Migrasi gagal:', err.message);
+  process.exit(1);
+});

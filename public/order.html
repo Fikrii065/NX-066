@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Up — GameFlash</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#141420;
+  --surface2:#1c1c2a;
+  --surface3:#242435;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#f0f0f5;
+  --text2:#a0a0b8;
+  --text3:#606078;
+  --accent:#ff6b1a;
+  --accent2:#ff8c42;
+  --accent-glow:rgba(255,107,26,0.3);
+  --accent-dim:rgba(255,107,26,0.12);
+  --green:#22c55e;
+  --red:#ef4444;
+  --radius:14px;
+  --radius-sm:10px;
+  --radius-xs:8px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
+
+/* HEADER */
+.header{background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 14px;height:58px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ff4500);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px var(--accent-glow);}
+.logo-icon svg{width:20px;height:20px;fill:#fff;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px;}
+.logo-name span{color:var(--accent);}
+.back-btn{width:38px;height:38px;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);text-decoration:none;transition:all .2s;margin-right:4px;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* LAYOUT */
+.container{max-width:560px;margin:0 auto;padding:16px 14px;}
+
+/* STEP */
+.step-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;margin-bottom:14px;}
+.step-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-title{font-size:15px;font-weight:600;color:var(--text);}
+
+/* GAME BANNER */
+.game-banner{position:relative;width:100%;height:200px;border-radius:var(--radius);overflow:hidden;margin-bottom:16px;background:var(--surface2);}
+.game-banner-bg{width:100%;height:100%;object-fit:cover;display:block;}
+.game-banner-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;background:linear-gradient(135deg,var(--surface2),var(--surface3));}
+.game-banner-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 50%,transparent 100%);}
+.game-banner-content{position:absolute;bottom:0;left:0;right:0;padding:16px;}
+.game-banner-icon-row{display:flex;align-items:flex-end;gap:12px;}
+.game-banner-icon{width:64px;height:64px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;background:var(--surface3);}
+.game-banner-icon-fallback{width:64px;height:64px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.game-banner-info{}
+.game-banner-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1.2;text-shadow:0 1px 4px rgba(0,0,0,0.5);}
+.game-banner-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.game-banner-badges{display:flex;gap:8px;margin-top:10px;}
+.game-banner-badge{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.35);padding:4px 8px;border-radius:20px;backdrop-filter:blur(4px);}
+
+/* INPUT */
+.field{margin-bottom:14px;}
+.field-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block;letter-spacing:.3px;}
+.field input{width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:12px 14px;font-size:15px;color:var(--text);outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}
+.field input:focus{border-color:var(--accent);}
+.field input::placeholder{color:var(--text3);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* NICKNAME CHECK */
+.nick-wrap{display:flex;gap:8px;align-items:flex-end;}
+.nick-wrap .field{flex:1;margin-bottom:0;}
+.nick-btn{height:44px;padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s;font-family:'Inter',sans-serif;}
+.nick-btn:hover{opacity:.85;}
+.nick-btn:disabled{opacity:.5;cursor:default;}
+.nick-result{margin-top:8px;padding:10px 12px;border-radius:var(--radius-xs);font-size:13px;font-weight:600;}
+.nick-result.ok{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:var(--green);}
+.nick-result.err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+
+/* PACKAGE GRID */
+.pkg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.pkg-category{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:6px;margin-bottom:2px;}
+.pkg-category-label{font-size:13px;font-weight:700;color:var(--text);}
+.pkg-card{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px 12px;cursor:pointer;transition:all .2s;position:relative;display:flex;flex-direction:column;gap:6px;}
+.pkg-card:hover{border-color:var(--accent);background:var(--accent-dim);}
+.pkg-card.selected{border-color:var(--accent);background:var(--accent-dim);}
+.pkg-card.selected::after{content:'✓';position:absolute;top:7px;right:9px;font-size:12px;font-weight:700;color:var(--accent);}
+.pkg-card-icon{font-size:22px;line-height:1;}
+.pkg-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.35;}
+.pkg-price{font-size:15px;font-weight:700;color:var(--accent);}
+.pkg-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,107,26,0.2);color:var(--accent);border:1px solid rgba(255,107,26,0.3);letter-spacing:.3px;width:fit-content;}
+.pkg-badge.instant{background:rgba(34,197,94,0.15);color:var(--green);border-color:rgba(34,197,94,0.3);}
+
+/* PAYMENT METHOD */
+.pay-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.pay-card{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:11px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;}
+.pay-card:hover{border-color:var(--accent);}
+.pay-card.selected{border-color:var(--accent);background:var(--accent-dim);}
+.pay-icon{font-size:20px;flex-shrink:0;}
+.pay-name{font-size:13px;font-weight:600;color:var(--text);}
+.pay-fee{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* ORDER SUMMARY */
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.summary-row:last-child{border-bottom:none;}
+.summary-label{font-size:13px;color:var(--text2);}
+.summary-val{font-size:13px;font-weight:600;color:var(--text);}
+.summary-total .summary-label{font-size:15px;font-weight:700;color:var(--text);}
+.summary-total .summary-val{font-size:18px;font-weight:700;color:var(--accent);}
+
+/* BUTTON */
+.btn-order{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#ff4500);color:#fff;border:none;border-radius:var(--radius-sm);font-size:16px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;transition:opacity .2s;margin-top:4px;}
+.btn-order:hover:not(:disabled){opacity:.9;}
+.btn-order:disabled{opacity:.5;cursor:default;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-xs);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);color:var(--text);padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;border:1px solid var(--border2);white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:#3a1010;border-color:rgba(239,68,68,0.4);color:#fca5a5;}
+
+/* LOADING OVERLAY */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,0.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.loading-overlay.show{display:flex;}
+.spinner{width:44px;height:44px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text2);font-weight:500;}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:60px 20px;}
+.not-found h2{font-size:18px;color:var(--text);margin-bottom:8px;}
+.not-found p{font-size:13px;color:var(--text3);}
+.not-found a{display:inline-block;margin-top:16px;padding:10px 24px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);text-decoration:none;font-size:14px;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="back-btn" title="Kembali">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+  </a>
+  <a href="/" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M6 4a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H6zm5 3h2v2h2v2h-2v2h-2v-2H9V9h2V7z"/></svg>
+    </div>
+    <span class="logo-name">Game<span>Flash</span></span>
+  </a>
+</header>
+
+<div class="container">
+  <!-- Game Banner -->
+  <div class="game-banner" id="game-banner">
+    <div class="game-banner-fallback" id="game-banner-fallback">🎮</div>
+    <img id="game-banner-bg" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt="">
+    <div class="game-banner-overlay"></div>
+    <div class="game-banner-content">
+      <div class="game-banner-icon-row">
+        <div class="game-banner-icon-fallback" id="game-icon-wrap">🎮</div>
+        <div class="game-banner-info">
+          <div class="game-banner-name" id="game-name">Memuat...</div>
+          <div class="game-banner-sub" id="game-sub">Top Up Instan · Proses Otomatis</div>
+        </div>
+      </div>
+      <div class="game-banner-badges">
+        <div class="game-banner-badge">⚡ Proses Cepat</div>
+        <div class="game-banner-badge">💬 Layanan 24/7</div>
+        <div class="game-banner-badge">✅ Pembayaran Aman</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Masukkan ID -->
+  <div class="step-block" id="step-id">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Masukkan ID Akun</div>
+    </div>
+    <div id="id-fields">
+      <!-- Dinamis berdasarkan params game -->
+    </div>
+    <div id="nick-result" style="display:none"></div>
+  </div>
+
+  <!-- STEP 2: Pilih Paket -->
+  <div class="step-block" id="step-pkg">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Pilih Paket</div>
+    </div>
+    <div class="pkg-grid" id="pkg-grid">
+      <!-- Skeleton -->
+      <div style="height:70px" class="skel"></div>
+      <div style="height:70px" class="skel"></div>
+      <div style="height:70px" class="skel"></div>
+      <div style="height:70px" class="skel"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Metode Bayar -->
+  <div class="step-block" id="step-pay">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Metode Pembayaran</div>
+    </div>
+    <div class="pay-grid" id="pay-grid">
+      <!-- Dinamis -->
+    </div>
+  </div>
+
+  <!-- STEP 4: Ringkasan -->
+  <div class="step-block" id="step-summary" style="display:none">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Ringkasan Pesanan</div>
+    </div>
+    <div id="summary-content"></div>
+  </div>
+
+  <!-- Data Pemesan (opsional) -->
+  <div class="step-block">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--surface3);color:var(--text2)">✉</div>
+      <div class="step-title" style="color:var(--text2)">Data Pemesan <span style="font-size:11px;font-weight:400">(opsional)</span></div>
+    </div>
+    <div class="field"><label class="field-label">Nama</label><input type="text" id="cust-name" placeholder="Nama kamu (opsional)"></div>
+    <div class="field-row">
+      <div class="field"><label class="field-label">WhatsApp</label><input type="tel" id="cust-wa" placeholder="08xx..."></div>
+      <div class="field"><label class="field-label">Email</label><input type="email" id="cust-email" placeholder="email@..."></div>
+    </div>
+  </div>
+
+  <button class="btn-order" id="btn-order" onclick="placeOrder()" disabled>Buat Pesanan</button>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Memproses pesanan...</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+const params   = new URLSearchParams(location.search);
+const GAME_CODE = params.get('game') || '';
+let GAME        = null;
+let PACKAGES    = [];
+let SEL_PKG     = null;
+let SEL_PAY     = null;
+let NICK_OK     = false;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(n){ return 'Rp '+Number(n).toLocaleString('id-ID'); }
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' '+type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function loading(show, text='Memproses...') {
+  document.getElementById('loading-overlay').classList.toggle('show', show);
+  document.getElementById('loading-text').textContent = text;
+}
+const DEFAULT_GAMES = [
+  {id:1, code:'mobile-legends',        name:'Mobile Legends: Bang Bang', icon:'⚔️', icon_url:null, params:'userId,zoneId', zone_label:'Zone ID',  banner_url:null},
+  {id:2, code:'mobile-legends-region', name:'Mobile Legends Region',     icon:'🗺️', icon_url:null, params:'userId,zoneId', zone_label:'Zone ID',  banner_url:null},
+  {id:3, code:'free-fire',             name:'Free Fire',                 icon:'🔥', icon_url:null, params:'userId',        zone_label:null,       banner_url:null},
+  {id:4, code:'free-fire-max',         name:'Free Fire MAX',             icon:'💥', icon_url:null, params:'userId',        zone_label:null,       banner_url:null},
+  {id:5, code:'pubgm',                 name:'PUBG Mobile',               icon:'🪖', icon_url:null, params:'userId',        zone_label:null,       banner_url:null},
+  {id:6, code:'valorant',              name:'Valorant',                  icon:'🎯', icon_url:null, params:'userId',        zone_label:null,       banner_url:null},
+  {id:7, code:'genshin-impact',        name:'Genshin Impact',            icon:'🌸', icon_url:null, params:'userId,zone',   zone_label:'Zone',     banner_url:null},
+  {id:8, code:'honkai-star-rail',      name:'Honkai: Star Rail',         icon:'🚂', icon_url:null, params:'userId,zone',   zone_label:'Zone',     banner_url:null},
+];
+
+async function API(path, opts={}) {
+  try {
+    const res = await fetch('/api' + path, {
+      headers: {'Content-Type':'application/json'},
+      ...opts,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    return res.json();
+  } catch(e) { return { success: false }; }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  if (!GAME_CODE) { showNotFound('Kode game tidak ditemukan.'); return; }
+
+  // Load game info
+  const gdata = await API('/games');
+  const gamesList = (gdata.success && gdata.games) ? gdata.games : DEFAULT_GAMES;
+  GAME = gamesList.find(g => g.code === GAME_CODE);
+  if (!GAME) { showNotFound('Game tidak ditemukan atau tidak aktif.'); return; }
+
+  // Update game banner
+  document.getElementById('game-name').textContent = GAME.name;
+  document.title = `Top Up ${GAME.name} — GameFlash`;
+
+  // Icon
+  const iconWrap = document.getElementById('game-icon-wrap');
+  if (GAME.icon_url) {
+    // Set src via property, bukan innerHTML, supaya base64 tidak corrupt
+    const img = document.createElement('img');
+    img.style.cssText = 'width:64px;height:64px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,0.2)';
+    img.onerror = function(){ this.outerHTML = '<span style="font-size:28px">'+(GAME.icon||'🎮')+'</span>'; };
+    img.src = GAME.icon_url;
+    iconWrap.innerHTML = '';
+    iconWrap.appendChild(img);
+  } else {
+    iconWrap.textContent = GAME.icon || '🎮';
+  }
+
+  // Banner background
+  if (GAME.banner_url) {
+    const bgImg = document.getElementById('game-banner-bg');
+    bgImg.src = GAME.banner_url;
+    bgImg.style.display = 'block';
+    document.getElementById('game-banner-fallback').style.display = 'none';
+  }
+
+  // Build ID fields
+  buildIdFields();
+
+  // Load packages
+  loadPackages();
+
+  // Load payment methods from settings
+  loadPaymentMethods();
+}
+
+function showNotFound(msg) {
+  document.getElementById('game-banner').style.display = 'none';
+  document.getElementById('step-id').style.display = 'none';
+  document.getElementById('step-pkg').style.display = 'none';
+  document.getElementById('step-pay').style.display = 'none';
+  document.getElementById('btn-order').style.display = 'none';
+  document.querySelector('.container').insertAdjacentHTML('afterbegin',
+    `<div class="not-found"><h2>Halaman Tidak Ditemukan</h2><p>${msg}</p><a href="/">← Kembali</a></div>`);
+}
+
+// ── ID Fields ────────────────────────────────────────────────────────────────
+function buildIdFields() {
+  const p = GAME.params || 'userId';
+  const hasZone = p.includes('zoneId') || p.includes('zone');
+  const zoneLabel = GAME.zone_label || 'Zone ID';
+  const container = document.getElementById('id-fields');
+
+  if (hasZone) {
+    container.innerHTML = `
+      <div class="nick-wrap">
+        <div class="field"><label class="field-label">User ID</label><input type="text" id="inp-userId" placeholder="Contoh: 123456789" oninput="onIdChange()"></div>
+        <div class="field" style="width:120px"><label class="field-label">${zoneLabel}</label><input type="text" id="inp-zoneId" placeholder="Contoh: 1234" oninput="onIdChange()"></div>
+        <button class="nick-btn" id="nick-btn" onclick="checkNick()" disabled>Cek</button>
+      </div>`;
+  } else {
+    container.innerHTML = `
+      <div class="nick-wrap">
+        <div class="field"><label class="field-label">User ID</label><input type="text" id="inp-userId" placeholder="Masukkan User ID kamu" oninput="onIdChange()"></div>
+        <button class="nick-btn" id="nick-btn" onclick="checkNick()" disabled>Cek</button>
+      </div>`;
+  }
+}
+
+function onIdChange() {
+  const uid = document.getElementById('inp-userId')?.value.trim();
+  const btn = document.getElementById('nick-btn');
+  if (btn) btn.disabled = !uid;
+  // Reset nick OK state
+  NICK_OK = false;
+  const nr = document.getElementById('nick-result');
+  nr.style.display = 'none';
+  updateOrderBtn();
+}
+
+async function checkNick() {
+  const uid = document.getElementById('inp-userId')?.value.trim();
+  const zid = document.getElementById('inp-zoneId')?.value.trim() || '';
+  if (!uid) return;
+
+  const btn = document.getElementById('nick-btn');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  const url = `/api/check-nickname?game=${encodeURIComponent(GAME_CODE)}&userId=${encodeURIComponent(uid)}` + (zid ? `&zoneId=${encodeURIComponent(zid)}` : '');
+  const data = await fetch(url).then(r=>r.json()).catch(()=>({success:false}));
+
+  btn.disabled = false;
+  btn.textContent = 'Cek';
+
+  const nr = document.getElementById('nick-result');
+  nr.style.display = 'block';
+  if (data.success && data.nickname) {
+    nr.innerHTML = `<div class="nick-result ok">✓ ${data.nickname}</div>`;
+    NICK_OK = true;
+  } else {
+    nr.innerHTML = `<div class="nick-result err">✗ ${data.message || 'ID tidak ditemukan'}</div>`;
+    NICK_OK = false;
+  }
+  updateOrderBtn();
+}
+
+// ── Packages ─────────────────────────────────────────────────────────────────
+function categorizePkg(name) {
+  const n = name.toLowerCase();
+  if (n.includes('flash') || n.includes('limited')) return { label: '⚡ Flash Sale', key: 'flash' };
+  if (n.includes('first') || n.includes('perdana')) return { label: '😍 First Top Up (Double Diamonds)', key: 'first' };
+  if (n.includes('starlight') || n.includes('twilight') || n.includes('weekly') || n.includes('monthly') || n.includes('pass') || n.includes('elite') || n.includes('epic')) return { label: '🔥 Special Items', key: 'special' };
+  return { label: '✨ Top Up Diamonds', key: 'topup' };
+}
+
+function getPkgIcon(name) {
+  const n = name.toLowerCase();
+  if (n.includes('starlight')) return '🌟';
+  if (n.includes('twilight')) return '🌙';
+  if (n.includes('weekly') || n.includes('pass')) return '📦';
+  if (n.includes('monthly') || n.includes('epic')) return '🎁';
+  if (n.includes('diamond') || n.includes('dm')) return '💎';
+  return '💎';
+}
+
+async function loadPackages() {
+  const data = await API('/packages/' + GAME_CODE);
+  const grid = document.getElementById('pkg-grid');
+  if (!data.success || !data.packages?.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text3);font-size:13px;">Belum ada paket tersedia</div>';
+    return;
+  }
+  PACKAGES = data.packages;
+
+  // Kelompokkan berdasarkan kategori
+  const ORDER = ['flash','first','special','topup'];
+  const groups = {};
+  for (const p of PACKAGES) {
+    const cat = categorizePkg(p.name);
+    if (!groups[cat.key]) groups[cat.key] = { label: cat.label, items: [] };
+    groups[cat.key].items.push(p);
+  }
+
+  let html = '';
+  for (const key of ORDER) {
+    if (!groups[key]) continue;
+    html += `<div class="pkg-category"><span class="pkg-category-label">${groups[key].label}</span></div>`;
+    html += groups[key].items.map(p => `
+      <div class="pkg-card" id="pkg-${p.id}" onclick="selectPkg(${p.id})">
+        <div class="pkg-card-icon">${getPkgIcon(p.name)}</div>
+        <div class="pkg-name">${p.name}</div>
+        <div class="pkg-price">${fmt(p.sell_price || p.base_price)}</div>
+        <div class="pkg-badge instant">⚡ Pengiriman INSTAN</div>
+      </div>`).join('');
+  }
+  grid.innerHTML = html;
+}
+
+function selectPkg(id) {
+  SEL_PKG = PACKAGES.find(p => p.id === id);
+  document.querySelectorAll('.pkg-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('pkg-'+id)?.classList.add('selected');
+  updateSummary();
+  updateOrderBtn();
+}
+
+// ── Payment Methods ───────────────────────────────────────────────────────────
+const PAY_METHODS = [
+  { code:'QRIS',      name:'QRIS',               icon:'⚡', fee_key:'fee_QRIS',      logo_key:'pay_logo_QRIS' },
+  { code:'DANA',      name:'DANA',                icon:'💙', fee_key:'fee_DANA',      logo_key:'pay_logo_DANA' },
+  { code:'OVO',       name:'OVO',                 icon:'💜', fee_key:'fee_OVO',       logo_key:'pay_logo_OVO' },
+  { code:'GOPAY',     name:'GoPay',               icon:'🟢', fee_key:'fee_GOPAY',     logo_key:'pay_logo_GOPAY' },
+  { code:'SHOPEEPAY', name:'ShopeePay',           icon:'🟠', fee_key:'fee_SHOPEEPAY', logo_key:'pay_logo_SHOPEEPAY' },
+  { code:'BCA',       name:'BCA Virtual Account', icon:'🏦', fee_key:'fee_BCA',       logo_key:'pay_logo_BCA' },
+  { code:'BNI',       name:'BNI Virtual Account', icon:'🏦', fee_key:'fee_BNI',       logo_key:'pay_logo_BNI' },
+  { code:'BRI',       name:'BRI Virtual Account', icon:'🏦', fee_key:'fee_BRI',       logo_key:'pay_logo_BRI' },
+  { code:'MANDIRI',   name:'Mandiri VA',          icon:'🏦', fee_key:'fee_MANDIRI',   logo_key:'pay_logo_MANDIRI' },
+  { code:'PERMATA',   name:'Permata VA',          icon:'🏦', fee_key:'fee_PERMATA',   logo_key:'pay_logo_PERMATA' },
+];
+
+let FEES = {};
+let SETTINGS = {};
+async function loadPaymentMethods() {
+  try {
+    const data = await API('/settings');
+    if (data?.settings) {
+      SETTINGS = data.settings;
+      FEES = data.settings;
+    }
+  } catch(e) {}
+
+  const grid = document.getElementById('pay-grid');
+  grid.innerHTML = PAY_METHODS.map(m => {
+    const fee = parseInt(FEES[m.fee_key]) || 0;
+    const logoSrc = SETTINGS[m.logo_key] || '';
+    const iconHtml = logoSrc
+      ? `<img src="${logoSrc}" style="width:36px;height:36px;object-fit:contain;border-radius:8px">`
+      : `<span class="pay-icon">${m.icon}</span>`;
+    return `<div class="pay-card" id="pay-${m.code}" onclick="selectPay('${m.code}')">
+      <div style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center">${iconHtml}</div>
+      <div>
+        <div class="pay-name">${m.name}</div>
+        <div class="pay-fee">${fee > 0 ? '+'+fmt(fee) : 'Tanpa biaya'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectPay(code) {
+  SEL_PAY = code;
+  document.querySelectorAll('.pay-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('pay-'+code)?.classList.add('selected');
+  updateSummary();
+  updateOrderBtn();
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+function updateSummary() {
+  const block = document.getElementById('step-summary');
+  if (!SEL_PKG || !SEL_PAY) { block.style.display='none'; return; }
+
+  const fee = parseInt(FEES['fee_'+SEL_PAY]) || 0;
+  const price = SEL_PKG.sell_price || SEL_PKG.base_price;
+  const total = price + fee;
+  const payLabel = PAY_METHODS.find(m=>m.code===SEL_PAY)?.name || SEL_PAY;
+  const uid = document.getElementById('inp-userId')?.value.trim() || '-';
+  const zid = document.getElementById('inp-zoneId')?.value.trim();
+
+  block.style.display = '';
+  document.getElementById('summary-content').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Game</span><span class="summary-val">${GAME.name}</span></div>
+    <div class="summary-row"><span class="summary-label">User ID</span><span class="summary-val">${uid}${zid?' / '+zid:''}</span></div>
+    <div class="summary-row"><span class="summary-label">Paket</span><span class="summary-val">${SEL_PKG.name}</span></div>
+    <div class="summary-row"><span class="summary-label">Harga Paket</span><span class="summary-val">${fmt(price)}</span></div>
+    <div class="summary-row"><span class="summary-label">Biaya Pembayaran (${payLabel})</span><span class="summary-val">${fee > 0 ? fmt(fee) : 'Gratis'}</span></div>
+    <div class="summary-row summary-total"><span class="summary-label">Total Bayar</span><span class="summary-val">${fmt(total)}</span></div>`;
+}
+
+// ── Validate & Submit ─────────────────────────────────────────────────────────
+function updateOrderBtn() {
+  const uid = document.getElementById('inp-userId')?.value.trim();
+  const ready = uid && SEL_PKG && SEL_PAY;
+  document.getElementById('btn-order').disabled = !ready;
+}
+
+async function placeOrder() {
+  const uid = document.getElementById('inp-userId')?.value.trim();
+  const zid = document.getElementById('inp-zoneId')?.value.trim() || '';
+  if (!uid) { toast('Masukkan User ID dulu', 'err'); return; }
+  if (!SEL_PKG) { toast('Pilih paket dulu', 'err'); return; }
+  if (!SEL_PAY) { toast('Pilih metode pembayaran dulu', 'err'); return; }
+
+  // Format customer_no
+  const customer_no = zid ? `${uid}|${zid}` : uid;
+
+  loading(true, 'Membuat pesanan...');
+  try {
+    const data = await API('/orders/create', {
+      method: 'POST',
+      body: {
+        game_id: GAME.id,
+        sku_code: SEL_PKG.sku,
+        customer_no,
+        payment_method: SEL_PAY,
+        customer_name:  document.getElementById('cust-name').value.trim() || null,
+        customer_wa:    document.getElementById('cust-wa').value.trim() || null,
+        customer_email: document.getElementById('cust-email').value.trim() || null,
+      }
+    });
+    loading(false);
+    if (data.success) {
+      location.href = `/payment?order_id=${data.order_id}`;
+    } else {
+      toast(data.message || 'Gagal membuat pesanan', 'err');
+    }
+  } catch(e) {
+    loading(false);
+    toast('Terjadi kesalahan, coba lagi', 'err');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

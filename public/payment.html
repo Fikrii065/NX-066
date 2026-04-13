@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pembayaran — GameFlash</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f0;--surface:#fff;--surface2:#f8f8f5;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --text:#1a1a1a;--text2:#666;--text3:#999;
+  --accent:#6c47ff;--accent-light:#eeebff;--accent-text:#3d1fa8;
+  --green:#0f6e56;--green-bg:#e1f5ee;
+  --amber:#7a4a0a;--amber-bg:#fdf3dc;
+  --red:#a32d2d;--red-bg:#fcebeb;
+  --radius:14px;--radius-sm:10px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px}
+.header{background:var(--surface);border-bottom:.5px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:17px;height:17px;fill:#fff}
+.header h1{font-size:16px;font-weight:600}
+.header a{margin-left:auto;font-size:13px;color:var(--accent);text-decoration:none;font-weight:500}
+.container{max-width:560px;margin:0 auto;padding:24px 16px}
+.skeleton{background:linear-gradient(90deg,#e8e8e2 25%,#f0f0ea 50%,#e8e8e2 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px;height:18px;margin-bottom:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* SUCCESS BANNER */
+.success-banner{background:linear-gradient(135deg,#6c47ff 0%,#4f35c2 100%);border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:20px;color:#fff;position:relative;overflow:hidden}
+.success-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.07)}
+.success-banner::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.05)}
+.success-icon-wrap{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:32px;position:relative;z-index:1}
+.success-banner h2{font-size:20px;font-weight:700;margin-bottom:6px;position:relative;z-index:1}
+.success-banner p{font-size:13px;opacity:.85;position:relative;z-index:1}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.progress-label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px}
+.progress-steps{display:flex;align-items:center}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-circle{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;z-index:1;border:2.5px solid var(--border2);background:var(--surface2);color:var(--text3);transition:all .4s ease}
+.step.done .step-circle{background:var(--accent);border-color:var(--accent);color:#fff}
+.step.active .step-circle{background:var(--surface);border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.step-label{font-size:10px;color:var(--text3);margin-top:6px;text-align:center;white-space:nowrap}
+.step.done .step-label,.step.active .step-label{color:var(--accent);font-weight:600}
+.step-line{flex:1;height:3px;background:var(--border2);margin-top:-20px;transition:background .4s ease}
+.step-line.done{background:var(--accent)}
+
+/* STATUS BANNER */
+.status-banner{border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.status-banner.unpaid{background:var(--amber-bg);border:.5px solid rgba(122,74,10,.15)}
+.status-banner.expired,.status-banner.failed{background:var(--red-bg);border:.5px solid rgba(163,45,45,.15)}
+.status-icon{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+.status-banner.unpaid .status-icon{background:rgba(122,74,10,.12);color:var(--amber)}
+.status-banner.expired .status-icon,.status-banner.failed .status-icon{background:rgba(163,45,45,.12);color:var(--red)}
+.status-title{font-size:15px;font-weight:600}
+.status-sub{font-size:13px;margin-top:3px;opacity:.75}
+
+/* CARD */
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0}
+.detail-row+.detail-row{border-top:.5px solid var(--border)}
+.detail-key{font-size:13px;color:var(--text2)}
+.detail-val{font-size:13px;font-weight:500;text-align:right;max-width:55%}
+.detail-total .detail-key{font-size:14px;font-weight:600;color:var(--text)}
+.detail-total .detail-val{font-size:16px;font-weight:700;color:var(--accent)}
+
+/* VA */
+.va-box{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0}
+.va-number{font-family:monospace;font-size:22px;font-weight:700;letter-spacing:2px;color:var(--text)}
+.copy-btn{height:34px;padding:0 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .15s;font-family:inherit}
+.copy-btn:hover{opacity:.9}
+.copy-btn.copied{background:#0f6e56}
+
+/* COUNTDOWN PILL */
+.timer-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#a32d2d;color:#fff;border-radius:100px;font-size:15px;font-weight:700;font-family:monospace;margin-bottom:16px;letter-spacing:.5px}
+.timer-pill.warning{background:#b87700}
+
+/* INSTRUCTIONS */
+.instruct-list{list-style:none;counter-reset:steps}
+.instruct-list li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:.5px solid var(--border);font-size:13px;color:var(--text2);line-height:1.5}
+.instruct-list li:last-child{border-bottom:none}
+.instruct-list li::before{content:counter(steps);min-width:22px;height:22px;background:var(--accent-light);color:var(--accent-text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* BUTTONS */
+.btn-check{width:100%;height:46px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-family:inherit;margin-bottom:10px}
+.btn-check:hover{opacity:.9}
+.btn-outline{width:100%;height:46px;background:transparent;color:var(--text2);border:.5px solid var(--border2);border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;font-family:inherit;text-decoration:none}
+.btn-outline:hover{background:var(--surface2)}
+.btn-download-qr{display:flex;align-items:center;justify-content:center;gap:8px;height:42px;background:var(--accent-light);color:var(--accent);border:1px solid rgba(108,71,255,.2);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .15s;font-family:inherit;margin-top:12px;width:100%}
+.btn-download-qr:hover{opacity:.85}
+
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none}
+
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(80px) rotate(360deg);opacity:0}}
+.confetti-dot{position:absolute;border-radius:2px;animation:confetti-fall 1.2s ease-out forwards}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+  <h1>GameFlash</h1>
+  <a href="/">&#8592; Kembali</a>
+</header>
+
+<div class="container" id="container">
+  <div id="skeleton">
+    <div style="height:80px;border-radius:14px;" class="skeleton"></div>
+    <div style="height:200px;border-radius:14px;margin-top:14px" class="skeleton"></div>
+    <div style="height:160px;border-radius:14px;margin-top:14px" class="skeleton"></div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <!-- SUCCESS BANNER (paid/topup success) -->
+    <div id="success-state" class="hidden">
+      <div class="success-banner" id="success-banner">
+        <div class="success-icon-wrap" id="success-icon-wrap">🎉</div>
+        <h2 id="success-title">Pembayaran Berhasil!</h2>
+        <p id="success-sub">Pesanan kamu sedang diproses. Mohon ditunggu ya!</p>
+      </div>
+    </div>
+
+    <!-- STATUS BANNER (unpaid/expired/failed) -->
+    <div class="status-banner hidden" id="status-banner">
+      <div class="status-icon" id="status-icon">⏳</div>
+      <div>
+        <div class="status-title" id="status-title">Menunggu Pembayaran</div>
+        <div class="status-sub" id="status-sub"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-wrap">
+      <div class="progress-label">Progress Transaksi</div>
+      <div class="progress-steps" id="progress-steps"></div>
+    </div>
+
+    <!-- COUNTDOWN PILL -->
+    <div id="timer-wrap" class="hidden" style="margin-bottom:4px">
+      <div class="timer-pill" id="timer-pill">
+        <span>⏱</span> <span id="countdown">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- DETAIL PESANAN -->
+    <div class="card">
+      <div class="card-title">Detail Pesanan</div>
+      <div class="detail-row">
+        <span class="detail-key">Order ID</span>
+        <span class="detail-val" id="d-order-id" style="font-family:monospace;font-size:12px"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Game</span>
+        <span class="detail-val" id="d-game"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Paket</span>
+        <span class="detail-val" id="d-package"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Akun</span>
+        <span class="detail-val" id="d-account"></span>
+      </div>
+      <div class="detail-row detail-total">
+        <span class="detail-key">Total Bayar</span>
+        <span class="detail-val" id="d-total"></span>
+      </div>
+    </div>
+
+    <!-- PAYMENT CARD -->
+    <div class="card" id="payment-card">
+      <div class="card-title" id="payment-card-title">Instruksi Pembayaran</div>
+      <div id="payment-content"></div>
+    </div>
+
+    <!-- ADMIN CONTACT -->
+    <div id="admin-contact-box" class="hidden"></div>
+
+    <!-- ACTIONS -->
+    <button class="btn-check" id="btn-check" onclick="checkStatus()">
+      <span id="check-text">Cek Status Pembayaran</span>
+      <div class="spinner hidden" id="check-spinner"></div>
+    </button>
+    <a href="/" class="btn-outline">🏠 Kembali ke Beranda</a>
+  </div>
+
+  <!-- ERROR -->
+  <div id="error-state" class="hidden" style="text-align:center;padding:60px 20px">
+    <div style="font-size:48px;margin-bottom:16px">😕</div>
+    <div style="font-size:18px;font-weight:600;margin-bottom:8px">Order tidak ditemukan</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:24px">Pastikan link yang kamu buka sudah benar.</div>
+    <a href="/" class="btn-outline" style="max-width:200px;margin:0 auto">Kembali ke Beranda</a>
+  </div>
+</div>
+
+<script>
+const fmt = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+
+const PAYMENT_INSTRUCTIONS = {
+  bca_va:{label:'BCA Virtual Account',icon:'🏦',steps:['Buka aplikasi BCA Mobile atau m-BCA','Pilih <strong>m-Transfer</strong> lalu <strong>BCA Virtual Account</strong>','Masukkan nomor VA di bawah ini','Periksa nama dan nominal, lalu konfirmasi','Masukkan PIN BCA untuk menyelesaikan pembayaran']},
+  bni_va:{label:'BNI Virtual Account',icon:'🏦',steps:['Buka aplikasi BNI Mobile Banking','Pilih <strong>Transfer</strong> lalu <strong>Virtual Account Billing</strong>','Masukkan nomor VA di bawah ini','Periksa nama dan nominal, lalu lanjutkan','Masukkan kata sandi untuk konfirmasi pembayaran']},
+  bri_va:{label:'BRI Virtual Account',icon:'🏦',steps:['Buka aplikasi BRImo','Pilih <strong>BRIVA</strong>','Masukkan nomor VA di bawah ini','Periksa detail, lalu masukkan PIN untuk bayar']},
+  mandiri_va:{label:'Mandiri Virtual Account',icon:'🏦',steps:['Buka Livin\' by Mandiri','Pilih <strong>Bayar</strong> lalu <strong>Multipayment</strong>','Masukkan nomor VA di bawah ini','Konfirmasi pembayaran dan masukkan PIN']},
+  dana:{label:'DANA',icon:'💳',steps:['Klik tombol <strong>Bayar dengan DANA</strong> di atas','Login ke akun DANA kamu','Konfirmasi pembayaran','Selesai, top up akan diproses otomatis']},
+  ovo:{label:'OVO',icon:'💜',steps:['Klik tombol <strong>Bayar dengan OVO</strong> di atas','Notifikasi akan muncul di aplikasi OVO kamu','Buka OVO dan konfirmasi pembayaran','Selesai, top up akan diproses otomatis']},
+  gopay:{label:'GoPay',icon:'💚',steps:['Klik tombol <strong>Bayar dengan GoPay</strong> di atas','Kamu akan diarahkan ke halaman pembayaran GoPay','Selesaikan pembayaran di aplikasi Gojek','Kembali ke halaman ini setelah pembayaran berhasil']},
+  shopeepay:{label:'ShopeePay',icon:'🧡',steps:['Klik tombol <strong>Bayar dengan ShopeePay</strong> di atas','Kamu akan diarahkan ke halaman pembayaran ShopeePay','Selesaikan pembayaran di aplikasi Shopee','Kembali ke halaman ini setelah pembayaran berhasil']},
+  qris:{label:'QRIS',icon:'📱',steps:['Scan QR code menggunakan aplikasi e-wallet atau m-banking apapun','Pastikan nominal sesuai','Konfirmasi pembayaran','Top up akan diproses setelah pembayaran dikonfirmasi']},
+};
+
+let order = null;
+let countdownInterval = null;
+let pollingInterval = null;
+
+const STEPS = [
+  {icon:'🛒',label:'Pesanan'},
+  {icon:'💳',label:'Pembayaran'},
+  {icon:'⚙️',label:'Proses'},
+  {icon:'✅',label:'Selesai'},
+];
+
+function getStepIndex(o) {
+  if (o.topup_status === 'success') return 3;
+  if (o.topup_status === 'failed') return 2;
+  if (o.payment_status === 'paid' || o.topup_status === 'processing') return 2;
+  return 1;
+}
+
+function renderProgress(o) {
+  const current = getStepIndex(o);
+  const wrap = document.getElementById('progress-steps');
+  let html = '';
+  STEPS.forEach((s, i) => {
+    const done   = i < current;
+    const active = i === current;
+    const cls    = done ? 'done' : active ? 'active' : '';
+    if (i > 0) html += `<div class="step-line ${i <= current ? 'done' : ''}"></div>`;
+    html += `<div class="step ${cls}">
+      <div class="step-circle">${done ? '✓' : s.icon}</div>
+      <div class="step-label">${s.label}</div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+async function loadOrder() {
+  const params  = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id');
+  if (!orderId) { showError(); return; }
+  try {
+    const res  = await fetch('/api/orders/' + orderId);
+    const data = await res.json();
+    if (!data.success) { showError(); return; }
+    order = data.order;
+    renderOrder();
+  } catch(e) { showError(); }
+}
+
+function renderOrder() {
+  document.getElementById('skeleton').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
+
+  const o  = order;
+  const pm = (o.payment_method || '').toLowerCase();
+  const info = PAYMENT_INSTRUCTIONS[pm] || {label: o.payment_method || '', icon:'💳', steps:[]};
+
+  renderProgress(o);
+
+  document.getElementById('d-order-id').textContent = o.order_id;
+  document.getElementById('d-game').textContent     = (o.game_icon||'') + ' ' + o.game_name;
+  document.getElementById('d-package').textContent  = o.package_name;
+  document.getElementById('d-account').textContent  = o.customer_no + (o.customer_name ? ' (' + o.customer_name + ')' : '');
+  document.getElementById('d-total').textContent    = fmt(o.total_amount);
+
+  const successState = document.getElementById('success-state');
+  const statusBanner = document.getElementById('status-banner');
+  const timerWrap    = document.getElementById('timer-wrap');
+  const btnCheck     = document.getElementById('btn-check');
+
+  successState.classList.add('hidden');
+  statusBanner.classList.add('hidden');
+  timerWrap.classList.add('hidden');
+  btnCheck.classList.remove('hidden');
+
+  if (o.topup_status === 'success') {
+    showSuccessBanner('🎉', 'Top Up Berhasil!', 'Diamonds/item sudah masuk ke akun kamu!');
+    stopPolling();
+    renderPaymentCard(o, info, true);
+    btnCheck.classList.add('hidden');
+
+  } else if (o.payment_status === 'paid' || o.topup_status === 'processing') {
+    showSuccessBanner('⚙️', 'Pembayaran Berhasil!', 'Pesanan kamu sedang diproses. Mohon ditunggu ya!');
+    renderPaymentCard(o, info, false);
+
+  } else if (o.payment_status === 'expired') {
+    showSimpleBanner('expired', '❌', 'Pembayaran Kadaluarsa', 'Silakan buat pesanan baru.');
+    stopPolling();
+    renderPaymentCard(o, info, false);
+
+  } else if (o.topup_status === 'failed') {
+    showSimpleBanner('failed', '⚠️', 'Top Up Gagal', 'Pembayaran diterima tapi top up gagal. Hubungi admin.');
+    stopPolling();
+    renderPaymentCard(o, info, false);
+    showAdminContact(o.order_id);
+
+  } else {
+    showSimpleBanner('unpaid', '⏳', 'Menunggu Pembayaran', 'Selesaikan pembayaran sebelum waktu habis.');
+    startCountdown(o.expired_at);
+    renderPaymentCard(o, info, false);
+  }
+}
+
+function showSuccessBanner(icon, title, sub) {
+  document.getElementById('success-state').classList.remove('hidden');
+  document.getElementById('success-icon-wrap').textContent = icon;
+  document.getElementById('success-title').textContent     = title;
+  document.getElementById('success-sub').textContent       = sub;
+  launchConfetti();
+}
+
+function showSimpleBanner(type, icon, title, sub) {
+  const banner = document.getElementById('status-banner');
+  banner.className = 'status-banner ' + type;
+  banner.classList.remove('hidden');
+  document.getElementById('status-icon').textContent  = icon;
+  document.getElementById('status-title').textContent = title;
+  document.getElementById('status-sub').textContent   = sub;
+}
+
+function renderPaymentCard(o, info, isSuccess) {
+  const payTitle = document.getElementById('payment-card-title');
+  const payBody  = document.getElementById('payment-content');
+
+  if (isSuccess) {
+    payTitle.textContent = 'Konfirmasi Sukses';
+    payBody.innerHTML = '<div style="text-align:center;padding:20px 0">' +
+      '<div style="font-size:48px;margin-bottom:10px">🎉</div>' +
+      '<div style="font-size:15px;font-weight:600;color:var(--green)">Top Up Berhasil!</div>' +
+      '<div style="font-size:13px;color:var(--text2);margin-top:6px">Item sudah masuk ke akun game kamu.</div>' +
+      (o.sn ? '<div style="margin-top:14px;font-size:12px;color:var(--text3)">SN: <code>' + o.sn + '</code></div>' : '') +
+      '</div>';
+    return;
+  }
+
+  payTitle.textContent = info.icon + ' ' + info.label;
+  let html = '';
+
+  if (o.va_number) {
+    html += '<div style="font-size:13px;color:var(--text2);margin-bottom:8px">Nomor Virtual Account</div>' +
+      '<div class="va-box">' +
+      '<div class="va-number" id="va-num">' + formatVA(o.va_number) + '</div>' +
+      '<button class="copy-btn" onclick="copyVA()">Salin</button>' +
+      '</div>';
+  }
+
+  const pm = (o.payment_method || '').toLowerCase();
+  if (pm === 'qris') {
+    if (o.qr_code) {
+      const isUrl = o.qr_code.startsWith('http');
+      const qrSrc = isUrl ? o.qr_code : 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(o.qr_code);
+      html += '<div style="text-align:center;padding:16px 0">' +
+        '<img id="qr-img" src="' + qrSrc + '" alt="QR Code" style="width:240px;height:240px;border-radius:12px;border:1px solid var(--border)" onerror="this.style.display=\'none\';document.getElementById(\'qr-fallback\').style.display=\'block\'">' +
+        '<div id="qr-fallback" style="display:none;padding:12px;background:var(--red-bg);border-radius:8px;font-size:13px;color:var(--red)">Gagal memuat QR. Coba refresh halaman.</div>' +
+        '<div style="margin-top:10px;font-size:12px;color:var(--text3)">Scan dengan aplikasi e-wallet / m-banking apapun</div>' +
+        '<div style="margin-top:6px;font-size:14px;font-weight:700;color:var(--accent)">' + fmt(o.total_amount) + '</div>' +
+        '<button class="btn-download-qr" onclick="downloadQR(\'' + qrSrc + '\')">⬇️ Unduh Kode QR</button>' +
+        '<div style="margin-top:6px;font-size:11px;color:var(--text3)">Screenshot jika QR Code tidak bisa di-download.</div>' +
+        '</div>';
+    } else {
+      html += '<div style="text-align:center;padding:16px;color:var(--text2);font-size:13px">⏳ QR sedang disiapkan, silakan refresh halaman...</div>';
+    }
+  } else if (o.payment_url && !o.va_number) {
+    html += '<a href="' + o.payment_url + '" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;height:46px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);text-decoration:none;font-size:15px;font-weight:600;margin-bottom:14px">Bayar dengan ' + info.label + ' \u2192</a>';
+  }
+
+  if (info.steps.length) {
+    html += '<div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Cara Pembayaran</div>' +
+      '<ul class="instruct-list">' + info.steps.map(function(s){return '<li>' + s + '</li>';}).join('') + '</ul>';
+  }
+
+  payBody.innerHTML = html;
+}
+
+function downloadQR(src) {
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = 'qr-payment-' + (order ? order.order_id : 'gameflash') + '.png';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function formatVA(va) {
+  return va.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function copyVA() {
+  var va = order && order.va_number;
+  if (!va) return;
+  navigator.clipboard.writeText(va).then(function() {
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Tersalin';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent = 'Salin'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function startCountdown(expiredAt) {
+  if (!expiredAt) return;
+  var timerWrap = document.getElementById('timer-wrap');
+  var pill      = document.getElementById('timer-pill');
+  var display   = document.getElementById('countdown');
+  timerWrap.classList.remove('hidden');
+  var end = new Date(expiredAt).getTime();
+
+  function tick() {
+    var diff = Math.max(0, end - Date.now());
+    var hh = Math.floor(diff / 3600000);
+    var mm = Math.floor((diff % 3600000) / 60000);
+    var ss = Math.floor((diff % 60000) / 1000);
+    if (hh > 0) {
+      display.textContent = hh + ' Jam  ' + String(mm).padStart(2,'0') + ' Menit  ' + String(ss).padStart(2,'0') + ' Detik';
+    } else {
+      display.textContent = String(mm).padStart(2,'0') + ' Menit  ' + String(ss).padStart(2,'0') + ' Detik';
+    }
+    if (diff < 600000) pill.classList.add('warning');
+    else pill.classList.remove('warning');
+    if (diff === 0) {
+      clearInterval(countdownInterval);
+      pill.innerHTML = '⏰ <span>Waktu habis — buat pesanan baru</span>';
+    }
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+function launchConfetti() {
+  var banner = document.getElementById('success-banner');
+  if (!banner) return;
+  var colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43'];
+  for (var i = 0; i < 18; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'confetti-dot';
+    dot.style.cssText = 'width:' + (6+Math.random()*8) + 'px;height:' + (6+Math.random()*8) + 'px;' +
+      'background:' + colors[Math.floor(Math.random()*colors.length)] + ';' +
+      'left:' + (Math.random()*100) + '%;top:' + (10+Math.random()*30) + '%;' +
+      'animation-delay:' + (Math.random()*0.5) + 's;animation-duration:' + (1+Math.random()*0.8) + 's;';
+    banner.appendChild(dot);
+    setTimeout(function(d){ return function(){ d.remove(); }; }(dot), 2000);
+  }
+}
+
+async function checkStatus() {
+  var btn  = document.getElementById('btn-check');
+  var text = document.getElementById('check-text');
+  var spin = document.getElementById('check-spinner');
+  btn.disabled = true;
+  text.textContent = 'Memeriksa...';
+  spin.classList.remove('hidden');
+  try {
+    await fetch('/api/orders/' + order.order_id + '/check-payment');
+    var res2  = await fetch('/api/orders/' + order.order_id);
+    var data2 = await res2.json();
+    if (data2.success) {
+      order = data2.order;
+      if (countdownInterval) clearInterval(countdownInterval);
+      renderOrder();
+    }
+  } catch(e) {}
+  btn.disabled = false;
+  text.textContent = 'Cek Status Pembayaran';
+  spin.classList.add('hidden');
+}
+
+function showAdminContact(orderId) {
+  fetch('/api/settings').then(function(r){return r.json();}).then(function(d) {
+    var wa = (d && d.settings && d.settings.contact_wa) ? d.settings.contact_wa : '';
+    var waBox = document.getElementById('admin-contact-box');
+    if (!waBox || !wa) return;
+    var msg = encodeURIComponent('Halo Admin, top up saya gagal diproses.\nOrder ID: ' + orderId + '\nMohon bantuan untuk diproses manual.');
+    waBox.innerHTML = '<div style="background:var(--red-bg);border:.5px solid rgba(163,45,45,.15);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;text-align:center">' +
+      '<div style="font-size:13px;color:var(--red);font-weight:600;margin-bottom:10px">⚠️ Top up gagal — hubungi admin untuk diproses manual</div>' +
+      '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Order ID: <strong>' + orderId + '</strong></div>' +
+      '<a href="https://wa.me/' + wa.replace(/\D/g,'') + '?text=' + msg + '" target="_blank" style="display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 20px;background:#25d366;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">💬 Hubungi Admin via WhatsApp</a>' +
+      '</div>';
+    waBox.classList.remove('hidden');
+  }).catch(function(){});
+}
+
+function stopPolling() {
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+}
+
+function showError() {
+  document.getElementById('skeleton').classList.add('hidden');
+  document.getElementById('error-state').classList.remove('hidden');
+}
+
+loadOrder();
+
+pollingInterval = setInterval(function() {
+  if (!order) return;
+  var shouldPoll = order.payment_status === 'unpaid' || order.payment_status === 'paid' || order.topup_status === 'processing';
+  if (shouldPoll) checkStatus();
+  else stopPolling();
+}, 4000);
+</script>
+</body>
+</html>

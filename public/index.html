@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameFlash — Top Up Game Instan</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#141420;
+  --surface2:#1c1c2a;
+  --surface3:#242435;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#f0f0f5;
+  --text2:#a0a0b8;
+  --text3:#606078;
+  --accent:#ff6b1a;
+  --accent2:#ff8c42;
+  --accent-glow:rgba(255,107,26,0.3);
+  --accent-dim:rgba(255,107,26,0.12);
+  --green:#22c55e;
+  --radius:14px;
+  --radius-sm:10px;
+  --radius-xs:8px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:24px;}
+
+/* HEADER */
+.header{background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 14px;height:58px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ff4500);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px var(--accent-glow);}
+.logo-icon svg{width:20px;height:20px;fill:#fff;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px;}
+.logo-name span{color:var(--accent);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.hdr-icon-btn{width:38px;height:38px;background:transparent;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:color .2s;}
+.hdr-icon-btn:hover{color:var(--text);}
+.hdr-flag-btn{display:flex;align-items:center;gap:6px;padding:6px 11px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;text-decoration:none;transition:all .2s;cursor:pointer;}
+.hdr-flag-btn:hover{border-color:var(--accent);}
+.hdr-flag-text{font-size:12px;font-weight:600;color:var(--text2);}
+
+/* HERO SLIDER */
+.hero-slider{margin:12px 14px 0;border-radius:var(--radius);overflow:hidden;position:relative;height:170px;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;border-radius:var(--radius);overflow:hidden;}
+.hero-slide.active{opacity:1;}
+.hero-slide-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;}
+.hero-slide-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.2) 60%,transparent 100%);}
+.hero-slide-content{position:absolute;bottom:0;left:0;right:0;padding:16px;}
+.hero-slide-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:6px;letter-spacing:.3px;}
+.hero-slide-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;line-height:1.1;color:#fff;text-transform:uppercase;}
+.hero-slide-title span{color:var(--accent);}
+.hero-slide-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;}
+.hero-dots{position:absolute;bottom:10px;right:14px;display:flex;gap:5px;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.35);transition:all .3s;cursor:pointer;}
+.hero-dot.active{background:#fff;width:18px;border-radius:3px;}
+
+/* SECTION LABEL */
+.sec-label{display:flex;align-items:flex-start;gap:10px;padding:18px 14px 12px;}
+.sec-label-icon{font-size:22px;line-height:1;margin-top:1px;flex-shrink:0;}
+.sec-label-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;letter-spacing:.3px;line-height:1.1;}
+.sec-label-sub{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4;}
+
+/* TRENDING 2-COLUMN GRID */
+.trending-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px;}
+.trending-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:all .22s;user-select:none;display:flex;align-items:center;gap:10px;padding:10px 12px;}
+.trending-card:hover{border-color:var(--accent);background:rgba(255,107,26,0.06);}
+.tc-img{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.tc-info{flex:1;min-width:0;}
+.tc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tc-publisher{font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* CATEGORY TABS */
+.cat-tabs-wrap{display:flex;align-items:center;margin:18px 0 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);}
+.cat-tabs{display:flex;overflow-x:auto;scrollbar-width:none;flex:1;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{flex:0 0 auto;padding:13px 18px;background:transparent;border:none;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;position:relative;transition:color .2s;}
+.cat-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2.5px;background:transparent;transition:background .2s;}
+.cat-tab.active{color:var(--accent);}
+.cat-tab.active::after{background:var(--accent);}
+.cat-arr{width:34px;height:100%;background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cat-arr:hover{color:var(--accent);}
+
+/* ALL GAMES 3-COL CARD GRID */
+.all-games-section{padding:10px 10px 4px;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.game-card-v{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .22s;user-select:none;position:relative;}
+.game-card-v:hover{border-color:var(--accent);}
+.gcv-thumb{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;overflow:hidden;}
+.gcv-thumb img{width:100%;height:100%;object-fit:cover;border-radius:0;}
+.gcv-badge{position:absolute;top:5px;right:5px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.gcv-info{padding:6px 7px 8px;}
+.gcv-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gcv-pub{font-size:9px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* FLASH SALE SECTION */
+.flash-sale-section{margin:14px 0 0;background:linear-gradient(135deg,#1a0a00,#1c1108);border-top:1px solid rgba(255,107,26,0.3);border-bottom:1px solid rgba(255,107,26,0.2);padding:12px 0 14px;}
+.fs-header{display:flex;align-items:center;justify-content:space-between;padding:0 14px 10px;}
+.fs-left{display:flex;align-items:center;gap:10px;}
+.fs-icon{font-size:24px;animation:fs-pulse 1.2s infinite;}
+@keyframes fs-pulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 4px #ff6b1a)}50%{transform:scale(1.2);filter:drop-shadow(0 0 10px #ff6b1a)}}
+.fs-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent);letter-spacing:.5px;}
+.fs-subtitle{font-size:11px;color:var(--text2);margin-top:1px;}
+.fs-countdown{display:flex;align-items:center;gap:4px;}
+.fs-cd-box{background:var(--accent);border-radius:6px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#fff;}
+.fs-cd-sep{color:var(--accent);font-weight:700;font-size:16px;}
+.fs-scroll-wrap{overflow-x:auto;scrollbar-width:none;padding:0 14px;}
+.fs-scroll-wrap::-webkit-scrollbar{display:none;}
+.fs-cards{display:flex;gap:10px;width:max-content;}
+.fs-card{width:120px;flex-shrink:0;background:var(--surface);border:1px solid rgba(255,107,26,0.3);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
+.fs-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.fs-card-thumb{width:100%;height:68px;object-fit:cover;display:block;}
+.fs-card-thumb-emoji{width:100%;height:68px;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.fs-card-body{padding:6px 8px 8px;}
+.fs-card-game{font-size:9px;color:var(--text3);margin-bottom:1px;}
+.fs-card-name{font-size:10px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:3px;}
+.fs-card-price{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--accent);}
+.fs-card-orig{font-size:9px;color:var(--text3);text-decoration:line-through;}
+.fs-card-disc{position:absolute;top:5px;right:5px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:2px 5px;border-radius:20px;}
+.fs-card-instan{font-size:9px;color:var(--green);font-weight:600;margin-top:2px;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-xs);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* GAME COVER COLORS */
+.gg-ml{background:linear-gradient(135deg,#1a237e,#283593,#1565c0);}
+.gg-ff{background:linear-gradient(135deg,#bf360c,#e64a19,#ff6f00);}
+.gg-pubg{background:linear-gradient(135deg,#33691e,#558b2f,#827717);}
+.gg-val{background:linear-gradient(135deg,#880e4f,#ad1457,#c62828);}
+.gg-gi{background:linear-gradient(135deg,#0d47a1,#1565c0,#006064);}
+.gg-hsr{background:linear-gradient(135deg,#311b92,#4527a0,#1a237e);}
+.gg-def{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);}
+
+/* MAINTENANCE */
+.maint{text-align:center;padding:80px 20px;}
+.maint h2{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;margin:12px 0 8px;}
+.maint p{font-size:14px;color:var(--text2);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div class="logo-name" id="site-name">Game<span>Flash</span></div>
+  </a>
+  <div class="header-right">
+    <button class="hdr-icon-btn" onclick="document.getElementById('search-overlay').style.display='flex'" aria-label="Cari">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <div class="hdr-flag-btn" onclick="toggleMenu()">
+      <span style="font-size:18px">🇮🇩</span>
+      <span class="hdr-flag-text">ID / IDR</span>
+    </div>
+    <button class="hdr-icon-btn" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:flex-start;padding:60px 16px 20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="width:100%;max-width:600px;margin:0 auto;">
+    <div style="display:flex;gap:10px;">
+      <input id="search-inp" type="text" placeholder="Cari game..." style="flex:1;height:48px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 16px;font-size:15px;color:var(--text);outline:none;font-family:'Inter',sans-serif;" oninput="filterGames(this.value)" onfocus="this.style.borderColor='var(--accent)'">
+      <button onclick="document.getElementById('search-overlay').style.display='none'" style="height:48px;padding:0 16px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;">Tutup</button>
+    </div>
+    <div id="search-results" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- SIDE MENU -->
+<div id="side-menu" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);" onclick="if(event.target===this)closeMenu()">
+  <div id="side-panel" style="position:absolute;left:0;top:0;bottom:0;width:80%;max-width:300px;background:#111118;border-right:1px solid var(--border);transform:translateX(-100%);transition:transform .3s ease;overflow-y:auto;display:flex;flex-direction:column;">
+    <!-- Header -->
+    <div style="padding:24px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:.5px;" id="menu-site-name">GameFlash</div>
+      <button onclick="closeMenu()" style="background:none;border:none;color:var(--text2);font-size:24px;cursor:pointer;line-height:1;padding:4px;">✕</button>
+    </div>
+    <!-- Menu Items -->
+    <nav style="flex:1;padding:8px 0;">
+      <a href="/" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-bottom:1px solid var(--border);transition:background .2s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''">
+        <span>Topup</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </a>
+      <a href="/cek-order" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-bottom:1px solid var(--border);transition:background .2s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''">
+        <span>Cek Transaksi</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </a>
+      <a href="#" onclick="closeMenu()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-bottom:1px solid var(--border);transition:background .2s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''">
+        <span>Leaderboard</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </a>
+      <a href="#" onclick="closeMenu()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-bottom:1px solid var(--border);transition:background .2s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''">
+        <span>Artikel</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </a>
+      <a href="#" onclick="closeMenu()" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-bottom:1px solid var(--border);transition:background .2s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''">
+        <span>Kalkulator</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </nav>
+    <!-- Bottom: Masuk -->
+    <div style="padding:12px 16px;border-top:1px solid var(--border);">
+      <a href="/login" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);text-decoration:none;font-size:15px;font-weight:600;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border2)'">
+        <span>Masuk</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MAINTENANCE -->
+<div id="maint-screen" class="maint" style="display:none">
+  <div style="font-size:48px">🔧</div>
+  <h2>Sedang Maintenance</h2>
+  <p>Kami sedang melakukan pemeliharaan sistem.<br>Silakan kembali beberapa saat lagi.</p>
+</div>
+
+<div id="main-wrap">
+
+  <!-- HERO SLIDER BANNER -->
+  <div class="hero-slider" id="hero-slider">
+    <div class="hero-slide active" style="background:linear-gradient(135deg,#1a0820 0%,#2d0a3e 40%,#0d1a3a 100%);">
+      <div class="hero-slide-bg">⚡</div>
+      <div class="hero-slide-overlay"></div>
+      <div class="hero-slide-content">
+        <div class="hero-slide-badge">🔥 PROMO AKTIF</div>
+        <div class="hero-slide-title">TOP UP GAME<br><span>CEPAT DAN MURAH</span></div>
+        <div class="hero-slide-sub">Buka 24 jam · Proses otomatis instan</div>
+      </div>
+    </div>
+    <div class="hero-dots" id="hero-dots">
+      <div class="hero-dot active" onclick="goSlide(0)"></div>
+    </div>
+  </div>
+
+  <!-- FLASH SALE -->
+  <div class="flash-sale-section">
+    <div class="fs-header">
+      <div class="fs-left">
+        <span class="fs-icon">⚡</span>
+        <div>
+          <div class="fs-title">FLASH SALE</div>
+          <div class="fs-subtitle">Pesan sekarang! Persediaan terbatas.</div>
+        </div>
+      </div>
+      <div class="fs-countdown" id="fs-countdown">
+        <div class="fs-cd-box"><span id="fcd-h">00</span></div>
+        <div class="fs-cd-sep">:</div>
+        <div class="fs-cd-box"><span id="fcd-m">00</span></div>
+        <div class="fs-cd-sep">:</div>
+        <div class="fs-cd-box"><span id="fcd-s">00</span></div>
+      </div>
+    </div>
+    <div class="fs-scroll-wrap">
+      <div class="fs-cards" id="fs-cards">
+        <div class="skel" style="width:160px;height:140px;border-radius:12px;flex-shrink:0;"></div>
+        <div class="skel" style="width:160px;height:140px;border-radius:12px;flex-shrink:0;"></div>
+        <div class="skel" style="width:160px;height:140px;border-radius:12px;flex-shrink:0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDING -->
+  <div class="sec-label">
+    <div class="sec-label-icon">🔥</div>
+    <div>
+      <div class="sec-label-title">TRENDING</div>
+      <div class="sec-label-sub">Berikut adalah beberapa produk yang paling populer saat ini.</div>
+    </div>
+  </div>
+  <div class="trending-grid" id="trending-grid">
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+    <div class="skel" style="height:74px;border-radius:10px;"></div>
+  </div>
+
+  <!-- CATEGORY TABS — rendered dynamically by JS -->
+  <div class="cat-tabs-wrap">
+    <button class="cat-arr" onclick="scrollCats(-1)">&#8249;</button>
+    <div class="cat-tabs" id="cat-tabs">
+      <!-- skeleton tabs saat loading -->
+      <div class="skel" style="width:90px;height:14px;border-radius:6px;margin:14px 12px;flex-shrink:0;"></div>
+      <div class="skel" style="width:60px;height:14px;border-radius:6px;margin:14px 8px;flex-shrink:0;"></div>
+      <div class="skel" style="width:80px;height:14px;border-radius:6px;margin:14px 8px;flex-shrink:0;"></div>
+    </div>
+    <button class="cat-arr" onclick="scrollCats(1)">&#8250;</button>
+  </div>
+
+  <!-- UNIFIED CATEGORY SECTION -->
+  <div id="section-cat" style="padding:10px 14px 4px;">
+    <!-- Skeleton awal -->
+    <div id="cat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+      <div class="skel" style="height:140px;border-radius:10px;"></div>
+    </div>
+  </div>
+
+</div><!-- #main-wrap -->
+
+<script>
+let GAMES = [], CFG = {};
+
+const GAME_THEMES = {
+  'mobile-legends':        { cls:'gg-ml',  emoji:'⚔️' },
+  'mobile-legends-region': { cls:'gg-ml',  emoji:'🗺️' },
+  'free-fire':             { cls:'gg-ff',  emoji:'🔥' },
+  'free-fire-max':         { cls:'gg-ff',  emoji:'💥' },
+  'pubgm':                 { cls:'gg-pubg',emoji:'🪖' },
+  'valorant':              { cls:'gg-val', emoji:'🎯' },
+  'genshin-impact':        { cls:'gg-gi',  emoji:'🌸' },
+  'honkai-star-rail':      { cls:'gg-hsr', emoji:'🚂' },
+  'roblox':                { cls:'gg-def', emoji:'🟥' },
+  'one-punch-man':         { cls:'gg-def', emoji:'👊' },
+  'blood-strike':          { cls:'gg-def', emoji:'🔫' },
+};
+
+const PUBLISHERS = {
+  'ml':'Moonton','ff':'Garena','ffmax':'Garena','pubg':'Tencent Games',
+  'val':'Riot Games','gi':'miHoYo','hsr':'HoYoverse','roblox':'Roblox Corporation',
+  'cod':'Activision','fc':'Electronic Arts','opm':'FingerFun','blood':'NetEase',
+  'ragna':'Gravity Game Hub'
+};
+
+function getTheme(g){
+  // Cari match by code exact, lalu by substring
+  if(GAME_THEMES[g.code]) return GAME_THEMES[g.code];
+  const k = Object.keys(GAME_THEMES).find(k=>g.code&&g.code.toLowerCase().includes(k.replace(/-/g,'').substring(0,6)));
+  return k ? GAME_THEMES[k] : {cls:'gg-def',emoji:g.icon||'🎮'};
+}
+
+// Icon map: src di-assign via JS bukan innerHTML supaya base64 tidak corrupt
+const _ICON_MAP = {};
+function gameImg(g, size){
+  size = size || '54px';
+  var t = getTheme(g);
+  var imgUrl = g.icon_url || null;
+  if(imgUrl){
+    var key = 'gimg_' + g.code.replace(/[^a-z0-9]/gi,'_') + (size==='100%'?'_big':'_sm');
+    _ICON_MAP[key] = imgUrl;
+    var errHandler = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+    if(size==='100%'){
+      return '<img id="'+key+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="" onerror="'+errHandler+'">'
+           + '<span style="display:none;font-size:38px">'+t.emoji+'</span>';
+    }
+    return '<img id="'+key+'" style="width:'+size+';height:'+size+';border-radius:12px;object-fit:cover;" alt="" onerror="'+errHandler+'">'
+         + '<span style="display:none;font-size:26px">'+t.emoji+'</span>';
+  }
+  return '<span style="font-size:'+(size==='100%'?'38px':'26px')+'">'+t.emoji+'</span>';
+}
+
+function applyIconSrcs(){
+  Object.keys(_ICON_MAP).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el && !el.src) el.src = _ICON_MAP[id];
+  });
+}
+
+function getPublisher(g){
+  const k = Object.keys(PUBLISHERS).find(k=>g.code&&g.code.toLowerCase().includes(k));
+  return k ? PUBLISHERS[k] : (g.publisher||'Publisher');
+}
+
+const DEFAULT_GAMES = [
+  {code:'mobile-legends',        name:'Mobile Legends: Bang Bang', icon:'⚔️', icon_url:null, params:'userId,zoneId', zone_label:'Zone ID'},
+  {code:'free-fire',             name:'Free Fire',                 icon:'🔥', icon_url:null, params:'userId',        zone_label:null},
+  {code:'free-fire-max',         name:'Free Fire MAX',             icon:'💥', icon_url:null, params:'userId',        zone_label:null},
+  {code:'pubgm',                 name:'PUBG Mobile',               icon:'🪖', icon_url:null, params:'userId',        zone_label:null},
+  {code:'valorant',              name:'Valorant',                  icon:'🎯', icon_url:null, params:'userId',        zone_label:null},
+  {code:'genshin-impact',        name:'Genshin Impact',            icon:'🌸', icon_url:null, params:'userId,zone',   zone_label:'Zone'},
+  {code:'honkai-star-rail',      name:'Honkai: Star Rail',         icon:'🚂', icon_url:null, params:'userId,zone',   zone_label:'Zone'},
+  {code:'mobile-legends-region', name:'Mobile Legends Region',     icon:'🗺️', icon_url:null, params:'userId,zoneId', zone_label:'Zone ID'},
+];
+
+async function safeFetch(url){
+  try{
+    const r = await fetch(url);
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null; }
+}
+
+async function init(){
+  const [sD, gD, bD] = await Promise.all([
+    safeFetch('/api/settings'),
+    safeFetch('/api/games'),
+    safeFetch('/api/banners'),
+  ]);
+
+  if(sD && sD.success){
+    CFG = sD.settings;
+    if(CFG.site_name){
+      const nm = CFG.site_name;
+      document.getElementById('site-name').innerHTML = nm.replace(/Flash/i,'<span>Flash</span>');
+      document.getElementById('menu-site-name').textContent = nm;
+    }
+    if(CFG.feature_maintenance==='1'){
+      document.getElementById('main-wrap').style.display='none';
+      document.getElementById('maint-screen').style.display='';
+      return;
+    }
+  }
+
+  if(bD && bD.success && bD.banners && bD.banners.length){
+    renderBanners(bD.banners);
+  }
+
+  if(gD && gD.success && gD.games && gD.games.length){
+    GAMES = gD.games;
+  } else {
+    // Fallback ke data default kalau DB tidak tersambung
+    GAMES = DEFAULT_GAMES;
+  }
+  renderAll();
+}
+
+function renderBanners(banners) {
+  const slider = document.getElementById('hero-slider');
+  const dotsEl = document.getElementById('hero-dots');
+  // Hapus semua slide lama kecuali dots
+  slider.querySelectorAll('.hero-slide').forEach(s=>s.remove());
+  // Render slide baru dari database
+  banners.forEach((b, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-slide' + (i===0?' active':'');
+    if(b.image_url) {
+      slide.style.cssText = `background:linear-gradient(135deg,#1a0820 0%,#0d1a3a 100%)`;
+      slide.innerHTML = `
+        <img src="${b.image_url}" alt="${b.title}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.remove()">
+        <div class="hero-slide-overlay"></div>
+        <div class="hero-slide-content">
+          <div class="hero-slide-title"><span>${b.title}</span></div>
+        </div>`;
+    } else {
+      slide.style.cssText = `background:linear-gradient(135deg,#1a0820 0%,#2d0a3e 40%,#0d1a3a 100%)`;
+      slide.innerHTML = `
+        <div class="hero-slide-bg">🎮</div>
+        <div class="hero-slide-overlay"></div>
+        <div class="hero-slide-content">
+          <div class="hero-slide-title"><span>${b.title}</span></div>
+        </div>`;
+    }
+    if(b.link_url) slide.style.cursor='pointer', slide.onclick=()=>window.open(b.link_url,'_blank');
+    slider.insertBefore(slide, dotsEl);
+  });
+  // Render dots
+  dotsEl.innerHTML = banners.map((_,i)=>`<div class="hero-dot${i===0?' active':''}" onclick="goSlide(${i})"></div>`).join('');
+  // Reset slider interval
+  slideIdx=0;
+  clearInterval(sliderTimer);
+  sliderTimer = setInterval(()=>goSlide((slideIdx+1)%banners.length), 4000);
+}
+
+function renderAll(){
+  // Flash Sale cards
+  renderFlashSale();
+
+  // Trending: first 8 as 2-col row cards (hanya dari category=game)
+  const tGrid = document.getElementById('trending-grid');
+  const trendingGames = GAMES.filter(g => (g.category||'game') === 'game');
+  if(!trendingGames.length && !GAMES.length){
+    tGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text3)">Belum ada game tersedia</div>';
+  } else {
+    const src = trendingGames.length ? trendingGames : GAMES;
+    tGrid.innerHTML = src.slice(0,8).map(g=>{
+      const t=getTheme(g);
+      return `<div class="trending-card" onclick="goOrder('${g.code}')">
+        <div class="tc-img ${t.cls}" style="overflow:hidden;">${gameImg(g,'54px')}</div>
+        <div class="tc-info"><div class="tc-name">${g.name}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Bangun tab dinamis & render section awal
+  buildCatTabs();
+
+  requestAnimationFrame(applyIconSrcs);
+}
+
+async function renderFlashSale(){
+  // Fetch hot packages dari semua game
+  let hotPkgs = [];
+  try {
+    const results = await Promise.all(GAMES.map(g=>fetch('/api/packages/'+g.code).then(r=>r.json()).catch(()=>null)));
+    results.forEach((d,i)=>{
+      if(d?.success && d.packages){
+        const hot = d.packages.filter(p=>p.is_hot);
+        hot.forEach(p=>{ p._game = GAMES[i]; });
+        hotPkgs = hotPkgs.concat(hot);
+      }
+    });
+  } catch(e){}
+
+  const fsCards = document.getElementById('fs-cards');
+  if(!hotPkgs.length){
+    // Fallback: tampilkan game pertama sebagai promo
+    hotPkgs = GAMES.slice(0,4).map((g,i)=>({
+      _game: g, name: 'Top Up '+g.name,
+      sell_price: [15000,25000,50000,100000][i]||15000,
+      base_price: null, sku: g.code
+    }));
+  }
+
+  fsCards.innerHTML = hotPkgs.map(p=>{
+    const g = p._game;
+    const t = getTheme(g);
+    const imgUrl = g.icon_url || t.img || null;
+    const disc = p.base_price ? Math.max(5,Math.round((1-p.base_price/p.sell_price)*100)) : 5;
+    const origPrice = p.base_price ? Math.round(p.sell_price*1.05) : null;
+    const thumb = imgUrl
+      ? `<img class="fs-card-thumb" src="${imgUrl}" onerror="this.outerHTML='<div class=\\'fs-card-thumb-emoji ${t.cls}\\'>${t.emoji}</div>'">`
+      : `<div class="fs-card-thumb-emoji ${t.cls}">${t.emoji}</div>`;
+    return `<div class="fs-card" onclick="goOrder('${g.code}')">
+      ${thumb}
+      <div class="fs-card-disc">Disc ${disc}%</div>
+      <div class="fs-card-body">
+        <div class="fs-card-game">${g.name}</div>
+        <div class="fs-card-name">${p.name}</div>
+        ${origPrice?`<div class="fs-card-orig">Rp ${origPrice.toLocaleString('id-ID')}</div>`:''}
+        <div class="fs-card-price">Rp ${(+p.sell_price).toLocaleString('id-ID')}</div>
+        <div class="fs-card-instan">⚡ Pengiriman Instan</div>
+      </div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(applyIconSrcs);
+}
+
+// Countdown timer — reset setiap jam
+function startCountdown(){
+  function tick(){
+    const now = new Date();
+    const end = new Date();
+    end.setHours(now.getHours()+1,0,0,0);
+    let diff = Math.floor((end-now)/1000);
+    const h = Math.floor(diff/3600); diff%=3600;
+    const m = Math.floor(diff/60);
+    const s = diff%60;
+    document.getElementById('fcd-h').textContent=String(h).padStart(2,'0');
+    document.getElementById('fcd-m').textContent=String(m).padStart(2,'0');
+    document.getElementById('fcd-s').textContent=String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick,1000);
+}
+startCountdown();
+
+function goOrder(code){
+  window.location.href = '/order?game=' + code;
+}
+
+function filterGames(q){
+  const res=document.getElementById('search-results');
+  if(!q.trim()||!GAMES.length){res.innerHTML='';return;}
+  const filtered=GAMES.filter(g=>g.name.toLowerCase().includes(q.toLowerCase()));
+  res.innerHTML=filtered.map(g=>{
+    const t=getTheme(g);
+    return `<div onclick="document.getElementById('search-overlay').style.display='none';goOrder('${g.code}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;">
+      <div class="tc-img ${t.cls}" style="width:42px;height:42px;border-radius:10px;font-size:20px;flex-shrink:0;">${t.emoji}</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">${g.name.split(':')[0]}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${getPublisher(g)}</div>
+      </div>
+    </div>`;
+  }).join('')||'<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px">Tidak ada game ditemukan</div>';
+}
+
+// ── Kategori config ───────────────────────────────────────────────────────────
+// Urutan & label tiap kategori. Voucher selalu muncul dari /api/vouchers.
+const CAT_CONFIG = [
+  { key:'game',      label:'Top Up Game',  badge:'TOP UP',    icon:'🎮' },
+  { key:'voucher',   label:'Voucher',      badge:'VOUCHER',   icon:'🎟️' },
+  { key:'pulsa',     label:'Pulsa & Data', badge:'PULSA',     icon:'📱' },
+  { key:'ewallet',   label:'E-Wallet',     badge:'E-WALLET',  icon:'💳' },
+  { key:'streaming', label:'Streaming',    badge:'STREAMING', icon:'📺' },
+  { key:'joki',      label:'Joki',         badge:'JOKI',      icon:'🕹️' },
+  { key:'lainnya',   label:'Lainnya',      badge:'LAINNYA',   icon:'📦' },
+];
+
+let ACTIVE_CAT = 'game'; // kategori aktif saat ini
+// Bangun tab — tampilkan semua kategori yang ada datanya di GAMES, + Voucher selalu ada
+function buildCatTabs() {
+  const catKeys = new Set(GAMES.map(g => g.category || 'game'));
+  catKeys.add('voucher'); // selalu ada
+  // Tambahkan semua kategori yang ada di CAT_CONFIG supaya tab selalu muncul
+  CAT_CONFIG.forEach(c => catKeys.add(c.key));
+
+  const tabsEl = document.getElementById('cat-tabs');
+  tabsEl.innerHTML = CAT_CONFIG
+    .map((c, i) => `<button class="cat-tab${i===0?' active':''}" data-cat="${c.key}" onclick="setCat(this)">${c.label}</button>`)
+    .join('');
+
+  // Set active cat ke tab pertama
+  const firstTab = tabsEl.querySelector('.cat-tab');
+  if (firstTab) {
+    ACTIVE_CAT = firstTab.dataset.cat;
+    renderCatSection(ACTIVE_CAT);
+  }
+}
+
+function setCat(el) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ACTIVE_CAT = el.dataset.cat;
+  renderCatSection(ACTIVE_CAT);
+}
+
+function renderCatSection(cat) {
+  if (cat === 'voucher') {
+    renderVoucherSection();
+    return;
+  }
+  const filtered = GAMES.filter(g => (g.category || 'game') === cat);
+  const grid = document.getElementById('cat-grid');
+  const cfg = CAT_CONFIG.find(c => c.key === cat) || { badge:'TOP UP', icon:'🎮' };
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 20px;">
+      <div style="font-size:40px;margin-bottom:12px;">🚧</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;">Segera Hadir</div>
+      <div style="font-size:13px;color:var(--text2);">Belum ada produk di kategori ini.</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(g => {
+    const t = getTheme(g);
+    // Jika game punya params='none' (voucher/kode), gunakan link_url jika ada
+    const dest = (g.params === 'none' && g.link_url) ? g.link_url : ('/order?game=' + g.code);
+    return `<div class="game-card-v" onclick="window.location.href='${dest}'">
+      <div class="gcv-thumb ${t.cls}" style="overflow:hidden;position:relative;">${gameImg(g,'100%')}
+        <div class="gcv-badge">${cfg.badge}</div>
+      </div>
+      <div class="gcv-info">
+        <div class="gcv-name">${g.name}</div>
+        <div class="gcv-pub">${getPublisher(g)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(applyIconSrcs);
+}
+
+function renderVoucherSection() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = `
+    <div style="grid-column:1/-1">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--text2);margin-bottom:10px;letter-spacing:.3px;">PLATFORM VOUCHER</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="vp-grid">
+        <div class="skel" style="height:120px;border-radius:10px;"></div>
+      </div>
+    </div>
+    <div style="grid-column:1/-1;margin-top:16px" id="vg-wrap">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--text2);margin-bottom:10px;letter-spacing:.3px;">VOUCHER GAME</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="vg-grid">
+        <div class="skel" style="height:120px;border-radius:10px;"></div>
+        <div class="skel" style="height:120px;border-radius:10px;"></div>
+        <div class="skel" style="height:120px;border-radius:10px;"></div>
+      </div>
+    </div>`;
+
+  fetch('/api/vouchers').then(r => r.json()).then(d => {
+    const vp = document.getElementById('vp-grid');
+    const vg = document.getElementById('vg-grid');
+    const vgWrap = document.getElementById('vg-wrap');
+    if (!vp) return;
+
+    if (!d.success || !d.vouchers || !d.vouchers.length) {
+      vp.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text3);font-size:12px">Belum ada voucher</div>';
+      if (vgWrap) vgWrap.style.display = 'none';
+      return;
+    }
+
+    const platforms = d.vouchers.filter(v => v.category === 'platform');
+    const games     = d.vouchers.filter(v => v.category === 'game');
+
+    vp.innerHTML = platforms.map(v => buildVoucherCard(v, 'VOUCHER')).join('')
+      || '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text3);font-size:12px">Belum ada</div>';
+
+    if (games.length && vg) {
+      vg.innerHTML = games.map(v => buildVoucherCard(v, 'VOUCHER')).join('');
+    } else if (vgWrap) {
+      vgWrap.style.display = 'none';
+    }
+  }).catch(() => {
+    const vp = document.getElementById('vp-grid');
+    if (vp) vp.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text3)">Gagal memuat</div>';
+  });
+}
+
+function buildVoucherCard(v, badge) {
+  const dest = v.link_url || '/order?game=' + v.code;
+  const imgEl = v.icon_url
+    ? `<img src="${v.icon_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`
+    : '';
+  return `<div class="game-card-v" onclick="window.location.href='${dest}'">
+    <div class="gcv-thumb gg-def" style="overflow:hidden;position:relative;">
+      ${imgEl}<span style="position:relative;font-size:30px${v.icon_url ? ';display:none' : ''}">${v.icon || '🎟️'}</span>
+      <div class="gcv-badge">${badge}</div>
+    </div>
+    <div class="gcv-info">
+      <div class="gcv-name">${v.name}</div>
+      <div class="gcv-pub">${v.category === 'platform' ? 'Platform Voucher' : 'Voucher Game'}</div>
+    </div>
+  </div>`;
+}
+
+function scrollCats(dir){
+  document.getElementById('cat-tabs').scrollBy({left:dir*120,behavior:'smooth'});
+}
+
+function toggleMenu(){
+  const menu=document.getElementById('side-menu');
+  const panel=document.getElementById('side-panel');
+  if(menu.style.display==='none'||!menu.style.display){
+    menu.style.display='block';
+    setTimeout(()=>panel.style.transform='translateX(0)',10);
+  } else { closeMenu(); }
+}
+
+function closeMenu(){
+  const panel=document.getElementById('side-panel');
+  panel.style.transform='translateX(-100%)';
+  setTimeout(()=>document.getElementById('side-menu').style.display='none',300);
+}
+
+// Hero slider
+let slideIdx=0, sliderTimer;
+const slides=()=>document.querySelectorAll('.hero-slide');
+const dots=()=>document.querySelectorAll('.hero-dot');
+function goSlide(n){
+  slides().forEach((s,i)=>s.classList.toggle('active',i===n));
+  dots().forEach((d,i)=>d.classList.toggle('active',i===n));
+  slideIdx=n;
+}
+sliderTimer = setInterval(()=>goSlide((slideIdx+1)%Math.max(slides().length,1)),4000);
+
+init();
+</script>
+</body>
+</html>

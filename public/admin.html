@@ -195,6 +195,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
     <div class="nav-item" onclick="showPage('packages',this)">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 4v1l7 3 7-3V4L8 1zM1 8l7 3 7-3v1l-7 3-7-3V8zm0 3l7 3 7-3v1l-7 3-7-3v-1z"/></svg>Paket & Harga
     </div>
+    <div class="nav-item" onclick="showPage('pkgicons',this)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14v12H1V2zm1 1v10h12V3H2zm2 2h8v1H4V5zm0 2h8v4H4V7zm1 1v2h6V8H5z"/></svg>Gambar Paket
+    </div>
     <div class="nav-section">Digiflazz</div>
     <div class="nav-item" onclick="showPage('digiflazz',this)">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM6 5h4v1.5H6V5zm0 2.5h4V9H6V7.5zm0 2.5h2.5V11H6v-1z"/></svg>Sinkronisasi
@@ -342,6 +345,84 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
           <thead><tr><th>SKU</th><th>Nama</th><th>Modal</th><th>Jual</th><th>Hot</th><th>Aktif</th><th></th></tr></thead>
           <tbody id="pkg-tbody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAMBAR PAKET -->
+  <div class="page" id="page-pkgicons">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div class="sec-title">Gambar Paket</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="pi-game-select" onchange="piLoadPackages()" style="width:180px">
+            <option value="">-- Pilih Game --</option>
+          </select>
+          <button class="btn primary" id="pi-save-btn" style="display:none" onclick="piSaveAll()">💾 Simpan Perubahan (<span id="pi-pending-count">0</span>)</button>
+          <button class="btn" id="pi-discard-btn" style="display:none" onclick="piDiscard()">Buang</button>
+        </div>
+      </div>
+      <!-- STATS -->
+      <div id="pi-stats" style="display:none;gap:10px;margin-bottom:14px;display:none">
+        <span id="pi-stat-text" style="font-size:12px;color:var(--text3)"></span>
+      </div>
+      <!-- FILTER -->
+      <div id="pi-toolbar" style="display:none;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="display:flex;gap:3px;background:var(--surface2);border-radius:7px;padding:3px">
+          <button class="btn" style="height:26px;padding:0 10px;font-size:11px;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.08)" id="pi-f-all" onclick="piSetFilter('all',this)">Semua</button>
+          <button class="btn" style="height:26px;padding:0 10px;font-size:11px" id="pi-f-has" onclick="piSetFilter('has',this)">Ada Gambar</button>
+          <button class="btn" style="height:26px;padding:0 10px;font-size:11px" id="pi-f-no" onclick="piSetFilter('no',this)">Belum Ada</button>
+        </div>
+        <input type="text" id="pi-search" placeholder="Cari paket..." oninput="piRender()" style="height:30px;border:.5px solid var(--border2);border-radius:7px;padding:0 10px;font-size:12px;width:160px;outline:none;font-family:inherit">
+      </div>
+      <!-- GRID -->
+      <div id="pi-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div>
+    </div>
+
+    <!-- MODAL UPLOAD -->
+    <div id="pi-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;padding:16px">
+      <div style="background:var(--surface);border-radius:var(--radius);width:100%;max-width:400px;overflow:hidden">
+        <div style="padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:10px">
+          <div style="font-weight:600;font-size:14px;flex:1">🖼️ Ubah Gambar — <span id="pi-modal-name"></span></div>
+          <button onclick="piCloseModal()" style="width:28px;height:28px;border-radius:6px;background:var(--surface2);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+        </div>
+        <div style="padding:16px">
+          <!-- Current -->
+          <div id="pi-cur-wrap" style="display:none;margin-bottom:12px">
+            <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px">Gambar Saat Ini</div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);padding:10px;border-radius:7px">
+              <img id="pi-cur-img" src="" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:.5px solid var(--border2)">
+              <div style="flex:1;font-size:12px;color:var(--text2)">Gambar aktif</div>
+              <button class="btn sm" onclick="piRemoveCurrent()" style="background:var(--red);color:#fff;border-color:var(--red);height:26px;padding:0 10px;font-size:11px">Hapus</button>
+            </div>
+          </div>
+          <!-- Upload -->
+          <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px">Upload Gambar Baru</div>
+          <label id="pi-upload-label" style="border:1.5px dashed var(--border2);border-radius:7px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:var(--surface2);text-align:center">
+            <input type="file" id="pi-file-input" accept="image/*" style="display:none" onchange="piHandleFile(this)">
+            <div style="font-size:24px">📁</div>
+            <div style="font-size:13px;font-weight:600">Klik atau drag & drop</div>
+            <div style="font-size:11px;color:var(--text3)">PNG, JPG, WEBP • Maks 1MB</div>
+          </label>
+          <div id="pi-file-preview" style="display:none;align-items:center;gap:10px;background:var(--surface2);border-radius:7px;padding:10px;margin-top:8px">
+            <img id="pi-file-img" src="" style="width:52px;height:52px;border-radius:8px;object-fit:cover">
+            <div style="flex:1">
+              <div id="pi-file-name" style="font-size:12px;font-weight:500"></div>
+              <div id="pi-file-size" style="font-size:11px;color:var(--text3)"></div>
+            </div>
+            <button onclick="piClearFile()" style="background:var(--red);color:#fff;border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:14px">×</button>
+          </div>
+          <!-- URL -->
+          <div style="display:flex;align-items:center;gap:8px;margin:12px 0;color:var(--text3);font-size:11px">
+            <div style="flex:1;height:.5px;background:var(--border2)"></div>atau URL<div style="flex:1;height:.5px;background:var(--border2)"></div>
+          </div>
+          <input type="url" id="pi-url-input" placeholder="https://example.com/gambar.png" oninput="piUrlPreview()" style="height:34px;border:.5px solid var(--border2);border-radius:7px;padding:0 10px;font-size:13px;width:100%;outline:none;font-family:inherit">
+          <img id="pi-url-prev" src="" style="display:none;width:100%;height:72px;object-fit:cover;border-radius:7px;margin-top:8px;border:.5px solid var(--border2)" onerror="this.style.display='none'" onload="this.style.display='block'">
+        </div>
+        <div style="padding:12px 16px;border-top:.5px solid var(--border);display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn" onclick="piCloseModal()">Batal</button>
+          <button class="btn primary" onclick="piApply()">✓ Terapkan</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1215,7 +1296,7 @@ function showPage(name, el) {
   if(el) el.classList.add('active');
   const titles = {
     dashboard:'Dashboard',transactions:'Transaksi',banners:'Banner',
-    games:'Daftar Game',vouchers:'Kelola Voucher',packages:'Paket & Harga',settings:'Pengaturan Situs',
+    games:'Daftar Game',vouchers:'Kelola Voucher',packages:'Paket & Harga',pkgicons:'Gambar Paket',settings:'Pengaturan Situs',
     markup:'Markup Harga',digiflazz:'Digiflazz — Sinkronisasi',cekuser:'Cek User',members:'Manajemen Member'
   };
   document.getElementById('page-title').textContent = titles[name]||name;
@@ -1228,6 +1309,7 @@ function showPage(name, el) {
   if(name==='digiflazz') { loadDigiBalance(); populateCekUserGames(); }
   if(name==='cekuser') populateCekUserGames();
   if(name==='members') loadMembers();
+  if(name==='pkgicons') piInit();
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -2655,6 +2737,233 @@ async function submitBalanceAdmin() {
 }
 // END MEMBER MANAGEMENT
 
+
+// ═══════════════════════════════════════════════════════
+// GAMBAR PAKET (pkgicons)
+// ═══════════════════════════════════════════════════════
+(function(){
+  let PI_GAMES = [];
+  let PI_PKGS  = [];
+  let PI_PEND  = {};   // {id: icon_url|null}
+  let PI_FILT  = 'all';
+  let PI_EDIT  = null;
+  let PI_B64   = null;
+  let PI_INITED = false;
+
+  window.piInit = async function() {
+    if (!PI_INITED) {
+      PI_INITED = true;
+      // populate game select
+      const sel = document.getElementById('pi-game-select');
+      if (sel.options.length <= 1) {
+        try {
+          const d = await API('/games/all');
+          PI_GAMES = (d.games||[]).filter(g=>g.is_active);
+          PI_GAMES.forEach(g => {
+            const o = document.createElement('option');
+            o.value = g.code;
+            o.textContent = (g.icon||'🎮') + ' ' + g.name;
+            sel.appendChild(o);
+          });
+        } catch(e) { toast('Gagal load game: '+e.message); }
+      }
+    }
+    piRender();
+  };
+
+  window.piLoadPackages = async function() {
+    const code = document.getElementById('pi-game-select').value;
+    PI_PEND = {};
+    piUpdateSaveBar();
+    if (!code) { PI_PKGS=[]; piRender(); return; }
+    document.getElementById('pi-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text3)">⏳ Memuat paket...</div>';
+    document.getElementById('pi-toolbar').style.display = 'none';
+    try {
+      const d = await API('/package-icons/'+code);
+      PI_PKGS = d.packages||[];
+      document.getElementById('pi-toolbar').style.display = 'flex';
+      piUpdateStats();
+      piRender();
+    } catch(e) {
+      document.getElementById('pi-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--red)">❌ '+e.message+'</div>';
+    }
+  };
+
+  function piGetIcon(p) {
+    if (p.id in PI_PEND) return PI_PEND[p.id];
+    return p.icon_url || null;
+  }
+
+  window.piSetFilter = function(f, el) {
+    PI_FILT = f;
+    ['all','has','no'].forEach(x => {
+      const btn = document.getElementById('pi-f-'+x);
+      if (btn) { btn.style.background = x===f ? 'var(--surface)' : ''; btn.style.boxShadow = x===f ? '0 1px 3px rgba(0,0,0,.08)' : ''; }
+    });
+    piRender();
+  };
+
+  function piUpdateStats() {
+    const total = PI_PKGS.length;
+    const withImg = PI_PKGS.filter(p => !!piGetIcon(p)).length;
+    const pend = Object.keys(PI_PEND).length;
+    document.getElementById('pi-stat-text').textContent =
+      total + ' paket  •  ' + withImg + ' ada gambar  •  ' + (total-withImg) + ' belum  •  ' + pend + ' perubahan pending';
+    document.getElementById('pi-stats').style.display = 'block';
+  }
+
+  window.piRender = function() {
+    const q = (document.getElementById('pi-search')||{value:''}).value.toLowerCase();
+    let list = PI_PKGS.filter(p => {
+      if (q && !p.name.toLowerCase().includes(q)) return false;
+      const h = !!piGetIcon(p);
+      if (PI_FILT==='has' && !h) return false;
+      if (PI_FILT==='no' && h) return false;
+      return true;
+    });
+    const grid = document.getElementById('pi-grid');
+    if (!list.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text3)">Tidak ada paket</div>';
+      return;
+    }
+    grid.innerHTML = list.map(p => {
+      const icon = piGetIcon(p);
+      const pend = p.id in PI_PEND;
+      const imgHtml = icon
+        ? '<img src="'+icon+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">'
+        : '<span style="font-size:28px">'+(p.is_hot?'🔥':'📦')+'</span>';
+      return '<div style="background:var(--surface);border:.5px solid '+(pend?'var(--accent)':'var(--border)')+';border-radius:var(--radius);overflow:hidden;'+(pend?'box-shadow:0 0 0 2px rgba(108,71,255,.15)':'')+'">'+
+        '<div onclick="piOpenModal('+p.id+')" style="height:90px;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative">'+
+          imgHtml+
+          '<div style="position:absolute;inset:0;background:rgba(108,71,255,.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;color:#fff;font-size:11px;font-weight:600" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">✏️ Ubah</div>'+
+        '</div>'+
+        '<div style="padding:8px 10px">'+
+          '<div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+p.name+'">'+p.name+'</div>'+
+          '<div style="font-size:10px;color:var(--text3)">Rp '+(p.base_price||0).toLocaleString('id-ID')+'</div>'+
+          (pend?'<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 5px;border-radius:10px;font-weight:700">✏️ Diubah</span>':'')+
+        '</div>'+
+        '<div style="padding:6px 8px;border-top:.5px solid var(--border);display:flex;gap:4px;background:var(--surface2)">'+
+          '<button class="btn sm" onclick="piOpenModal('+p.id+')" style="flex:1;height:24px;font-size:10px">🖼️ Ubah</button>'+
+          (icon?'<button onclick="piQuickRemove('+p.id+')" style="width:24px;height:24px;background:var(--red);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:12px">×</button>':'')+
+        '</div>'+
+      '</div>';
+    }).join('');
+    piUpdateStats();
+  };
+
+  window.piOpenModal = function(id) {
+    PI_EDIT = id; PI_B64 = null;
+    const p = PI_PKGS.find(x=>x.id===id);
+    document.getElementById('pi-modal-name').textContent = p.name;
+    document.getElementById('pi-file-input').value = '';
+    document.getElementById('pi-url-input').value = '';
+    document.getElementById('pi-file-preview').style.display = 'none';
+    document.getElementById('pi-url-prev').style.display = 'none';
+    const cur = piGetIcon(p);
+    if (cur) {
+      document.getElementById('pi-cur-wrap').style.display = 'block';
+      document.getElementById('pi-cur-img').src = cur;
+    } else {
+      document.getElementById('pi-cur-wrap').style.display = 'none';
+    }
+    document.getElementById('pi-modal').style.display = 'flex';
+  };
+
+  window.piCloseModal = function() {
+    document.getElementById('pi-modal').style.display = 'none';
+    PI_EDIT = null; PI_B64 = null;
+  };
+
+  window.piHandleFile = async function(input) {
+    if (!input.files[0]) return;
+    const file = input.files[0];
+    if (file.size > 1024*1024) { toast('Ukuran file maksimal 1MB'); input.value=''; return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      PI_B64 = e.target.result;
+      document.getElementById('pi-url-input').value = '';
+      document.getElementById('pi-url-prev').style.display = 'none';
+      document.getElementById('pi-file-img').src = PI_B64;
+      document.getElementById('pi-file-name').textContent = file.name;
+      document.getElementById('pi-file-size').textContent = (file.size/1024).toFixed(1)+' KB';
+      document.getElementById('pi-file-preview').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.piClearFile = function() {
+    PI_B64 = null;
+    document.getElementById('pi-file-input').value = '';
+    document.getElementById('pi-file-preview').style.display = 'none';
+  };
+
+  window.piUrlPreview = function() {
+    const url = document.getElementById('pi-url-input').value.trim();
+    if (url) { PI_B64 = null; piClearFile(); document.getElementById('pi-url-prev').src = url; }
+    else document.getElementById('pi-url-prev').style.display = 'none';
+  };
+
+  window.piRemoveCurrent = function() {
+    PI_PEND[PI_EDIT] = null;
+    document.getElementById('pi-cur-wrap').style.display = 'none';
+    piUpdateSaveBar();
+  };
+
+  window.piApply = function() {
+    const url = document.getElementById('pi-url-input').value.trim();
+    PI_PEND[PI_EDIT] = PI_B64 || url || null;
+    piCloseModal();
+    piUpdateSaveBar();
+    piRender();
+    toast('Gambar diterapkan — tekan Simpan untuk menyimpan');
+  };
+
+  window.piQuickRemove = function(id) {
+    PI_PEND[id] = null;
+    piUpdateSaveBar();
+    piRender();
+    toast('Gambar dihapus — tekan Simpan untuk menyimpan');
+  };
+
+  function piUpdateSaveBar() {
+    const n = Object.keys(PI_PEND).length;
+    document.getElementById('pi-pending-count').textContent = n;
+    document.getElementById('pi-save-btn').style.display = n>0 ? '' : 'none';
+    document.getElementById('pi-discard-btn').style.display = n>0 ? '' : 'none';
+  }
+
+  window.piDiscard = function() {
+    PI_PEND = {};
+    piUpdateSaveBar();
+    piRender();
+    toast('Perubahan dibuang');
+  };
+
+  window.piSaveAll = async function() {
+    const entries = Object.entries(PI_PEND);
+    if (!entries.length) return;
+    const btn = document.getElementById('pi-save-btn');
+    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+    try {
+      const updates = entries.map(([id,icon_url])=>({id:parseInt(id),icon_url}));
+      await API('/package-icons/bulk/update', {method:'PUT',body:{updates}});
+      entries.forEach(([id,icon_url])=>{
+        const p = PI_PKGS.find(x=>x.id===parseInt(id));
+        if(p) p.icon_url = icon_url;
+      });
+      PI_PEND = {};
+      piUpdateSaveBar();
+      piRender();
+      toast('✅ Semua perubahan berhasil disimpan!');
+    } catch(e) {
+      toast('Gagal: '+e.message);
+    } finally {
+      btn.disabled=false;
+      btn.textContent='💾 Simpan Perubahan (<span id="pi-pending-count">0</span>)';
+      btn.innerHTML='💾 Simpan Perubahan (<span id="pi-pending-count">'+Object.keys(PI_PEND).length+'</span>)';
+    }
+  };
+})();
 </script>
 
 <!-- ═══ MODAL: Detail / Edit Member ════════════════════════════════════════ -->

@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dokumentasi Fitur Admin — NX-066</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0e12;
+    --bg2: #13151c;
+    --bg3: #1a1d27;
+    --surface: #1f2230;
+    --surface2: #252840;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #8890a8;
+    --accent: #6c47ff;
+    --accent2: #9b70ff;
+    --accent3: rgba(108,71,255,0.15);
+    --teal: #00d9be;
+    --amber: #ffad3b;
+    --rose: #ff6b8a;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 60px;
+  }
+
+  .logo-pill {
+    background: var(--accent3);
+    border: 1px solid rgba(108,71,255,0.3);
+    color: var(--accent2);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .header-title span {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(74,222,128,0.1);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(74,222,128,0.2);
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    margin-bottom: 8px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 20px 4px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .sidebar-item:hover {
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+  }
+
+  .sidebar-item.active {
+    background: var(--accent3);
+    color: var(--accent2);
+    border-left-color: var(--accent);
+  }
+
+  .sidebar-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 48px 56px;
+    max-width: 860px;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 56px;
+  }
+
+  .hero-tag {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.7;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 64px;
+    scroll-margin-top: 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+  }
+
+  .section-meta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .section-meta p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* FEATURE CARD */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border2);
+    background: var(--surface2);
+  }
+
+  .feature-card-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .feature-card-title .fc-icon {
+    font-size: 14px;
+  }
+
+  .feature-card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* API TABLE */
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .api-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .api-table tr:not(:last-child) td {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .api-table td {
+    padding: 10px 12px;
+    color: var(--muted);
+    vertical-align: top;
+  }
+
+  .api-table td:first-child {
+    color: var(--text);
+  }
+
+  .method-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'DM Sans', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .method-get { background: rgba(74,222,128,0.1); color: var(--green); }
+  .method-post { background: rgba(108,71,255,0.12); color: var(--accent2); }
+  .method-put { background: rgba(255,173,59,0.1); color: var(--amber); }
+  .method-patch { background: rgba(0,217,190,0.1); color: var(--teal); }
+  .method-delete { background: rgba(255,107,138,0.1); color: var(--rose); }
+
+  .endpoint-code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    background: rgba(108,71,255,0.08);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-info {
+    background: rgba(108,71,255,0.08);
+    border: 1px solid rgba(108,71,255,0.2);
+    color: #b8acff;
+  }
+
+  .callout-warn {
+    background: rgba(255,173,59,0.07);
+    border: 1px solid rgba(255,173,59,0.2);
+    color: #ffc87a;
+  }
+
+  .callout-success {
+    background: rgba(74,222,128,0.07);
+    border: 1px solid rgba(74,222,128,0.2);
+    color: #7debb0;
+  }
+
+  .callout-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+
+  /* LIST ITEMS */
+  .action-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .action-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .action-list li::before {
+    content: '→';
+    color: var(--accent2);
+    font-size: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .action-list li strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* STAT CHIPS */
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .stat-chip .label {
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .stat-chip .value {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  /* FOOTER */
+  .doc-footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-pill">NX-066</div>
+  <span class="header-title">/ <span>Dokumentasi Fitur Admin</span></span>
+  <span class="badge">● Live</span>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <a class="sidebar-item active" href="#dashboard">
+        <span class="sidebar-dot"></span>Dashboard Admin
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Manajemen</div>
+      <a class="sidebar-item" href="#voucher">
+        <span class="sidebar-dot"></span>Voucher Diskon
+      </a>
+      <a class="sidebar-item" href="#saldo">
+        <span class="sidebar-dot"></span>Mutasi Saldo
+      </a>
+      <a class="sidebar-item" href="#refund">
+        <span class="sidebar-dot"></span>Auto Refund Saldo
+      </a>
+      <a class="sidebar-item" href="#flashsale">
+        <span class="sidebar-dot"></span>Flash Sale
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sistem</div>
+      <a class="sidebar-item" href="#membership">
+        <span class="sidebar-dot"></span>Sistem Keanggotaan
+      </a>
+      <a class="sidebar-item" href="#admin">
+        <span class="sidebar-dot"></span>Kelola Admin
+      </a>
+      <a class="sidebar-item" href="#kategori">
+        <span class="sidebar-dot"></span>Kelola Kategori
+      </a>
+      <a class="sidebar-item" href="#akun">
+        <span class="sidebar-dot"></span>Kelola Akun
+      </a>
+      <a class="sidebar-item" href="#pembelian">
+        <span class="sidebar-dot"></span>Kelola Pembelian
+      </a>
+      <a class="sidebar-item" href="#metode">
+        <span class="sidebar-dot"></span>Kelola Metode
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Konfigurasi</div>
+      <a class="sidebar-item" href="#notifikasi">
+        <span class="sidebar-dot"></span>Notifikasi WA
+      </a>
+      <a class="sidebar-item" href="#banner">
+        <span class="sidebar-dot"></span>Kelola Banner
+      </a>
+      <a class="sidebar-item" href="#sosmed">
+        <span class="sidebar-dot"></span>Kelola Sosmed
+      </a>
+      <a class="sidebar-item" href="#syarat">
+        <span class="sidebar-dot"></span>Syarat & Ketentuan
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">Panel Administrasi</div>
+      <h1>Dokumentasi<br>Fitur Admin</h1>
+      <p>Panduan lengkap seluruh fitur administrasi sistem NX-066 — platform top-up game berbasis Node.js dengan integrasi Digiflazz, TokoPay, dan notifikasi WhatsApp melalui Fonnte.</p>
+    </div>
+
+    <!-- 1. DASHBOARD -->
+    <section class="section" id="dashboard">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div class="section-meta">
+          <h2>Dashboard Admin</h2>
+          <p>Ringkasan performa harian & statistik platform</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Dashboard adalah halaman utama admin yang menampilkan gambaran besar kondisi toko secara real-time. Semua data diambil langsung dari database dan disajikan dalam satu tampilan terpadu.</p>
+
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="label">Total Order Hari Ini</div>
+          <div class="value">total_orders</div>
+        </div>
+        <div class="stat-chip">
+          <div class="label">Order Berhasil</div>
+          <div class="value">success_orders</div>
+        </div>
+        <div class="stat-chip">
+          <div class="label">Order Gagal</div>
+          <div class="value">failed_orders</div>
+        </div>
+        <div class="stat-chip">
+          <div class="label">Pendapatan Hari Ini</div>
+          <div class="value">revenue (Rp)</div>
+        </div>
+        <div class="stat-chip">
+          <div class="label">Saldo Digiflazz</div>
+          <div class="value">deposit</div>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">📈</span> Statistik Harian</div>
+          <div class="feature-card-desc">Grafik 30 hari terakhir menampilkan total order, order sukses, dan revenue per tanggal.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🧾</span> Order Terbaru</div>
+          <div class="feature-card-desc">10 transaksi terakhir dengan detail game, paket, status pembayaran, dan status top-up.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">⚡</span> Perbandingan Kemarin</div>
+          <div class="feature-card-desc">Revenue dan jumlah order dibandingkan dengan hari sebelumnya untuk melihat tren.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">💰</span> Saldo Digiflazz</div>
+          <div class="feature-card-desc">Cek saldo deposit Digiflazz langsung dari dashboard tanpa perlu membuka aplikasi terpisah.</div>
+        </div>
+      </div>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Deskripsi</th></tr>
+        <tr>
+          <td><span class="method-badge method-get">GET</span></td>
+          <td><code class="endpoint-code">/api/admin/dashboard</code></td>
+          <td>Data ringkasan hari ini vs kemarin + 10 order terbaru</td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-get">GET</span></td>
+          <td><code class="endpoint-code">/api/admin/stats/daily</code></td>
+          <td>Statistik harian 30 hari terakhir untuk grafik</td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-get">GET</span></td>
+          <td><code class="endpoint-code">/api/admin/digiflazz/balance</code></td>
+          <td>Cek saldo deposit Digiflazz secara langsung</td>
+        </tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 2. VOUCHER -->
+    <section class="section" id="voucher">
+      <div class="section-header">
+        <div class="section-icon">🎟️</div>
+        <div class="section-meta">
+          <h2>Voucher Diskon</h2>
+          <p>Manajemen voucher & kode promo untuk pelanggan</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Modul voucher memungkinkan admin mengelola kode diskon atau voucher platform yang ditampilkan kepada pengguna. Setiap voucher memiliki ikon, kategori, dan URL tujuan yang dapat dikustomisasi.</p>
+
+      <ul class="action-list">
+        <li><strong>Tambah Voucher</strong> — Buat voucher baru dengan kode unik, nama, ikon (emoji atau gambar base64), kategori, dan URL tujuan klik.</li>
+        <li><strong>Edit Voucher</strong> — Perbarui informasi voucher termasuk nama, ikon, link URL, kategori, urutan tampil, dan status aktif/nonaktif.</li>
+        <li><strong>Hapus Voucher</strong> — Hapus voucher yang sudah tidak berlaku dari sistem.</li>
+        <li><strong>Aktif/Nonaktif</strong> — Toggle status is_active untuk mengontrol visibilitas voucher di halaman publik.</li>
+        <li><strong>Upload Ikon</strong> — Mendukung upload gambar ikon dalam format base64 untuk tampilan yang lebih profesional.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <span>Voucher yang aktif (is_active = 1) akan muncul di halaman publik dan diurutkan berdasarkan nilai <strong>sort_order</strong>. Voucher nonaktif hanya terlihat di panel admin melalui endpoint <code>/api/vouchers/all</code>.</span>
+      </div>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/vouchers</code></td><td>Daftar voucher aktif (publik)</td></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/vouchers/all</code></td><td>Semua voucher termasuk nonaktif (admin)</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/vouchers</code></td><td>Tambah voucher baru</td></tr>
+        <tr><td><span class="method-badge method-put">PUT</span></td><td><code class="endpoint-code">/api/vouchers/:id</code></td><td>Update voucher</td></tr>
+        <tr><td><span class="method-badge method-delete">DELETE</span></td><td><code class="endpoint-code">/api/vouchers/:id</code></td><td>Hapus voucher</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 3. MUTASI SALDO -->
+    <section class="section" id="saldo">
+      <div class="section-header">
+        <div class="section-icon">💳</div>
+        <div class="section-meta">
+          <h2>Mutasi Saldo</h2>
+          <p>Riwayat topup, pemakaian, dan penyesuaian saldo pengguna</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Admin dapat memantau dan mengelola saldo akun pengguna secara langsung. Setiap perubahan saldo tercatat di tabel <code>balance_logs</code> untuk keperluan audit dan transparansi.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">➕</span> Tambah Saldo</div>
+          <div class="feature-card-desc">Admin bisa menambah saldo pengguna secara manual dengan catatan alasan untuk rekam jejak.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">➖</span> Kurangi Saldo</div>
+          <div class="feature-card-desc">Pengurangan saldo disertai validasi bahwa saldo pengguna mencukupi sebelum diproses.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">📜</span> Log Transaksi</div>
+          <div class="feature-card-desc">Semua perubahan saldo dicatat dengan type (topup/deduct), jumlah, keterangan, dan referensi.</td>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🔒</span> Transaksi Aman</div>
+          <div class="feature-card-desc">Setiap operasi saldo menggunakan database transaction (BEGIN/COMMIT/ROLLBACK) untuk mencegah data korup.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <span>Operasi saldo menggunakan <strong>row-level locking</strong> (<code>FOR UPDATE</code>) untuk mencegah race condition saat ada transaksi bersamaan. Selalu sertakan parameter <code>note</code> untuk keperluan audit.</span>
+      </div>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/balance/me</code></td><td>Cek saldo pengguna (user sendiri)</td></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/balance/methods</code></td><td>Daftar metode pembayaran untuk topup saldo</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/balance/topup</code></td><td>Buat transaksi topup saldo via TokoPay</td></tr>
+        <tr><td><span class="method-badge method-patch">PATCH</span></td><td><code class="endpoint-code">/api/admin/users/:id/balance</code></td><td>Admin tambah/kurangi saldo pengguna</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 4. AUTO REFUND -->
+    <section class="section" id="refund">
+      <div class="section-header">
+        <div class="section-icon">↩️</div>
+        <div class="section-meta">
+          <h2>Auto Refund Saldo</h2>
+          <p>Pengembalian saldo otomatis untuk transaksi gagal</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Sistem auto refund diaktifkan saat top-up ke Digiflazz gagal (status <code>failed</code>) pada order yang dibayar dengan saldo akun. Saldo dikembalikan secara otomatis tanpa intervensi manual.</p>
+
+      <ul class="action-list">
+        <li><strong>Trigger Otomatis</strong> — Refund dipicu oleh webhook dari Digiflazz ketika status top-up berubah menjadi <code>failed</code>.</li>
+        <li><strong>Validasi Pembayaran</strong> — Hanya order dengan <code>payment_method = balance</code> yang mendapat refund ke saldo akun.</li>
+        <li><strong>Update Status Order</strong> — Status <code>topup_status</code> diubah menjadi <code>refunded</code> setelah saldo dikembalikan.</li>
+        <li><strong>Log Balance</strong> — Pengembalian saldo tercatat di <code>balance_logs</code> dengan referensi order_id.</li>
+        <li><strong>Notifikasi WA</strong> — Pengguna mendapat notifikasi WhatsApp otomatis saat refund berhasil diproses.</li>
+      </ul>
+
+      <div class="callout callout-success">
+        <span class="callout-icon">✅</span>
+        <span>Alur refund: Webhook Digiflazz → validasi status failed → cek payment_method = balance → kembalikan saldo → update order status → kirim notif WA → catat di balance_logs.</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 5. FLASH SALE -->
+    <section class="section" id="flashsale">
+      <div class="section-header">
+        <div class="section-icon">⚡</div>
+        <div class="section-meta">
+          <h2>Flash Sale</h2>
+          <p>Produk dengan harga spesial terbatas waktu</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Fitur flash sale memungkinkan admin menandai paket tertentu sebagai produk unggulan (<code>is_hot = 1</code>) yang ditampilkan secara khusus di halaman depan dengan badge visual yang menarik perhatian.</p>
+
+      <ul class="action-list">
+        <li><strong>Tandai Produk Hot</strong> — Admin mengaktifkan flag <code>is_hot</code> pada paket tertentu untuk menampilkan badge flash sale.</li>
+        <li><strong>Harga Khusus</strong> — Penetapan harga jual (<code>sell_price</code>) berbeda dari harga normal dengan markup lebih rendah.</li>
+        <li><strong>Tampil Prioritas</strong> — Produk hot ditampilkan di posisi teratas atau mendapat highlight visual khusus di UI.</li>
+        <li><strong>Sync Digiflazz</strong> — Harga base dapat disinkronkan dari Digiflazz untuk memastikan margin tetap terjaga.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <span>Saat ini flag <code>is_hot</code> dikelola melalui endpoint paket. Untuk flash sale berbasis waktu (dengan tanggal mulai/selesai), perlu penambahan kolom <code>flash_start</code> dan <code>flash_end</code> di tabel <code>packages</code>.</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 6. SISTEM KEANGGOTAAN -->
+    <section class="section" id="membership">
+      <div class="section-header">
+        <div class="section-icon">🏆</div>
+        <div class="section-meta">
+          <h2>Sistem Keanggotaan</h2>
+          <p>Level pelanggan: Basic, Gold, Platinum (Reseller)</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Sistem keanggotaan mengatur harga yang diterima pengguna berdasarkan role akun mereka. Saat ini terdapat dua tier utama yang sudah aktif di backend.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">👤</span> Member (Basic)</div>
+          <div class="feature-card-desc">Harga normal dengan markup persen + minimum. Default untuk semua pengguna baru yang mendaftar.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">⭐</span> Reseller (Gold/Platinum)</div>
+          <div class="feature-card-desc">Harga tanpa markup (0% + Rp0 minimum). Khusus akun yang diupgrade admin ke role reseller.</div>
+        </div>
+      </div>
+
+      <ul class="action-list">
+        <li><strong>Atur Level</strong> — Admin dapat mengubah role pengguna antara <code>member</code> dan <code>reseller</code> kapan saja.</li>
+        <li><strong>Harga Otomatis</strong> — Saat checkout, sistem otomatis mendeteksi JWT token untuk menentukan harga yang berlaku.</li>
+        <li><strong>Notif Upgrade</strong> — Pengguna mendapat WhatsApp otomatis saat akun diupgrade ke reseller.</li>
+        <li><strong>Reset Password</strong> — Admin bisa reset password via manual atau kirim link token (berlaku 1 jam) ke WhatsApp pengguna.</li>
+        <li><strong>Toggle Akun</strong> — Aktifkan/nonaktifkan akun pengguna untuk membatasi akses login.</li>
+      </ul>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/admin/users</code></td><td>Daftar pengguna dengan filter & pagination</td></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/admin/users/:id</code></td><td>Detail pengguna + riwayat order</td></tr>
+        <tr><td><span class="method-badge method-patch">PATCH</span></td><td><code class="endpoint-code">/api/admin/users/:id/role</code></td><td>Ubah role (member/reseller)</td></tr>
+        <tr><td><span class="method-badge method-patch">PATCH</span></td><td><code class="endpoint-code">/api/admin/users/:id/toggle</code></td><td>Aktif/nonaktifkan akun</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/admin/users/:id/reset-password</code></td><td>Reset password (manual atau token WA)</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 7. KELOLA ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-header">
+        <div class="section-icon">🔐</div>
+        <div class="section-meta">
+          <h2>Kelola Admin</h2>
+          <p>Manajemen akun administrator sistem</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Admin superadmin dapat mengelola akun admin lainnya. Terdapat tiga level role admin yang berbeda tingkat aksesnya di sistem.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">👑</span> Superadmin</div>
+          <div class="feature-card-desc">Akses penuh ke semua fitur termasuk kelola admin lain dan pengaturan sistem kritis.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🛡️</span> Admin</div>
+          <div class="feature-card-desc">Akses standar untuk mengelola produk, order, pengguna, dan konten.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🎧</span> CS (Customer Service)</div>
+          <div class="feature-card-desc">Akses terbatas untuk membantu penanganan order dan pertanyaan pelanggan.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🔑</span> Autentikasi JWT</div>
+          <div class="feature-card-desc">Login admin menggunakan JWT token terpisah dari JWT pengguna biasa (type: admin vs user).</div>
+        </div>
+      </div>
+
+      <ul class="action-list">
+        <li><strong>Tambah Admin</strong> — Buat akun admin baru dengan username, email, password, dan role yang ditentukan.</li>
+        <li><strong>Edit Admin</strong> — Perbarui informasi akun admin termasuk perubahan role.</li>
+        <li><strong>Hapus Admin</strong> — Hapus akun admin yang tidak aktif lagi dari sistem.</li>
+        <li><strong>Password Hashing</strong> — Semua password admin di-hash menggunakan bcrypt dengan salt rounds 12.</li>
+      </ul>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 8. KELOLA KATEGORI (GAME) -->
+    <section class="section" id="kategori">
+      <div class="section-header">
+        <div class="section-icon">🎮</div>
+        <div class="section-meta">
+          <h2>Kelola Kategori (Game)</h2>
+          <p>Manajemen game/kategori produk top-up</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Kategori dalam konteks NX-066 adalah daftar <strong>game</strong> yang tersedia untuk di-top-up. Admin dapat mengelola game yang ditampilkan beserta konfigurasinya.</p>
+
+      <ul class="action-list">
+        <li><strong>Tambah Game</strong> — Daftarkan game baru dengan kode unik, nama, ikon, parameter input (userId/zoneId), dan kode VIP Digiflazz.</li>
+        <li><strong>Edit Game</strong> — Perbarui detail game termasuk ikon kustom (base64 image), urutan tampil, dan status aktif.</li>
+        <li><strong>Hapus Game</strong> — Hapus game beserta semua paket yang terkait (CASCADE DELETE).</li>
+        <li><strong>Aktif/Nonaktif</strong> — Toggle <code>is_active</code> untuk menyembunyikan game dari halaman publik tanpa menghapusnya.</li>
+        <li><strong>Sync Produk Digiflazz</strong> — Sinkronisasi otomatis produk dari price list Digiflazz berdasarkan kecocokan nama brand/game.</li>
+      </ul>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/admin/digiflazz/pricelist</code></td><td>Ambil price list dari Digiflazz API</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/admin/digiflazz/sync</code></td><td>Sinkronisasi produk pilihan ke database</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/admin/sync-products</code></td><td>Quick sync semua produk Digiflazz ke game</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 9. KELOLA AKUN -->
+    <section class="section" id="akun">
+      <div class="section-header">
+        <div class="section-icon">👥</div>
+        <div class="section-meta">
+          <h2>Kelola Akun Pengguna</h2>
+          <p>Manajemen akun member dan reseller</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Modul ini memberikan admin visibilitas dan kontrol penuh atas akun pengguna yang terdaftar, termasuk riwayat transaksi dan pengelolaan saldo.</p>
+
+      <ul class="action-list">
+        <li><strong>Tambah Akun</strong> — Pengguna bisa mendaftar sendiri, atau admin dapat membuat akun langsung.</li>
+        <li><strong>Edit Akun</strong> — Perbarui nama, email, nomor telepon, atau role pengguna.</li>
+        <li><strong>Hapus Akun</strong> — Hapus permanen akun pengguna dari database.</li>
+        <li><strong>Cari & Filter</strong> — Pencarian berdasarkan nama, email, atau nomor HP dengan filter role (member/reseller).</li>
+        <li><strong>Lihat Riwayat Order</strong> — Tampilkan 20 order terakhir beserta total pembelian per pengguna.</li>
+        <li><strong>Manajemen Saldo</strong> — Tambah atau kurangi saldo pengguna dengan catatan alasan.</li>
+      </ul>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 10. KELOLA PEMBELIAN -->
+    <section class="section" id="pembelian">
+      <div class="section-header">
+        <div class="section-icon">🛒</div>
+        <div class="section-meta">
+          <h2>Kelola Pembelian</h2>
+          <p>Manajemen transaksi order pelanggan</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Admin dapat memantau dan mengintervensi transaksi yang bermasalah. Setiap order memiliki dua status yang dikelola secara independen: status pembayaran dan status top-up.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">💰</span> Status Pembayaran</div>
+          <div class="feature-card-desc">unpaid → paid → expired/failed. Diperbarui via webhook TokoPay secara otomatis.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🎯</span> Status Top-up</div>
+          <div class="feature-card-desc">pending → processing → success/failed/refunded. Diperbarui via webhook Digiflazz.</div>
+        </div>
+      </div>
+
+      <ul class="action-list">
+        <li><strong>Edit Order</strong> — Admin bisa memperbarui status order secara manual untuk kasus penanganan khusus.</li>
+        <li><strong>Hapus Order</strong> — Hapus data order yang tidak valid atau duplikat dari sistem.</li>
+        <li><strong>Retry Top-up</strong> — Coba ulang pengiriman ke Digiflazz untuk order yang gagal diproses.</li>
+        <li><strong>Cek Nickname</strong> — Verifikasi username game pengguna sebelum memproses top-up manual.</li>
+        <li><strong>Lihat Log</strong> — Akses <code>topup_logs</code> dan <code>payment_logs</code> untuk debug transaksi bermasalah.</li>
+      </ul>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/admin/check-nickname</code></td><td>Cek nickname game via Digiflazz</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/orders/create</code></td><td>Buat order baru</td></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/orders/check/:id</code></td><td>Cek status order pelanggan</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 11. KELOLA METODE -->
+    <section class="section" id="metode">
+      <div class="section-header">
+        <div class="section-icon">💳</div>
+        <div class="section-meta">
+          <h2>Kelola Metode Pembayaran</h2>
+          <p>Manajemen channel pembayaran via TokoPay</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Sistem mendukung 10 metode pembayaran yang dapat diaktifkan/dinonaktifkan secara independen. Setiap metode memiliki logo, biaya layanan, dan channel khusus yang dikonfigurasi dari settings.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title">⚡ QRIS Realtime</div>
+          <div class="feature-card-desc">Pembayaran via QRIS dengan konfirmasi real-time. Biaya dapat dikonfigurasi per transaksi.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title">📱 E-Wallet</div>
+          <div class="feature-card-desc">DANA, OVO, GoPay, ShopeePay dengan biaya layanan yang dapat diatur masing-masing.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title">🏦 Virtual Account</div>
+          <div class="feature-card-desc">BCA, BNI, BRI, Mandiri, Permata dengan nomor VA yang unik per transaksi.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title">💰 Saldo Akun</div>
+          <div class="feature-card-desc">Pembayaran dari saldo akun internal. Tanpa biaya tambahan, proses instan.</div>
+        </div>
+      </div>
+
+      <ul class="action-list">
+        <li><strong>Aktif/Nonaktif Metode</strong> — Toggle <code>pay_enabled_[KODE]</code> untuk masing-masing metode pembayaran.</li>
+        <li><strong>Atur Biaya Layanan</strong> — Tetapkan <code>fee_[KODE]</code> (Rupiah) untuk biaya per metode pembayaran.</li>
+        <li><strong>Upload Logo</strong> — Simpan logo metode pembayaran dalam format base64 yang ditampilkan di UI checkout.</li>
+        <li><strong>Konfigurasi Channel</strong> — Mapping kode internal ke kode channel TokoPay via <code>pay_channel_[KODE]</code>.</li>
+      </ul>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/settings</code></td><td>Ambil setting publik termasuk fee & status metode</td></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/settings/all</code></td><td>Semua setting termasuk kredensial (admin)</td></tr>
+        <tr><td><span class="method-badge method-put">PUT</span></td><td><code class="endpoint-code">/api/settings</code></td><td>Update setting (whitelist key)</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 12. NOTIFIKASI -->
+    <section class="section" id="notifikasi">
+      <div class="section-header">
+        <div class="section-icon">📱</div>
+        <div class="section-meta">
+          <h2>Notifikasi WhatsApp (Fonnte)</h2>
+          <p>Kirim pesan otomatis ke pelanggan via WhatsApp</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Sistem notifikasi menggunakan layanan <strong>Fonnte</strong> untuk mengirim pesan WhatsApp otomatis ke pengguna pada berbagai event penting dalam perjalanan transaksi.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">✅</span> Order Berhasil</div>
+          <div class="feature-card-desc">Konfirmasi top-up sukses dengan detail order, game, paket, dan serial number jika ada.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">❌</span> Order Gagal</div>
+          <div class="feature-card-desc">Pemberitahuan top-up gagal beserta informasi refund saldo jika pembayaran via saldo.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">↩️</span> Refund Saldo</div>
+          <div class="feature-card-desc">Notifikasi pengembalian saldo dengan jumlah yang dikembalikan dan nomor order referensi.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">🔑</span> Reset Password</div>
+          <div class="feature-card-desc">Kirim link reset password atau password baru yang telah di-reset admin kepada pengguna.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">⭐</span> Upgrade Reseller</div>
+          <div class="feature-card-desc">Selamat datang sebagai reseller lengkap dengan informasi keuntungan harga yang didapat.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-title"><span class="fc-icon">💳</span> Topup Saldo</div>
+          <div class="feature-card-desc">Konfirmasi topup saldo berhasil dengan jumlah yang masuk dan saldo akhir akun.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <span>Notifikasi WA memerlukan konfigurasi <code>fonte_token</code> dan <code>fonte_device</code> di tabel settings. Aktifkan fitur dengan mengatur <code>feature_whatsapp_notif = 1</code>. Semua notifikasi bersifat opsional — kegagalan pengiriman WA tidak menghentikan proses utama.</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 13. BANNER -->
+    <section class="section" id="banner">
+      <div class="section-header">
+        <div class="section-icon">🖼️</div>
+        <div class="section-meta">
+          <h2>Kelola Banner</h2>
+          <p>Manajemen banner/slider halaman utama</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Banner adalah gambar promosi yang ditampilkan sebagai slider di halaman utama toko. Admin dapat mengelola tampilan visual toko untuk meningkatkan konversi penjualan.</p>
+
+      <ul class="action-list">
+        <li><strong>Tambah Banner</strong> — Upload banner baru dengan judul, URL gambar, URL tujuan klik, dan urutan tampil.</li>
+        <li><strong>Hapus Banner</strong> — Hapus banner yang sudah tidak relevan dari sistem.</li>
+        <li><strong>Atur Urutan</strong> — Kontrol urutan tampil banner menggunakan nilai <code>sort_order</code>.</li>
+        <li><strong>Aktif/Nonaktif</strong> — Sembunyikan banner sementara tanpa menghapusnya dengan toggle <code>is_active</code>.</li>
+      </ul>
+
+      <table class="api-table">
+        <tr><th>Method</th><th>Endpoint</th><th>Aksi</th></tr>
+        <tr><td><span class="method-badge method-get">GET</span></td><td><code class="endpoint-code">/api/banners</code></td><td>Daftar banner aktif (publik)</td></tr>
+        <tr><td><span class="method-badge method-post">POST</span></td><td><code class="endpoint-code">/api/banners</code></td><td>Tambah banner baru</td></tr>
+        <tr><td><span class="method-badge method-delete">DELETE</span></td><td><code class="endpoint-code">/api/banners/:id</code></td><td>Hapus banner</td></tr>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 14. SOSMED -->
+    <section class="section" id="sosmed">
+      <div class="section-header">
+        <div class="section-icon">🌐</div>
+        <div class="section-meta">
+          <h2>Kelola Sosial Media</h2>
+          <p>Link sosmed & informasi kontak toko</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Admin dapat mengatur informasi kontak dan link media sosial yang ditampilkan di footer atau halaman toko. Semua disimpan sebagai key-value di tabel settings.</p>
+
+      <ul class="action-list">
+        <li><strong>WhatsApp Kontak</strong> — Nomor WhatsApp CS yang muncul sebagai tombol chat langsung.</li>
+        <li><strong>Email Kontak</strong> — Alamat email customer service untuk komunikasi formal.</li>
+        <li><strong>Instagram</strong> — Link profil Instagram toko untuk keperluan promosi.</li>
+        <li><strong>Telegram</strong> — Link grup atau channel Telegram untuk komunitas pelanggan.</li>
+        <li><strong>Footer Text</strong> — Teks hak cipta/copyright yang muncul di bagian bawah halaman.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <span>Semua setting sosmed dikelola via endpoint <code>PUT /api/settings</code> dengan key: <code>contact_wa</code>, <code>contact_email</code>, <code>social_instagram</code>, <code>social_telegram</code>, <code>footer_text</code>. Update dilakukan dalam satu request batch.</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- 15. SYARAT DAN KETENTUAN -->
+    <section class="section" id="syarat">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div class="section-meta">
+          <h2>Kelola Syarat & Ketentuan</h2>
+          <p>Konten legal dan informasi toko</p>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);margin-bottom:20px;">Admin dapat mengelola berbagai konten informatif dan pengaturan tampilan toko yang mempengaruhi pengalaman pengguna secara keseluruhan.</p>
+
+      <ul class="action-list">
+        <li><strong>Nama & Tagline Toko</strong> — Identitas toko (<code>site_name</code>, <code>site_tagline</code>) yang muncul di judul halaman.</li>
+        <li><strong>Logo Toko</strong> — Upload logo toko dalam format gambar base64 atau URL eksternal.</li>
+        <li><strong>Warna Tema</strong> — Ubah warna aksen utama (<code>accent_color</code>) untuk personalisasi tampilan UI.</li>
+        <li><strong>Mode Maintenance</strong> — Aktifkan <code>feature_maintenance = 1</code> untuk menutup toko sementara saat ada update.</li>
+        <li><strong>Guest Checkout</strong> — Toggle <code>feature_guest_checkout</code> untuk mengizinkan/melarang pembelian tanpa login.</li>
+        <li><strong>Check Nickname</strong> — Aktifkan/nonaktifkan fitur verifikasi username game sebelum checkout.</li>
+      </ul>
+
+      <div class="callout callout-success">
+        <span class="callout-icon">✅</span>
+        <span>Setting disimpan menggunakan mekanisme <strong>INSERT ... ON DUPLICATE KEY UPDATE</strong> sehingga aman dijalankan berulang kali. Hanya key yang ada dalam whitelist yang diizinkan untuk mencegah penyimpanan data tidak sah.</span>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="doc-footer">
+      <span>NX-066 · Platform Top-Up Game · Node.js + MySQL</span>
+      <span>Integrasi: Digiflazz · TokoPay · Fonnte WhatsApp</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.sidebar-item');
+  const sections = document.querySelectorAll('.section');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        items.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('href') === '#' + id) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  items.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(item.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

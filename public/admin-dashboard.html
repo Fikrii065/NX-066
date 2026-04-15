@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — NexStore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14;
+  --surface:#151820;
+  --surface2:#1c2030;
+  --surface3:#222638;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:#e8eaf0;
+  --text2:#9ba3b8;
+  --text3:#5a6280;
+  --accent:#6366f1;
+  --accent2:#818cf8;
+  --accent-bg:rgba(99,102,241,0.12);
+  --accent-glow:rgba(99,102,241,0.3);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.1);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.1);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.1);
+  --blue:#38bdf8;--blue-bg:rgba(56,189,248,0.1);
+  --gold:#f59e0b;--gold-bg:rgba(245,158,11,0.12);
+  --platinum:#a78bfa;--platinum-bg:rgba(167,139,250,0.12);
+  --sidebar:240px;
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:13.5px;-webkit-font-smoothing:antialiased}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-logo{padding:22px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 16px rgba(99,102,241,0.4)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-size:15px;font-weight:800;letter-spacing:-.4px;background:linear-gradient(135deg,#e8eaf0,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:10px;color:var(--text3);font-weight:500;margin-top:1px}
+.nav{padding:10px 10px;flex:1}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-xs);cursor:pointer;color:var(--text2);font-size:12.5px;font-weight:500;transition:all .15s;user-select:none;margin-bottom:1px;position:relative}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent2);font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;height:50%;width:3px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.nav-item:hover .nav-icon,.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.admin-badge{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--radius-xs);background:var(--surface2);cursor:pointer;transition:background .15s}
+.admin-badge:hover{background:var(--surface3)}
+.admin-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 10px rgba(99,102,241,0.3)}
+.admin-name{font-size:12.5px;font-weight:600}
+.admin-role{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.topbar-breadcrumb{font-size:11px;color:var(--text3);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{height:33px;padding:0 14px;border:1px solid var(--border2);border-radius:var(--radius-xs);font-size:12px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--text2);transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--font)}
+.btn:hover{background:var(--surface3);color:var(--text);border-color:var(--border2)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 0 16px var(--accent-glow)}
+.btn-primary:hover{background:#5558e8;opacity:1;box-shadow:0 0 24px var(--accent-glow)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(239,68,68,.2)}
+.btn-success{background:var(--green-bg);color:var(--green);border-color:rgba(34,197,94,.2)}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border-color:rgba(245,158,11,.2)}
+.btn-sm{height:28px;padding:0 10px;font-size:11px}
+.btn-xs{height:25px;padding:0 8px;font-size:11px;border-radius:5px}
+.btn svg,.btn-sm svg{width:13px;height:13px;flex-shrink:0}
+
+/* ── PAGE ── */
+.page{display:none;padding:24px;flex:1;overflow-y:auto;min-height:0;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-gradient,linear-gradient(90deg,#6366f1,#8b5cf6))}
+.stat-card.green::before{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.stat-card.amber::before{background:linear-gradient(90deg,#f59e0b,#d97706)}
+.stat-card.red::before{background:linear-gradient(90deg,#ef4444,#dc2626)}
+.stat-card.blue::before{background:linear-gradient(90deg,#38bdf8,#0284c7)}
+.stat-icon{width:36px;height:36px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.stat-value{font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.stat-up{color:var(--green)}
+.stat-down{color:var(--red)}
+
+/* ── SECTION ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-size:14px;font-weight:700;letter-spacing:-.2px}
+.sec-desc{font-size:11.5px;color:var(--text3);margin-top:2px}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.card-pad{padding:18px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;background:var(--surface2);border-bottom:1px solid var(--border)}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.td-main{color:var(--text);font-weight:600}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-purple{background:var(--platinum-bg);color:var(--platinum)}
+.badge-gold{background:var(--gold-bg);color:var(--gold)}
+.badge-gray{background:var(--surface3);color:var(--text3)}
+
+/* ── LEVEL BADGES ── */
+.level-basic{background:rgba(99,102,241,0.12);color:#818cf8;border:1px solid rgba(99,102,241,0.2)}
+.level-gold{background:var(--gold-bg);color:var(--gold);border:1px solid rgba(245,158,11,0.2)}
+.level-platinum{background:var(--platinum-bg);color:var(--platinum);border:1px solid rgba(167,139,250,0.2)}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
+.form-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:11.5px;font-weight:600;color:var(--text2)}
+.field-hint{font-size:10.5px;color:var(--text3);margin-top:2px}
+input,select,textarea{height:36px;border:1px solid var(--border2);border-radius:var(--radius-xs);padding:0 11px;font-size:13px;color:var(--text);background:var(--surface2);width:100%;outline:none;transition:border-color .15s,box-shadow .15s;font-family:var(--font)}
+textarea{height:80px;padding:9px 11px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--surface2)}
+.search-bar{height:36px;border:1px solid var(--border2);border-radius:var(--radius-xs);padding:0 11px 0 36px;background:var(--surface2);color:var(--text);font-size:13px;width:220px;outline:none;transition:border-color .15s,width .2s;font-family:var(--font)}
+.search-bar:focus{border-color:var(--accent);width:260px}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);pointer-events:none}
+
+/* ── TOGGLE ── */
+.toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:20px;cursor:pointer;transition:background .2s;border:1px solid var(--border2)}
+.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:transform .2s,background .2s}
+.toggle input:checked+.toggle-slider{background:var(--accent);border-color:transparent}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px);background:#fff}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:22px;width:500px;max-width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.modal-close{width:28px;height:28px;border:none;background:var(--surface3);border-radius:6px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:var(--red-bg);color:var(--red)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ── FLASH SALE BANNER ── */
+.flash-sale-bar{background:linear-gradient(135deg,#f59e0b,#ef4444);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.flash-sale-bar.hidden{display:none}
+.flash-label{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.flash-countdown{font-family:var(--mono);font-size:14px;font-weight:700;color:#fff;background:rgba(0,0,0,.25);padding:3px 10px;border-radius:6px;letter-spacing:1px}
+.flash-toggle-btn{height:27px;padding:0 12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.3);border-radius:6px;color:#fff;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s}
+.flash-toggle-btn:hover{background:rgba(0,0,0,.4)}
+
+/* ── MEMBER CARD ── */
+.member-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.member-card:hover{border-color:var(--border2)}
+.member-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.member-avatar.basic{background:linear-gradient(135deg,#6366f1,#818cf8)}
+.member-avatar.gold{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.member-avatar.platinum{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+.member-body{flex:1;min-width:0}
+.member-name{font-size:13.5px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
+.member-email{font-size:11.5px;color:var(--text3);margin-top:2px}
+.member-meta{font-size:11px;color:var(--text3);margin-top:4px;display:flex;gap:12px}
+.member-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── BANNER ITEM ── */
+.banner-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.banner-item:hover{border-color:var(--border2)}
+.banner-preview{width:88px;height:48px;border-radius:8px;background:var(--surface3);flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+.banner-preview img{width:100%;height:100%;object-fit:cover}
+.banner-no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px}
+.banner-meta{flex:1;min-width:0}
+.banner-name{font-size:13px;font-weight:600;color:var(--text)}
+.banner-url{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.banner-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── SOSMED ITEM ── */
+.sosmed-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.sosmed-icon{width:38px;height:38px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--surface2)}
+
+/* ── LEVEL CARD ── */
+.level-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:0;transition:border-color .2s,box-shadow .2s;cursor:pointer;position:relative;overflow:hidden}
+.level-card:hover{border-color:var(--border2)}
+.level-card.basic-card{border-top:2px solid #818cf8}
+.level-card.gold-card{border-top:2px solid var(--gold)}
+.level-card.platinum-card{border-top:2px solid var(--platinum)}
+.level-cards-row{display:flex;gap:16px;margin-bottom:24px}
+.level-icon{font-size:28px;margin-bottom:10px}
+.level-name{font-size:15px;font-weight:800;margin-bottom:4px}
+.level-count{font-size:12px;color:var(--text3)}
+.level-perk{margin-top:12px;font-size:12px;color:var(--text2)}
+.level-perk span{display:block;padding:3px 0}
+
+/* ── PAYMENT METHOD ITEM ── */
+.method-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.method-icon{width:40px;height:40px;border-radius:var(--radius-xs);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.method-body{flex:1;min-width:0}
+.method-name{font-size:13px;font-weight:600}
+.method-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.method-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+
+/* ── NOTIF ── */
+.notif-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.notif-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.notif-icon{width:38px;height:38px;border-radius:var(--radius-xs);background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:20px}
+.notif-title{font-size:14px;font-weight:700}
+.notif-sub{font-size:11.5px;color:var(--text3)}
+.notif-status{margin-left:auto;display:flex;align-items:center;gap:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.off{background:var(--text3);box-shadow:none}
+
+/* ── ADMIN ITEM ── */
+.admin-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.admin-item-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* ── SYARAT ── */
+.syarat-editor{width:100%;min-height:200px;border:1px solid var(--border2);border-radius:var(--radius-xs);padding:12px 14px;background:var(--surface2);color:var(--text);font-size:13px;font-family:var(--font);resize:vertical;outline:none;line-height:1.6;transition:border-color .15s}
+.syarat-editor:focus{border-color:var(--accent)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);color:var(--text);padding:11px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:9999;border:1px solid var(--border2);display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-color:rgba(34,197,94,.3)}
+.toast.error{border-color:rgba(239,68,68,.3)}
+
+/* ── SEARCH FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border)}
+.filter-bar select{width:auto;height:33px}
+
+/* ── EMPTY STATE ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--text3);text-align:center;gap:10px}
+.empty-icon{font-size:40px;margin-bottom:4px}
+.empty-title{font-size:14px;font-weight:600;color:var(--text2)}
+.empty-sub{font-size:12px}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;gap:6px;align-items:center;padding:14px 18px;border-top:1px solid var(--border)}
+
+/* ── UPLOAD AREA ── */
+.upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius-xs);padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:border-color .15s;text-align:center;background:var(--surface2)}
+.upload-area:hover{border-color:var(--accent)}
+.upload-area input[type=file]{display:none}
+.upload-text{font-size:12px;color:var(--text3)}
+.upload-cta{font-size:12px;color:var(--accent);font-weight:600}
+
+/* ── TAB ROW ── */
+.tab-row{display:flex;gap:2px;background:var(--surface2);border-radius:var(--radius-xs);padding:3px;margin-bottom:14px}
+.tab-btn{flex:1;height:28px;border:none;border-radius:calc(var(--radius-xs) - 2px);background:transparent;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text3);transition:all .15s;font-family:var(--font)}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* ── SPINNER ── */
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .sidebar{display:none;position:fixed;z-index:400;width:260px;height:100vh}
+  .sidebar.open{display:flex}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .level-cards-row{flex-direction:column}
+  .hamburger{display:flex!important}
+}
+.hamburger{display:none;align-items:center;justify-content:center;width:34px;height:34px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-xs);cursor:pointer;color:var(--text2)}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:399}
+.sidebar-backdrop.open{display:block}
+
+/* ── COLOR PICKERS ── */
+input[type=color]{padding:2px 4px;height:36px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">NexStore</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z"/></svg>Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('transaksi',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M14 5H2V3h12v2zm0 4H2V7h12v2zM2 13h7v-2H2v2z"/></svg>Pembelian
+      <span class="nav-badge" id="badge-transaksi">3</span>
+    </div>
+    <div class="nav-section">Konten</div>
+    <div class="nav-item" onclick="showPage('banner',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v10H1V3zm1 1v8h12V4H2zm2 1h8v2H4V5zm0 3h5v1H4V8z"/></svg>Banner
+    </div>
+    <div class="nav-item" onclick="showPage('kategori',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h6v6H1V2zm8 0h6v6H9V2zM1 10h6v5H1v-5zm8 2.5a2.5 2.5 0 115 0 2.5 2.5 0 01-5 0z"/></svg>Kategori
+    </div>
+    <div class="nav-item" onclick="showPage('sosmed',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M11 2a3 3 0 11-1.2 5.74L6.06 9.57A3 3 0 010 11a3 3 0 016-.12l3.76-1.84a3 3 0 01-.02-.44A3 3 0 0111 5.6L7.23 3.77A3 3 0 015 4a3 3 0 110-3 3 3 0 011.2.26L9.94 3.09A3 3 0 0111 2z"/></svg>Sosial Media
+    </div>
+    <div class="nav-section">Pengguna</div>
+    <div class="nav-item" onclick="showPage('pelanggan',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M5 8a3 3 0 100-6 3 3 0 000 6zm6-3a2 2 0 100-4 2 2 0 000 4zm-5 4a5 5 0 00-5 5h10a5 5 0 00-5-5zm6 0a3.97 3.97 0 00-1.4.25A6 6 0 0114 15h3a4 4 0 00-5-3.75z"/></svg>Level Pelanggan
+    </div>
+    <div class="nav-item" onclick="showPage('akun',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2a6 6 0 00-6 6h12a6 6 0 00-6-6z"/></svg>Kelola Akun
+    </div>
+    <div class="nav-item" onclick="showPage('admin',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM4 9a4 4 0 018 0v1H4V9zm-3 4h14v1H1v-1z M12 6l1.5 1.5-4 4L7 10l1.5-1.5 1 1z"/></svg>Kelola Admin
+    </div>
+    <div class="nav-section">Pembayaran</div>
+    <div class="nav-item" onclick="showPage('metode',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1 1 1 0 000 2 1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1v-2a1 1 0 011-1 1 1 0 000-2 1 1 0 01-1-1V4z"/></svg>Metode Pembayaran
+    </div>
+    <div class="nav-section">Pengaturan</div>
+    <div class="nav-item" onclick="showPage('notifikasi',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a.5.5 0 01.5.5V2a5 5 0 014.5 5v2.5l1 2H2l1-2V7a5 5 0 014.5-5v-.5A.5.5 0 018 1zm0 13a1.5 1.5 0 001.5-1.5h-3A1.5 1.5 0 008 14z"/></svg>Notifikasi
+    </div>
+    <div class="nav-item" onclick="showPage('syarat',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1zm1 2v8h8V4H4zm1 1h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>Syarat & Ketentuan
+    </div>
+    <div class="nav-item" onclick="showPage('flashsale',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Flash Sale
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <div class="admin-avatar">AD</div>
+      <div>
+        <div class="admin-name">Admin</div>
+        <div class="admin-role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- FLASH SALE BAR -->
+  <div class="flash-sale-bar" id="flash-bar">
+    <div class="flash-label">⚡ FLASH SALE AKTIF — Diskon hingga 50%</div>
+    <div class="flash-countdown" id="flash-countdown">02:45:33</div>
+    <button class="flash-toggle-btn" onclick="endFlashSale()">Akhiri Sekarang</button>
+  </div>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M2 4h14v1.5H2V4zm0 4h14v1.5H2V8zm0 4h14v1.5H2V12z"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-breadcrumb" id="page-breadcrumb">Overview &rsaquo; Dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="showToast('✓ Produk baru berhasil ditambahkan','success')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Tambah Produk
+      </button>
+      <button class="btn" onclick="window.open('/','_blank')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h14v10H1V1zm1 1v8h12V2H2zm5 10v3M5 15h6"/></svg>
+        Lihat Toko
+      </button>
+    </div>
+  </div>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-icon" style="background:var(--green-bg)">💰</div>
+        <div class="stat-label">Pendapatan Hari Ini</div>
+        <div class="stat-value">Rp 4,2 jt</div>
+        <div class="stat-sub stat-up">↑ +12% dari kemarin</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-icon" style="background:var(--amber-bg)">🛒</div>
+        <div class="stat-label">Transaksi Hari Ini</div>
+        <div class="stat-value">128</div>
+        <div class="stat-sub stat-up">↑ +8 transaksi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--accent-bg)">👥</div>
+        <div class="stat-label">Total Member</div>
+        <div class="stat-value">1.847</div>
+        <div class="stat-sub">+23 bulan ini</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon" style="background:var(--red-bg)">⚠️</div>
+        <div class="stat-label">Transaksi Gagal</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sub stat-down">Perlu ditinjau</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-pad sec-head">
+        <div><div class="sec-title">Transaksi Terbaru</div><div class="sec-desc">10 transaksi terakhir</div></div>
+        <button class="btn btn-sm" onclick="showPage('transaksi',document.querySelector('[onclick*=\"transaksi\"]'))">Lihat Semua →</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Game</th><th>Paket</th><th>Total</th><th>Status Bayar</th><th>Status Top Up</th><th>Waktu</th></tr></thead>
+          <tbody id="recent-trx-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRANSAKSI / PEMBELIAN ═══ -->
+  <div class="page" id="page-transaksi">
+    <div class="card">
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 1a6 6 0 104.47 10.03l2.75 2.75 1.06-1.06-2.75-2.75A6 6 0 007 1zm0 1.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z"/></svg>
+          <input class="search-bar" type="text" placeholder="Cari order ID / akun..." style="width:220px">
+        </div>
+        <select style="width:130px">
+          <option value="">Semua Status</option>
+          <option>Sukses</option><option>Diproses</option><option>Pending</option><option>Gagal</option>
+        </select>
+        <select style="width:130px">
+          <option value="">Semua Metode</option>
+          <option>QRIS</option><option>Transfer Bank</option><option>OVO</option>
+        </select>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto">Export CSV</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Game</th><th>Akun</th><th>Paket</th><th>Total</th><th>Metode</th><th>Status Bayar</th><th>Status Top Up</th><th>Waktu</th><th></th></tr></thead>
+          <tbody id="trx-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="trx-page"></div>
+    </div>
+  </div>
+
+  <!-- ═══ BANNER ═══ -->
+  <div class="page" id="page-banner">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Kelola Banner</div><div class="sec-desc">Ukuran ideal: 1200×400px</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-banner')">+ Tambah Banner</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="banner-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ KATEGORI ═══ -->
+  <div class="page" id="page-kategori">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Kelola Kategori</div><div class="sec-desc">Atur kategori produk</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-kategori')">+ Tambah Kategori</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ikon</th><th>Nama Kategori</th><th>Slug</th><th>Produk</th><th>Status</th><th></th></tr></thead>
+          <tbody id="kat-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SOSMED ═══ -->
+  <div class="page" id="page-sosmed">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Kelola Sosial Media</div><div class="sec-desc">Tampil di halaman utama & footer</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-sosmed')">+ Tambah Sosmed</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px" id="sosmed-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL PELANGGAN ═══ -->
+  <div class="page" id="page-pelanggan">
+    <div class="level-cards-row" id="level-cards-row"></div>
+    <div class="card">
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 1a6 6 0 104.47 10.03l2.75 2.75 1.06-1.06-2.75-2.75A6 6 0 007 1zm0 1.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z"/></svg>
+          <input class="search-bar" type="text" placeholder="Cari nama / email...">
+        </div>
+        <select style="width:130px">
+          <option value="">Semua Level</option>
+          <option>Basic</option><option>Gold</option><option>Platinum</option>
+        </select>
+        <span style="font-size:12px;color:var(--text3);margin-left:auto">1.847 member</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:14px" id="member-list"></div>
+      <div class="pagination" id="member-page"></div>
+    </div>
+  </div>
+
+  <!-- ═══ KELOLA AKUN ═══ -->
+  <div class="page" id="page-akun">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Kelola Akun Pengguna</div><div class="sec-desc">Tambah, edit, atau hapus akun</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-akun')">+ Tambah Akun</button>
+      </div>
+      <div class="filter-bar" style="padding:0 0 14px">
+        <div class="search-wrap">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 1a6 6 0 104.47 10.03l2.75 2.75 1.06-1.06-2.75-2.75A6 6 0 007 1zm0 1.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z"/></svg>
+          <input class="search-bar" type="text" placeholder="Cari email / username...">
+        </div>
+        <select style="width:120px"><option>Semua Role</option><option>Member</option><option>Reseller</option><option>Admin</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Pengguna</th><th>Email</th><th>Role</th><th>Level</th><th>Terdaftar</th><th>Status</th><th></th></tr></thead>
+          <tbody id="akun-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KELOLA ADMIN ═══ -->
+  <div class="page" id="page-admin">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Kelola Admin</div><div class="sec-desc">Atur akses dan peran administrator</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-admin')">+ Tambah Admin</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="admin-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ METODE PEMBAYARAN ═══ -->
+  <div class="page" id="page-metode">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Metode Pembayaran</div><div class="sec-desc">Atur gateway dan metode pembayaran aktif</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-metode')">+ Tambah Metode</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="metode-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ NOTIFIKASI ═══ -->
+  <div class="page" id="page-notifikasi">
+    <div class="notif-card">
+      <div class="notif-header">
+        <div class="notif-icon">💬</div>
+        <div>
+          <div class="notif-title">WhatsApp via Fonnte</div>
+          <div class="notif-sub">Kirim notifikasi transaksi otomatis ke pelanggan</div>
+        </div>
+        <div class="notif-status">
+          <div class="status-dot" id="wa-dot"></div>
+          <span style="font-size:12px;font-weight:600;color:var(--green)" id="wa-status-text">Terhubung</span>
+          <label class="toggle" style="margin-left:8px">
+            <input type="checkbox" id="wa-toggle" checked onchange="toggleWA()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field form-full">
+          <label class="field-label">Token API Fonnte</label>
+          <input type="password" id="fonnte-token" value="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" placeholder="Token dari dashboard fonnte.com">
+          <div class="field-hint">Daftar di <a href="https://fonnte.com" target="_blank" style="color:var(--accent2)">fonnte.com</a> untuk mendapatkan token API</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Nomor Pengirim (WhatsApp)</label>
+          <input type="text" id="wa-sender" value="628123456789" placeholder="628xxxxxxxxx">
+        </div>
+        <div class="field">
+          <label class="field-label">Delay Pengiriman (detik)</label>
+          <input type="number" id="wa-delay" value="2" min="0" max="60">
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">Kejadian yang memicu notifikasi:</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;font-weight:500">Pembayaran Berhasil</div><div style="font-size:11px;color:var(--text3)">Notif saat pembayaran dikonfirmasi</div></div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;font-weight:500">Top Up Berhasil</div><div style="font-size:11px;color:var(--text3)">Notif saat produk terkirim ke akun</div></div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;font-weight:500">Top Up Gagal</div><div style="font-size:11px;color:var(--text3)">Notif jika transaksi gagal diproses</div></div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+            <div><div style="font-size:13px;font-weight:500">Pembayaran Kadaluarsa</div><div style="font-size:11px;color:var(--text3)">Notif saat pembayaran tidak dibayar</div></div>
+            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn btn-primary" onclick="saveNotif()">💾 Simpan Pengaturan</button>
+        <button class="btn" onclick="testWA()">📤 Kirim Test</button>
+      </div>
+    </div>
+
+    <div class="notif-card" style="opacity:.6">
+      <div class="notif-header">
+        <div style="width:38px;height:38px;border-radius:var(--radius-xs);background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:20px">📧</div>
+        <div>
+          <div class="notif-title">Email (SMTP)</div>
+          <div class="notif-sub">Kirim notifikasi via email — segera hadir</div>
+        </div>
+        <div class="notif-status">
+          <span class="badge badge-gray">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SYARAT & KETENTUAN ═══ -->
+  <div class="page" id="page-syarat">
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div><div class="sec-title">Syarat & Ketentuan</div><div class="sec-desc">Tampil di halaman pembelian dan footer</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="previewSyarat()">👁 Preview</button>
+          <button class="btn btn-primary" onclick="saveSyarat()">💾 Simpan</button>
+        </div>
+      </div>
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="switchSyaratTab('editor',this)">✏️ Editor</button>
+        <button class="tab-btn" onclick="switchSyaratTab('preview',this)">👁 Preview</button>
+      </div>
+      <div id="syarat-editor-tab">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Mendukung format Markdown. Gunakan # untuk judul, ** untuk tebal, * untuk miring.</div>
+        <textarea class="syarat-editor" id="syarat-content" rows="18"># Syarat dan Ketentuan NexStore
+
+## 1. Ketentuan Umum
+Dengan menggunakan layanan NexStore, Anda setuju dengan syarat dan ketentuan berikut.
+
+## 2. Produk dan Layanan
+- Semua produk digital yang tersedia adalah resmi dan berlisensi
+- Harga dapat berubah sewaktu-waktu tanpa pemberitahuan
+- Ketersediaan produk tidak selalu terjamin
+
+## 3. Pembayaran
+- Pembayaran dilakukan di muka sebelum produk dikirimkan
+- Kami menerima pembayaran melalui QRIS, Transfer Bank, dan dompet digital
+- Bukti pembayaran wajib disimpan untuk klaim refund
+
+## 4. Refund dan Pembatalan
+- Refund hanya dapat dilakukan jika produk tidak terkirim dalam 1x24 jam
+- Pembatalan transaksi tidak dapat dilakukan setelah pembayaran dikonfirmasi
+- Refund diproses dalam 3-5 hari kerja
+
+## 5. Privasi Data
+- Data pengguna dijaga kerahasiaannya
+- Kami tidak menjual data pengguna kepada pihak ketiga
+
+## 6. Perubahan Ketentuan
+Kami berhak mengubah syarat dan ketentuan ini sewaktu-waktu. Pengguna akan diberitahu melalui email atau notifikasi di aplikasi.
+
+---
+*Terakhir diperbarui: Januari 2025*</textarea>
+      </div>
+      <div id="syarat-preview-tab" style="display:none">
+        <div id="syarat-preview-content" style="background:var(--surface2);border-radius:var(--radius-xs);padding:20px;font-size:13.5px;line-height:1.7;color:var(--text);min-height:300px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FLASH SALE ═══ -->
+  <div class="page" id="page-flashsale">
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div class="sec-head">
+        <div><div class="sec-title">Pengaturan Flash Sale</div><div class="sec-desc">Diskon waktu terbatas untuk produk tertentu</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="fs-status-badge" class="badge badge-green">● Aktif</span>
+          <label class="toggle"><input type="checkbox" id="fs-main-toggle" checked onchange="toggleFlashSale()"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label class="field-label">Mulai Flash Sale</label>
+          <input type="datetime-local" id="fs-start" value="2025-01-15T10:00">
+        </div>
+        <div class="field">
+          <label class="field-label">Akhir Flash Sale</label>
+          <input type="datetime-local" id="fs-end" value="2025-01-15T23:59">
+        </div>
+        <div class="field">
+          <label class="field-label">Label Banner</label>
+          <input type="text" id="fs-label" value="FLASH SALE — Diskon hingga 50%!" placeholder="Teks di banner flash sale">
+        </div>
+        <div class="field">
+          <label class="field-label">Warna Background</label>
+          <input type="color" id="fs-color" value="#ef4444">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-primary" onclick="saveFlashSale()">💾 Simpan</button>
+        <button class="btn btn-danger" onclick="endFlashSale()">⏹ Akhiri Sekarang</button>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="sec-head">
+        <div class="sec-title">Produk Flash Sale</div>
+        <button class="btn btn-primary" onclick="openModal('modal-flashprod')">+ Tambah Produk</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Game</th><th>Paket</th><th>Harga Normal</th><th>Diskon</th><th>Harga Flash</th><th>Stok Flash</th><th>Terjual</th><th></th></tr></thead>
+          <tbody id="flash-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- ═══════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- MODAL BANNER -->
+<div class="modal-overlay" id="modal-banner">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Banner</div>
+      <button class="modal-close" onclick="closeModal('modal-banner')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="field">
+        <label class="field-label">Nama Banner</label>
+        <input type="text" placeholder="Banner Promo Lebaran">
+      </div>
+      <div class="field">
+        <div class="tab-row" style="margin-bottom:8px">
+          <button class="tab-btn active" onclick="switchTab('banner','url',this)">URL Gambar</button>
+          <button class="tab-btn" onclick="switchTab('banner','upload',this)">Upload File</button>
+        </div>
+        <div id="banner-url-tab"><input type="url" placeholder="https://example.com/banner.jpg"></div>
+        <div id="banner-upload-tab" style="display:none">
+          <div class="upload-area">
+            <input type="file" accept="image/*">
+            <span style="font-size:28px">🖼️</span>
+            <span class="upload-cta">Klik untuk upload</span>
+            <span class="upload-text">PNG, JPG, WEBP — maks 2MB</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Link Tujuan (opsional)</label>
+        <input type="url" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label class="field-label">Status</label>
+        <select><option>Aktif</option><option>Nonaktif</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-banner')">Batal</button>
+      <button class="btn btn-primary" onclick="addBanner()">Simpan Banner</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KATEGORI -->
+<div class="modal-overlay" id="modal-kategori">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="kat-modal-title">Tambah Kategori</div>
+      <button class="modal-close" onclick="closeModal('modal-kategori')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Nama Kategori</label><input type="text" id="kat-name" placeholder="Game Mobile"></div>
+      <div class="field"><label class="field-label">Slug</label><input type="text" id="kat-slug" placeholder="game-mobile"></div>
+      <div class="field"><label class="field-label">Ikon (Emoji)</label><input type="text" id="kat-icon" placeholder="🎮" maxlength="4"></div>
+      <div class="field"><label class="field-label">Urutan Tampil</label><input type="number" id="kat-order" value="0" min="0"></div>
+      <div class="field"><label class="field-label">Status</label><select id="kat-status"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-kategori')">Batal</button>
+      <button class="btn btn-primary" onclick="saveKategori()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOSMED -->
+<div class="modal-overlay" id="modal-sosmed">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="sosmed-modal-title">Tambah Sosial Media</div>
+      <button class="modal-close" onclick="closeModal('modal-sosmed')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Platform</label>
+        <select id="sosmed-platform">
+          <option value="instagram">📷 Instagram</option>
+          <option value="tiktok">🎵 TikTok</option>
+          <option value="facebook">👥 Facebook</option>
+          <option value="twitter">🐦 X (Twitter)</option>
+          <option value="youtube">📺 YouTube</option>
+          <option value="telegram">✈️ Telegram</option>
+          <option value="whatsapp">💬 WhatsApp</option>
+          <option value="discord">🎮 Discord</option>
+        </select>
+      </div>
+      <div class="field"><label class="field-label">Username / Handle</label><input type="text" id="sosmed-handle" placeholder="@nexstore"></div>
+      <div class="field form-full"><label class="field-label">URL Lengkap</label><input type="url" id="sosmed-url" placeholder="https://instagram.com/nexstore"></div>
+      <div class="field"><label class="field-label">Status</label><select id="sosmed-status"><option>Aktif</option><option>Nonaktif</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sosmed')">Batal</button>
+      <button class="btn btn-primary" onclick="saveSosmed()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LEVEL PELANGGAN (edit) -->
+<div class="modal-overlay" id="modal-level">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="level-modal-title">Edit Level Pelanggan</div>
+      <button class="modal-close" onclick="closeModal('modal-level')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Nama Level</label><input type="text" id="lvl-name" placeholder="Gold"></div>
+      <div class="field"><label class="field-label">Ikon</label><input type="text" id="lvl-icon" placeholder="⭐" maxlength="4"></div>
+      <div class="field"><label class="field-label">Min. Total Belanja (Rp)</label><input type="number" id="lvl-min" placeholder="500000"></div>
+      <div class="field"><label class="field-label">Diskon Level (%)</label><input type="number" id="lvl-discount" placeholder="5" min="0" max="100"></div>
+      <div class="field form-full"><label class="field-label">Deskripsi Keuntungan</label><textarea id="lvl-perks" placeholder="Diskon 5% semua produk&#10;Prioritas CS&#10;Akses promo eksklusif"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-level')">Batal</button>
+      <button class="btn btn-primary" onclick="saveLevel()">Simpan Level</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AKUN -->
+<div class="modal-overlay" id="modal-akun">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="akun-modal-title">Tambah Akun</div>
+      <button class="modal-close" onclick="closeModal('modal-akun')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Nama Lengkap</label><input type="text" id="akun-nama" placeholder="Budi Santoso"></div>
+      <div class="field"><label class="field-label">Username</label><input type="text" id="akun-username" placeholder="budisantoso"></div>
+      <div class="field form-full"><label class="field-label">Email</label><input type="email" id="akun-email" placeholder="budi@email.com"></div>
+      <div class="field"><label class="field-label">Password</label><input type="password" id="akun-password" placeholder="••••••••"></div>
+      <div class="field"><label class="field-label">Role</label>
+        <select id="akun-role"><option>Member</option><option>Reseller</option></select>
+      </div>
+      <div class="field"><label class="field-label">Level</label>
+        <select id="akun-level"><option>Basic</option><option>Gold</option><option>Platinum</option></select>
+      </div>
+      <div class="field"><label class="field-label">No. WhatsApp</label><input type="text" id="akun-wa" placeholder="628xxx"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-akun')">Batal</button>
+      <button class="btn btn-primary" onclick="saveAkun()">Simpan Akun</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="admin-modal-title">Tambah Admin</div>
+      <button class="modal-close" onclick="closeModal('modal-admin')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Nama Admin</label><input type="text" id="adm-nama" placeholder="Admin Tes"></div>
+      <div class="field"><label class="field-label">Email</label><input type="email" id="adm-email" placeholder="admin@email.com"></div>
+      <div class="field"><label class="field-label">Password</label><input type="password" id="adm-password" placeholder="••••••••"></div>
+      <div class="field"><label class="field-label">Role</label>
+        <select id="adm-role"><option>Admin</option><option>Super Admin</option><option>CS</option></select>
+      </div>
+      <div class="field form-full" style="display:flex;flex-direction:column;gap:8px">
+        <label class="field-label">Akses Fitur</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px" id="adm-access">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Dashboard</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Transaksi</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Produk</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Member</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Pengaturan</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Keuangan</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-admin')">Batal</button>
+      <button class="btn btn-primary" onclick="saveAdmin()">Simpan Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL METODE PEMBAYARAN -->
+<div class="modal-overlay" id="modal-metode">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="metode-modal-title">Tambah Metode Pembayaran</div>
+      <button class="modal-close" onclick="closeModal('modal-metode')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Nama Metode</label><input type="text" id="mtd-name" placeholder="QRIS All Payment"></div>
+      <div class="field"><label class="field-label">Tipe</label>
+        <select id="mtd-type">
+          <option>QRIS</option><option>Transfer Bank</option><option>E-Wallet</option><option>Minimarket</option><option>Kripto</option>
+        </select>
+      </div>
+      <div class="field"><label class="field-label">Gateway / Provider</label>
+        <select id="mtd-gateway">
+          <option>Tokopay</option><option>Midtrans</option><option>Xendit</option><option>Manual</option>
+        </select>
+      </div>
+      <div class="field"><label class="field-label">Biaya Admin (Rp / %)</label><input type="text" id="mtd-fee" placeholder="0 atau 1%"></div>
+      <div class="field"><label class="field-label">Ikon (Emoji)</label><input type="text" id="mtd-icon" placeholder="💳" maxlength="4"></div>
+      <div class="field"><label class="field-label">Status</label>
+        <select id="mtd-status"><option>Aktif</option><option>Nonaktif</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-metode')">Batal</button>
+      <button class="btn btn-primary" onclick="saveMetode()">Simpan Metode</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FLASH SALE PRODUK -->
+<div class="modal-overlay" id="modal-flashprod">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Produk Flash Sale</div>
+      <button class="modal-close" onclick="closeModal('modal-flashprod')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label class="field-label">Game</label>
+        <select id="fp-game"><option>Mobile Legends</option><option>Free Fire</option><option>PUBG Mobile</option><option>Genshin Impact</option></select>
+      </div>
+      <div class="field"><label class="field-label">Paket</label>
+        <select id="fp-paket"><option>86 Diamonds</option><option>172 Diamonds</option><option>344 Diamonds</option></select>
+      </div>
+      <div class="field"><label class="field-label">Harga Normal (Rp)</label><input type="number" id="fp-normal" placeholder="15000"></div>
+      <div class="field"><label class="field-label">Diskon (%)</label><input type="number" id="fp-diskon" placeholder="20" min="1" max="99"></div>
+      <div class="field"><label class="field-label">Stok Flash Sale</label><input type="number" id="fp-stok" placeholder="100"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-flashprod')">Batal</button>
+      <button class="btn btn-primary" onclick="saveFlashProd()">Tambah</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Berhasil disimpan</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA SAMPLE
+// ══════════════════════════════════════════════
+const sampleTrx = [
+  {id:'NX-20250115-001',game:'Mobile Legends',akun:'12345678 (1001)',paket:'86 Diamonds',total:'Rp 15.000',metode:'QRIS',bayar:'paid',topup:'success',waktu:'10:23'},
+  {id:'NX-20250115-002',game:'Free Fire',akun:'9876543',paket:'70 Diamonds',total:'Rp 9.000',metode:'OVO',bayar:'paid',topup:'success',waktu:'10:45'},
+  {id:'NX-20250115-003',game:'PUBG Mobile',akun:'081234567890',paket:'60 UC',total:'Rp 12.000',metode:'Transfer BCA',bayar:'paid',topup:'processing',waktu:'11:02'},
+  {id:'NX-20250115-004',game:'Genshin Impact',akun:'uid_abc123',paket:'60 Primogems',total:'Rp 18.000',metode:'QRIS',bayar:'pending',topup:'pending',waktu:'11:30'},
+  {id:'NX-20250115-005',game:'Mobile Legends',akun:'55566677 (2001)',paket:'344 Diamonds',total:'Rp 85.000',metode:'Transfer BRI',bayar:'paid',topup:'failed',waktu:'11:45'},
+];
+
+const sampleBanners = [
+  {id:1,name:'Promo Ramadan 2025',url:'https://picsum.photos/seed/b1/400/150',link:'/',status:'active'},
+  {id:2,name:'Flash Sale Weekend',url:'https://picsum.photos/seed/b2/400/150',link:'/promo',status:'active'},
+  {id:3,name:'New Game: Valorant',url:'',link:'',status:'inactive'},
+];
+
+const sampleKategori = [
+  {id:1,icon:'🎮',name:'Game Mobile',slug:'game-mobile',count:48,status:1},
+  {id:2,icon:'📱',name:'Pulsa & Data',slug:'pulsa-data',count:22,status:1},
+  {id:3,icon:'💳',name:'E-Wallet',slug:'e-wallet',count:15,status:1},
+  {id:4,icon:'📺',name:'Streaming',slug:'streaming',count:8,status:0},
+  {id:5,icon:'🎟️',name:'Voucher Game',slug:'voucher-game',count:31,status:1},
+];
+
+const sampleSosmed = [
+  {id:1,platform:'instagram',icon:'📷',handle:'@nexstore.id',url:'https://instagram.com/nexstore',status:'Aktif'},
+  {id:2,platform:'tiktok',icon:'🎵',handle:'@nexstore',url:'https://tiktok.com/@nexstore',status:'Aktif'},
+  {id:3,platform:'telegram',icon:'✈️',handle:'@nexstore_official',url:'https://t.me/nexstore_official',status:'Aktif'},
+  {id:4,platform:'whatsapp',icon:'💬',handle:'+62 812-3456-7890',url:'https://wa.me/628123456789',status:'Aktif'},
+];
+
+const sampleMembers = [
+  {id:1,name:'Budi Santoso',email:'budi@email.com',level:'gold',belanja:'Rp 1,2 jt',orders:34},
+  {id:2,name:'Siti Rahayu',email:'siti@gmail.com',level:'platinum',belanja:'Rp 5,8 jt',orders:127},
+  {id:3,name:'Ahmad Fauzi',email:'ahmad@yahoo.com',level:'basic',belanja:'Rp 45.000',orders:3},
+  {id:4,name:'Dewi Lestari',email:'dewi@email.com',level:'gold',belanja:'Rp 750.000',orders:22},
+  {id:5,name:'Rizky Pratama',email:'rizky@gmail.com',level:'basic',belanja:'Rp 0',orders:0},
+];
+
+const sampleAkun = [
+  {id:1,name:'Budi Santoso',email:'budi@email.com',role:'Member',level:'Gold',terdaftar:'10 Jan 2025',status:'Aktif'},
+  {id:2,name:'Siti Rahayu',email:'siti@gmail.com',role:'Reseller',level:'Platinum',terdaftar:'2 Des 2024',status:'Aktif'},
+  {id:3,name:'Ahmad Fauzi',email:'ahmad@yahoo.com',role:'Member',level:'Basic',terdaftar:'14 Jan 2025',status:'Aktif'},
+  {id:4,name:'Test User',email:'test@email.com',role:'Member',level:'Basic',terdaftar:'15 Jan 2025',status:'Suspend'},
+];
+
+const sampleAdmins = [
+  {id:1,name:'Super Admin',email:'admin@nexstore.id',role:'Super Admin',akses:'Semua'},
+  {id:2,name:'Rina CS',email:'rina@nexstore.id',role:'CS',akses:'Transaksi, Member'},
+  {id:3,name:'Doni Manager',email:'doni@nexstore.id',role:'Admin',akses:'Produk, Konten'},
+];
+
+const sampleMetode = [
+  {id:1,icon:'📱',name:'QRIS All Payment',type:'QRIS',gateway:'Tokopay',fee:'0',status:true},
+  {id:2,icon:'🏦',name:'Transfer BCA',type:'Transfer Bank',gateway:'Manual',fee:'Rp 0',status:true},
+  {id:3,icon:'💚',name:'OVO',type:'E-Wallet',gateway:'Xendit',fee:'1%',status:true},
+  {id:4,icon:'💙',name:'GoPay',type:'E-Wallet',gateway:'Midtrans',fee:'1%',status:false},
+];
+
+const sampleFlash = [
+  {game:'Mobile Legends',paket:'86 Diamonds',normal:'Rp 15.000',diskon:'30%',flash:'Rp 10.500',stok:50,terjual:23},
+  {game:'Free Fire',paket:'70 Diamonds',normal:'Rp 9.000',diskon:'20%',flash:'Rp 7.200',stok:100,terjual:67},
+];
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const pageTitles = {
+  dashboard:'Dashboard', transaksi:'Kelola Pembelian', banner:'Kelola Banner', kategori:'Kelola Kategori',
+  sosmed:'Sosial Media', pelanggan:'Level Pelanggan', akun:'Kelola Akun', admin:'Kelola Admin',
+  metode:'Metode Pembayaran', notifikasi:'Notifikasi', syarat:'Syarat & Ketentuan', flashsale:'Flash Sale'
+};
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[name] || name;
+  document.getElementById('page-breadcrumb').textContent = 'NexStore › ' + (pageTitles[name] || name);
+  // Load data
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'transaksi') renderTrx();
+  if (name === 'banner') renderBanners();
+  if (name === 'kategori') renderKategori();
+  if (name === 'sosmed') renderSosmed();
+  if (name === 'pelanggan') renderPelanggan();
+  if (name === 'akun') renderAkun();
+  if (name === 'admin') renderAdmins();
+  if (name === 'metode') renderMetode();
+  if (name === 'flashsale') renderFlash();
+  if (window.innerWidth < 769) toggleSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-backdrop').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════════════
+function renderDashboard() {
+  const statusMap = {paid:'badge-green',pending:'badge-amber',failed:'badge-red'};
+  const topupMap = {success:'badge-green',processing:'badge-amber',pending:'badge-amber',failed:'badge-red'};
+  const rows = sampleTrx.slice(0,5).map(t => `
+    <tr>
+      <td class="td-main" style="font-family:var(--mono);font-size:11px">${t.id}</td>
+      <td>${t.game}</td>
+      <td>${t.paket}</td>
+      <td style="font-weight:600;color:var(--text)">${t.total}</td>
+      <td><span class="badge ${statusMap[t.bayar]||'badge-gray'}">${t.bayar}</span></td>
+      <td><span class="badge ${topupMap[t.topup]||'badge-gray'}">${t.topup}</span></td>
+      <td style="color:var(--text3)">${t.waktu}</td>
+    </tr>`).join('');
+  document.getElementById('recent-trx-body').innerHTML = rows;
+}
+
+function renderTrx() {
+  const statusMap = {paid:'badge-green',pending:'badge-amber',failed:'badge-red'};
+  const topupMap = {success:'badge-green',processing:'badge-amber',pending:'badge-amber',failed:'badge-red'};
+  const rows = sampleTrx.map(t => `
+    <tr>
+      <td class="td-main" style="font-family:var(--mono);font-size:11px">${t.id}</td>
+      <td>${t.game}</td>
+      <td style="font-size:12px;color:var(--text3)">${t.akun}</td>
+      <td>${t.paket}</td>
+      <td style="font-weight:600;color:var(--text)">${t.total}</td>
+      <td style="font-size:12px">${t.metode}</td>
+      <td><span class="badge ${statusMap[t.bayar]||'badge-gray'}">${t.bayar}</span></td>
+      <td><span class="badge ${topupMap[t.topup]||'badge-gray'}">${t.topup}</span></td>
+      <td style="color:var(--text3);font-size:12px">${t.waktu}</td>
+      <td>
+        <button class="btn btn-xs" onclick="showToast('Detail transaksi '+this.closest('tr').cells[0].textContent)">Detail</button>
+        ${t.topup==='failed'?`<button class="btn btn-xs btn-amber" onclick="showToast('Retry dikirim')">Retry</button>`:''}
+        <button class="btn btn-xs btn-danger" onclick="deleteTrx('${t.id}')">Hapus</button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('trx-body').innerHTML = rows;
+  document.getElementById('trx-page').innerHTML = `
+    <button class="btn btn-sm" disabled>← Prev</button>
+    <span style="font-size:12px;color:var(--text2)">Hal 1 / 1 · ${sampleTrx.length} transaksi</span>
+    <button class="btn btn-sm" disabled>Next →</button>`;
+}
+
+function renderBanners() {
+  document.getElementById('banner-list').innerHTML = sampleBanners.map(b => `
+    <div class="banner-item">
+      <div class="banner-preview">
+        ${b.url ? `<img src="${b.url}" onerror="this.parentNode.innerHTML='<div class=banner-no-img>🖼️</div>'">` : '<div class="banner-no-img">🖼️</div>'}
+      </div>
+      <div class="banner-meta">
+        <div class="banner-name">${b.name}</div>
+        <div class="banner-url">${b.link || '(tidak ada link)'}</div>
+        <div style="margin-top:5px"><span class="badge ${b.status==='active'?'badge-green':'badge-gray'}">${b.status==='active'?'Aktif':'Nonaktif'}</span></div>
+      </div>
+      <div class="banner-actions">
+        <button class="btn btn-sm" onclick="showToast('Edit banner: ${b.name}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteBanner(${b.id})">Hapus</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderKategori() {
+  const rows = sampleKategori.map(k => `
+    <tr>
+      <td style="font-size:22px">${k.icon}</td>
+      <td class="td-main">${k.name}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--text3)">${k.slug}</td>
+      <td><span style="font-weight:600">${k.count}</span> produk</td>
+      <td><span class="badge ${k.status?'badge-green':'badge-gray'}">${k.status?'Aktif':'Nonaktif'}</span></td>
+      <td style="display:flex;gap:6px;padding-top:8px">
+        <button class="btn btn-xs" onclick="editKategori(${k.id})">Edit</button>
+        <button class="btn btn-xs btn-danger" onclick="showToast('Kategori dihapus','success')">Hapus</button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('kat-body').innerHTML = rows;
+}
+
+function renderSosmed() {
+  document.getElementById('sosmed-list').innerHTML = sampleSosmed.map(s => `
+    <div class="sosmed-item">
+      <div class="sosmed-icon">${s.icon}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text);text-transform:capitalize">${s.platform}</div>
+        <div style="font-size:12px;color:var(--text3)">${s.handle}</div>
+      </div>
+      <a href="${s.url}" target="_blank" style="font-size:11px;color:var(--accent2);text-decoration:none;margin-right:8px">↗ Buka</a>
+      <span class="badge badge-green" style="margin-right:8px">Aktif</span>
+      <button class="btn btn-xs" onclick="editSosmed(${s.id})">Edit</button>
+      <button class="btn btn-xs btn-danger" style="margin-left:6px" onclick="showToast('Sosmed dihapus','success')">Hapus</button>
+    </div>`).join('');
+}
+
+function renderPelanggan() {
+  // Level cards
+  const levels = [
+    {key:'basic',label:'Basic',icon:'🔵',count:1234,color:'basic-card',desc:'Member baru',perks:['Tidak ada diskon khusus','Akses semua produk','Notifikasi transaksi']},
+    {key:'gold',label:'Gold',icon:'⭐',count:489,color:'gold-card',desc:'Belanja ≥ Rp 500rb',perks:['Diskon 5% semua produk','Prioritas CS','Promo eksklusif bulanan']},
+    {key:'platinum',label:'Platinum',icon:'💎',count:124,color:'platinum-card',desc:'Belanja ≥ Rp 2 juta',perks:['Diskon 10% semua produk','CS 24/7 prioritas','Early access flash sale','Free ongkir voucher']},
+  ];
+  document.getElementById('level-cards-row').innerHTML = levels.map(l => `
+    <div class="level-card ${l.color}" onclick="openModal('modal-level'); document.getElementById('level-modal-title').textContent='Edit Level ${l.label}'; document.getElementById('lvl-name').value='${l.label}'; document.getElementById('lvl-icon').value='${l.icon}'">
+      <div class="level-icon">${l.icon}</div>
+      <div class="level-name">${l.label}</div>
+      <div class="level-count">${l.count.toLocaleString()} member · ${l.desc}</div>
+      <div class="level-perk">${l.perks.map(p=>`<span>✓ ${p}</span>`).join('')}</div>
+      <div style="margin-top:14px"><button class="btn btn-sm" style="font-size:11px">⚙ Atur Level</button></div>
+    </div>`).join('');
+
+  // Members list
+  document.getElementById('member-list').innerHTML = sampleMembers.map(m => `
+    <div class="member-card">
+      <div class="member-avatar ${m.level}">${m.name.charAt(0)}</div>
+      <div class="member-body">
+        <div class="member-name">${m.name} <span class="badge level-${m.level}">${m.level.charAt(0).toUpperCase()+m.level.slice(1)}</span></div>
+        <div class="member-email">${m.email}</div>
+        <div class="member-meta"><span>💰 ${m.belanja}</span><span>🛒 ${m.orders} order</span></div>
+      </div>
+      <div class="member-actions">
+        <button class="btn btn-sm" onclick="showToast('Level diubah ke Gold','success')">Ubah Level</button>
+        <button class="btn btn-sm btn-danger" onclick="showToast('Akun disuspend','error')">Suspend</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderAkun() {
+  const rows = sampleAkun.map(a => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${a.name.charAt(0)}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${a.name}</div>
+        </div>
+      </td>
+      <td style="font-size:12px;color:var(--text3)">${a.email}</td>
+      <td><span class="badge badge-blue">${a.role}</span></td>
+      <td><span class="badge level-${a.level.toLowerCase()}">${a.level}</span></td>
+      <td style="font-size:12px;color:var(--text3)">${a.terdaftar}</td>
+      <td><span class="badge ${a.status==='Aktif'?'badge-green':'badge-red'}">${a.status}</span></td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-xs" onclick="editAkun(${a.id})">Edit</button>
+          <button class="btn btn-xs btn-danger" onclick="showToast('Akun dihapus','success')">Hapus</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('akun-body').innerHTML = rows;
+}
+
+function renderAdmins() {
+  document.getElementById('admin-list').innerHTML = sampleAdmins.map(a => `
+    <div class="admin-item">
+      <div class="admin-item-avatar">${a.name.charAt(0)}</div>
+      <div style="flex:1">
+        <div style="font-size:13.5px;font-weight:600;color:var(--text)">${a.name}</div>
+        <div style="font-size:11.5px;color:var(--text3)">${a.email}</div>
+        <div style="margin-top:4px;display:flex;gap:6px;align-items:center">
+          <span class="badge badge-purple">${a.role}</span>
+          <span style="font-size:11px;color:var(--text3)">${a.akses}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="editAdmin(${a.id})">Edit</button>
+        ${a.id!==1?`<button class="btn btn-sm btn-danger" onclick="showToast('Admin dihapus','success')">Hapus</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderMetode() {
+  document.getElementById('metode-list').innerHTML = sampleMetode.map(m => `
+    <div class="method-item">
+      <div class="method-icon">${m.icon}</div>
+      <div class="method-body">
+        <div class="method-name">${m.name}</div>
+        <div class="method-desc">${m.type} · ${m.gateway} · Fee: ${m.fee}</div>
+      </div>
+      <div class="method-actions">
+        <span class="badge ${m.status?'badge-green':'badge-gray'}">${m.status?'Aktif':'Nonaktif'}</span>
+        <label class="toggle">
+          <input type="checkbox" ${m.status?'checked':''} onchange="toggleMetode(${m.id},this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+        <button class="btn btn-sm" onclick="editMetode(${m.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="showToast('Metode dihapus','success')">Hapus</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderFlash() {
+  document.getElementById('flash-body').innerHTML = sampleFlash.map((f,i) => `
+    <tr>
+      <td class="td-main">${f.game}</td>
+      <td>${f.paket}</td>
+      <td style="color:var(--text3);text-decoration:line-through">${f.normal}</td>
+      <td><span class="badge badge-red">${f.diskon}</span></td>
+      <td style="font-weight:700;color:var(--green)">${f.flash}</td>
+      <td>${f.stok}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:60px;height:5px;background:var(--surface3);border-radius:10px;overflow:hidden">
+            <div style="width:${Math.round(f.terjual/f.stok*100)}%;height:100%;background:var(--green);border-radius:10px"></div>
+          </div>
+          ${f.terjual}
+        </div>
+      </td>
+      <td><button class="btn btn-xs btn-danger" onclick="showToast('Produk flash sale dihapus','success')">Hapus</button></td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target === o) o.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✓ ':'✗ ') + msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// FLASH SALE COUNTDOWN
+// ══════════════════════════════════════════════
+let fsEnd = Date.now() + (2*3600+45*60+33)*1000;
+function updateCountdown() {
+  const diff = Math.max(0, fsEnd - Date.now());
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  document.getElementById('flash-countdown').textContent = 
+    String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+
+function toggleFlashSale() {
+  const on = document.getElementById('fs-main-toggle').checked;
+  document.getElementById('flash-bar').classList.toggle('hidden', !on);
+  document.getElementById('fs-status-badge').className = 'badge ' + (on?'badge-green':'badge-gray');
+  document.getElementById('fs-status-badge').textContent = on?'● Aktif':'Nonaktif';
+}
+
+function endFlashSale() {
+  document.getElementById('fs-main-toggle').checked = false;
+  toggleFlashSale();
+  showToast('Flash sale telah diakhiri');
+}
+
+// ══════════════════════════════════════════════
+// WA TOGGLE
+// ══════════════════════════════════════════════
+function toggleWA() {
+  const on = document.getElementById('wa-toggle').checked;
+  document.getElementById('wa-dot').className = 'status-dot ' + (on?'':'off');
+  document.getElementById('wa-status-text').textContent = on?'Terhubung':'Nonaktif';
+  document.getElementById('wa-status-text').style.color = on?'var(--green)':'var(--text3)';
+}
+
+// ══════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════
+function addBanner() {
+  sampleBanners.push({id:Date.now(),name:'Banner Baru',url:'',link:'',status:'active'});
+  renderBanners();
+  closeModal('modal-banner');
+  showToast('Banner berhasil ditambahkan');
+}
+
+function deleteBanner(id) {
+  const i = sampleBanners.findIndex(b=>b.id===id);
+  if(i>-1) sampleBanners.splice(i,1);
+  renderBanners();
+  showToast('Banner dihapus');
+}
+
+function saveKategori() {
+  closeModal('modal-kategori');
+  showToast('Kategori berhasil disimpan');
+}
+
+function editKategori(id) {
+  const k = sampleKategori.find(x=>x.id===id);
+  if(k) {
+    document.getElementById('kat-name').value = k.name;
+    document.getElementById('kat-slug').value = k.slug;
+    document.getElementById('kat-icon').value = k.icon;
+    document.getElementById('kat-modal-title').textContent = 'Edit Kategori';
+    openModal('modal-kategori');
+  }
+}
+
+function saveSosmed() {
+  closeModal('modal-sosmed');
+  showToast('Sosmed berhasil disimpan');
+}
+
+function editSosmed(id) {
+  const s = sampleSosmed.find(x=>x.id===id);
+  if(s) {
+    document.getElementById('sosmed-modal-title').textContent = 'Edit Sosial Media';
+    document.getElementById('sosmed-handle').value = s.handle;
+    document.getElementById('sosmed-url').value = s.url;
+    openModal('modal-sosmed');
+  }
+}
+
+function saveLevel() {
+  closeModal('modal-level');
+  showToast('Level berhasil diperbarui');
+}
+
+function saveAkun() {
+  closeModal('modal-akun');
+  showToast('Akun berhasil disimpan');
+}
+
+function editAkun(id) {
+  const a = sampleAkun.find(x=>x.id===id);
+  if(a) {
+    document.getElementById('akun-modal-title').textContent = 'Edit Akun';
+    document.getElementById('akun-nama').value = a.name;
+    document.getElementById('akun-email').value = a.email;
+    openModal('modal-akun');
+  }
+}
+
+function deleteTrx(id) {
+  const i = sampleTrx.findIndex(t=>t.id===id);
+  if(i>-1) sampleTrx.splice(i,1);
+  renderTrx();
+  showToast('Transaksi dihapus');
+}
+
+function saveAdmin() {
+  closeModal('modal-admin');
+  showToast('Admin berhasil ditambahkan');
+}
+
+function editAdmin(id) {
+  document.getElementById('admin-modal-title').textContent = 'Edit Admin';
+  openModal('modal-admin');
+}
+
+function saveMetode() {
+  closeModal('modal-metode');
+  showToast('Metode pembayaran disimpan');
+}
+
+function editMetode(id) {
+  document.getElementById('metode-modal-title').textContent = 'Edit Metode';
+  openModal('modal-metode');
+}
+
+function toggleMetode(id, state) {
+  const m = sampleMetode.find(x=>x.id===id);
+  if(m) m.status = state;
+  renderMetode();
+  showToast('Metode ' + (state?'diaktifkan':'dinonaktifkan'));
+}
+
+function saveNotif() { showToast('Pengaturan notifikasi disimpan'); }
+function testWA() { showToast('Pesan test dikirim ke WhatsApp'); }
+
+function saveFlashSale() { showToast('Pengaturan flash sale disimpan'); }
+
+function saveFlashProd() {
+  closeModal('modal-flashprod');
+  showToast('Produk flash sale ditambahkan');
+}
+
+// ── SYARAT TAB ──
+function switchSyaratTab(tab, btn) {
+  document.querySelectorAll('#page-syarat .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('syarat-editor-tab').style.display = tab==='editor'?'':'none';
+  document.getElementById('syarat-preview-tab').style.display = tab==='preview'?'':'none';
+  if(tab==='preview') {
+    const text = document.getElementById('syarat-content').value;
+    document.getElementById('syarat-preview-content').innerHTML = markdownToHtml(text);
+  }
+}
+
+function saveSyarat() { showToast('Syarat & Ketentuan berhasil disimpan'); }
+function previewSyarat() { switchSyaratTab('preview', document.querySelectorAll('#page-syarat .tab-btn')[1]); }
+
+function markdownToHtml(md) {
+  return md
+    .replace(/^### (.+)$/gm,'<h3 style="font-size:14px;font-weight:700;margin:12px 0 6px;color:var(--text)">$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2 style="font-size:15px;font-weight:800;margin:16px 0 8px;color:var(--text)">$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1 style="font-size:18px;font-weight:800;margin:0 0 12px;color:var(--text)">$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^- (.+)$/gm,'<li style="margin:3px 0;padding-left:4px">$1</li>')
+    .replace(/^---$/gm,'<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">')
+    .replace(/\n\n/g,'</p><p style="margin:8px 0">')
+    .replace(/^(?!<[hlip])/gm,'');
+}
+
+// ── TAB SWITCHER ──
+function switchTab(prefix, tab, btn) {
+  btn.closest('.tab-row').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(prefix+'-url-tab').style.display = tab==='url'?'':'none';
+  document.getElementById(prefix+'-upload-tab').style.display = tab==='upload'?'':'none';
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+renderDashboard();
+document.getElementById('badge-transaksi').textContent = sampleTrx.filter(t=>t.topup==='failed').length;
+</script>
+</body>
+</html>

@@ -1753,27 +1753,65 @@ function fileToBase64(file) {
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 async function init() {
-  const token = localStorage.getItem('gf_token');
-  if (!token) { window.location.href='/login'; return; }
-  try {
-    const data = await API('/auth/me');
-    if (!data.success) { window.location.href='/login'; return; }
-    const a = data.admin;
-    document.getElementById('admin-username').textContent = a.username;
-    document.getElementById('admin-role').textContent = a.role;
-    document.getElementById('admin-avatar').textContent = a.username.slice(0,2).toUpperCase();
-  } catch(e) { window.location.href='/login'; return; }
+  // Beri waktu localStorage terbaca (fix mobile browser)
+  await new Promise(r => setTimeout(r, 50));
 
-  // Load site name for sidebar
+  const token = localStorage.getItem('gf_token');
+  if (!token) { window.location.href = '/login'; return; }
+
+  // Coba verifikasi token — retry 1x jika network error (bukan 401)
+  let data = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+      });
+      data = await res.json();
+
+      // Token expired / invalid → hapus dan ke login
+      if (res.status === 401) {
+        localStorage.removeItem('gf_token');
+        window.location.href = '/login';
+        return;
+      }
+
+      if (res.ok && data.success) break; // sukses
+    } catch (e) {
+      // Network error — tunggu sebentar lalu retry sekali
+      if (attempt === 0) { await new Promise(r => setTimeout(r, 800)); continue; }
+      // Retry juga gagal — tampilkan overlay error, jangan paksa ke login
+      document.getElementById('loading-overlay').innerHTML =
+        '<div style="text-align:center"><div style="font-size:24px;margin-bottom:8px">⚠️</div>' +
+        '<div style="font-size:14px;font-weight:600;margin-bottom:4px">Koneksi terputus</div>' +
+        '<div style="font-size:12px;color:#888;margin-bottom:16px">Periksa koneksi internet Anda</div>' +
+        '<button onclick="location.reload()" style="padding:8px 20px;background:#6c47ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px">Coba Lagi</button></div>';
+      return;
+    }
+  }
+
+  if (!data || !data.success) {
+    localStorage.removeItem('gf_token');
+    window.location.href = '/login';
+    return;
+  }
+
+  const a = data.admin;
+  document.getElementById('admin-username').textContent = a.username;
+  document.getElementById('admin-role').textContent = a.role;
+  document.getElementById('admin-avatar').textContent = a.username.slice(0,2).toUpperCase();
+
+  // Load site name untuk sidebar
   try {
-    const sd = await API('/settings');
-    if (sd.success && sd.settings.site_name) {
+    const sd = await fetch('/api/settings', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    }).then(r => r.json());
+    if (sd.success && sd.settings && sd.settings.site_name) {
       document.getElementById('site-name-logo').textContent = sd.settings.site_name;
       document.title = 'Admin — ' + sd.settings.site_name;
     }
   } catch(_) {}
 
-  document.getElementById('loading-overlay').style.display='none';
+  document.getElementById('loading-overlay').style.display = 'none';
   loadDashboard();
   loadDashboardChart();
   loadDVouchers();
@@ -3076,7 +3114,12 @@ async function qaSave() {
   }
 }
 
-init();
+// Tunggu DOM siap sebelum init untuk menghindari race condition pada mobile browser
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // MEMBER MANAGEMENT

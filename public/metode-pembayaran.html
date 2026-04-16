@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metode Pembayaran — Admin</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f0;--surface:#fff;--surface2:#f8f8f5;--surface3:#f0f0ea;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --accent:#6c47ff;--accent-bg:#eeebff;--accent-text:#3d1fa8;
+  --green:#0f6e56;--green-bg:#e1f5ee;
+  --red:#a32d2d;--red-bg:#fcebeb;
+  --amber:#854f0b;--amber-bg:#faeeda;
+  --sidebar:220px;--radius:10px;--radius-sm:7px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+/* Sidebar */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:18px 16px 14px;display:flex;align-items:center;gap:9px;border-bottom:.5px solid var(--border)}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:16px;height:16px;fill:#fff}
+.logo-name{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--text3)}
+.nav{padding:10px 8px;flex:1}
+.nav-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:background .12s,color .12s;user-select:none;margin-bottom:1px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent-text)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:12px;border-top:.5px solid var(--border)}
+.admin-badge{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer}
+.admin-badge:hover{background:var(--surface3)}
+.admin-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.admin-name{font-size:12px;font-weight:500}
+.admin-role{font-size:10px;color:var(--text3)}
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:.5px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:16px;font-weight:600}
+.breadcrumb{font-size:12px;color:var(--accent);font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-info{display:flex;align-items:center;gap:8px}
+.admin-info-name{font-size:13px;font-weight:500}
+.admin-info-role{font-size:11px;color:var(--text3)}
+.avatar-circle{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.page{padding:24px;flex:1;overflow-y:auto}
+/* Buttons */
+.btn{height:34px;padding:0 14px;border:.5px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text);transition:background .12s,opacity .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{opacity:.9}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2)}
+.btn.danger:hover{background:#f8dada}
+.btn.success{background:var(--green-bg);color:var(--green);border-color:rgba(15,110,86,.2)}
+.btn.sm{height:28px;padding:0 10px;font-size:11px}
+.btn svg{width:13px;height:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* Filters */
+.filters-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-group{display:flex;align-items:center;gap:6px}
+.filter-group select{height:34px;border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 10px;font-size:12px;color:var(--text);background:var(--surface);outline:none;cursor:pointer;font-family:inherit;padding-right:28px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;min-width:140px}
+.filter-group select:focus{border-color:var(--accent)}
+.filter-btn{width:34px;height:34px;border:.5px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.search-wrap{display:flex;align-items:center;gap:0;margin-left:auto}
+.search-input{height:34px;border:.5px solid var(--border2);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);padding:0 12px;font-size:12px;color:var(--text);background:var(--surface);outline:none;width:200px;font-family:inherit}
+.search-input:focus{border-color:var(--accent)}
+.search-btn{width:36px;height:34px;border:.5px solid var(--accent);background:var(--accent);color:#fff;border-radius:0 var(--radius-sm) var(--radius-sm) 0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* Card / Table */
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.card-head{background:var(--accent);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.card-head svg{width:14px;height:14px;fill:rgba(255,255,255,.8)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:var(--surface2);border-bottom:.5px solid var(--border);white-space:nowrap}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--text2)}
+.sort-icon{margin-left:4px;opacity:.5;display:inline-block}
+td{padding:10px 14px;border-bottom:.5px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;gap:4px}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.red{background:var(--red-bg);color:var(--red)}
+.badge.blue{background:#e6f1fb;color:#185fa5}
+.badge.purple{background:var(--accent-bg);color:var(--accent-text)}
+/* Toggle */
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;display:inline-block}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:20px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+.toggle-label{font-size:11px;color:var(--text3);margin-left:4px}
+.toggle-wrap{display:flex;align-items:center;gap:4px}
+/* Toggle with yes/no text */
+.toggle-cell{display:flex;align-items:center;gap:5px}
+.toggle-cell .tlabel{font-size:11px;font-weight:500}
+/* Action buttons */
+.action-btns{display:flex;align-items:center;gap:4px}
+.icon-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.icon-btn:hover{opacity:.8}
+.icon-btn.view{background:#e6f1fb}
+.icon-btn.edit{background:#fff3e0}
+.icon-btn.del{background:var(--red-bg)}
+.icon-btn svg{width:13px;height:13px}
+.icon-btn.view svg{color:#185fa5;fill:#185fa5}
+.icon-btn.edit svg{color:#b45309;fill:#b45309}
+.icon-btn.del svg{color:var(--red);fill:var(--red)}
+/* Fee display */
+.fee-display{font-size:12px}
+.fee-display .fee-flat{font-weight:500;color:var(--text)}
+.fee-display .fee-pct{color:var(--text3);margin-top:1px}
+/* Payment gateway chip */
+.gw-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--surface2);border:.5px solid var(--border);border-radius:6px;font-size:11px;font-weight:500;color:var(--text2)}
+/* Logo preview */
+.logo-thumb{width:32px;height:32px;border-radius:6px;background:var(--surface2);border:.5px solid var(--border);object-fit:contain;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-size:16px;flex-shrink:0}
+/* Modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);border:.5px solid var(--border);padding:22px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.modal.wide{width:620px}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.modal-title svg{width:16px;height:16px;fill:var(--accent)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:.5px solid var(--border)}
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-full{grid-column:1/-1}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:12px;font-weight:500;color:var(--text2)}
+.field-hint{font-size:11px;color:var(--text3)}
+input[type=text],input[type=number],input[type=url],select.form-select,textarea{height:34px;border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 10px;font-size:13px;color:var(--text);background:var(--surface);width:100%;outline:none;transition:border-color .15s;font-family:inherit}
+input:focus,select.form-select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,71,255,.1)}
+/* Upload logo */
+.logo-upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--surface2);transition:border-color .15s;text-align:center;min-height:80px;position:relative}
+.logo-upload-area:hover{border-color:var(--accent)}
+.logo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.logo-upload-area img{max-height:48px;max-width:100%;object-fit:contain;display:none}
+.logo-upload-area.has-img img{display:block}
+.logo-upload-area.has-img .upload-placeholder{display:none}
+.upload-placeholder{display:flex;flex-direction:column;align-items:center;gap:4px}
+.upload-placeholder span{font-size:11px;color:var(--text3)}
+.upload-placeholder strong{font-size:12px;color:var(--accent)}
+/* Detail info rows */
+.detail-row{display:flex;padding:9px 0;border-bottom:.5px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-key{width:160px;flex-shrink:0;color:var(--text3);font-size:12px}
+.detail-val{flex:1;font-weight:500}
+/* Toast */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--text);color:#fff;padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:opacity .22s,transform .22s;pointer-events:none;max-width:320px;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:#0f6e56}
+.toast.error{background:#a32d2d}
+/* Topbar breadcrumb sep */
+.bc-sep{color:var(--text3);font-size:13px;margin:0 4px}
+/* Section header */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.sec-title{font-size:18px;font-weight:600;letter-spacing:-.3px}
+.sec-title span{font-size:13px;font-weight:400;color:var(--text3);margin-left:6px}
+/* type badges */
+.type-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.type-ewallet{background:#fce7f3;color:#be185d}
+.type-va{background:#ede9fe;color:#6d28d9}
+.type-qris{background:#fef3c7;color:#92400e}
+.type-convience{background:#d1fae5;color:#065f46}
+.type-bank{background:#dbeafe;color:#1e40af}
+/* spinner */
+.spinner-sm{width:14px;height:14px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* confirm delete */
+.confirm-icon{width:48px;height:48px;border-radius:50%;background:var(--red-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.confirm-icon svg{width:22px;height:22px;fill:var(--red)}
+.confirm-text{text-align:center;margin-bottom:4px;font-weight:600;font-size:15px}
+.confirm-sub{text-align:center;font-size:12px;color:var(--text3);margin-bottom:4px}
+/* empty state */
+.empty-state{padding:48px 24px;text-align:center;color:var(--text3)}
+.empty-state svg{width:40px;height:40px;fill:var(--border2);margin-bottom:10px}
+.empty-state p{font-size:13px}
+/* chips */
+.chip-wrap{display:flex;gap:5px;flex-wrap:wrap}
+/* highlight add btn */
+.add-btn{background:var(--accent);color:#fff;border-color:var(--accent);font-size:13px;height:36px;padding:0 16px}
+.add-btn:hover{opacity:.9}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">GameFlash</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Main Menu</div>
+    <div class="nav-item" onclick="navTo('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section">Super Admin</div>
+    <div class="nav-item" onclick="navTo('admin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Admin
+    </div>
+    <div class="nav-item" onclick="navTo('pengguna')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Pengguna
+    </div>
+    <div class="nav-item" onclick="navTo('level')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Level Pengguna
+    </div>
+    <div class="nav-section">Layanan</div>
+    <div class="nav-item" onclick="navTo('tipe')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Tipe Kategori
+    </div>
+    <div class="nav-item" onclick="navTo('kategori')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Kategori Layanan
+    </div>
+    <div class="nav-item" onclick="navTo('layanan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Layanan
+    </div>
+    <div class="nav-item" onclick="navTo('provider')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Provider
+    </div>
+    <div class="nav-section">Deposit &amp; Pembayaran</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Metode Pembayaran
+    </div>
+    <div class="nav-item" onclick="navTo('deposit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
+      Deposit
+    </div>
+    <div class="nav-section">Pesanan</div>
+    <div class="nav-item" onclick="navTo('pesanan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Pesanan
+    </div>
+    <div class="nav-section">Log &amp; Laporan</div>
+    <div class="nav-item" onclick="navTo('peningkatan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Peningkatan Peng...
+    </div>
+    <div class="nav-item" onclick="navTo('mutasi')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Mutasi Saldo
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <div class="admin-avatar">JD</div>
+      <div>
+        <div class="admin-name">John Doe</div>
+        <div class="admin-role">Administrator</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div style="font-size:18px;color:var(--text3);cursor:pointer">☾</div>
+      <div style="width:1px;height:20px;background:var(--border);margin:0 8px"></div>
+      <span class="topbar-title">Payment Method</span>
+      <span class="bc-sep">|</span>
+      <span class="breadcrumb">Admin Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <div class="admin-info">
+        <div style="text-align:right">
+          <div class="admin-info-name">John Doe</div>
+          <div class="admin-info-role">Admin</div>
+        </div>
+        <div class="avatar-circle">JD</div>
+      </div>
+      <button class="btn" style="width:34px;height:34px;padding:0;justify-content:center;background:var(--accent);color:#fff;border-color:var(--accent)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page">
+
+    <!-- Filters Bar -->
+    <div class="filters-bar">
+      <div class="filter-group">
+        <select id="filter-status" onchange="applyFilters()">
+          <option value="">Semua...</option>
+          <option value="aktif">Aktif</option>
+          <option value="nonaktif">Nonaktif</option>
+        </select>
+        <button class="filter-btn" onclick="applyFilters()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+      </div>
+      <div class="filter-group">
+        <select id="filter-tipe" onchange="applyFilters()">
+          <option value="">Semua...</option>
+          <option value="ewallet">E-Wallet</option>
+          <option value="va">Virtual Account</option>
+          <option value="qris">QRIS</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="convience">Convenience Store</option>
+        </select>
+        <button class="filter-btn" onclick="applyFilters()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+      </div>
+      <div class="filter-group">
+        <select id="filter-publik" onchange="applyFilters()">
+          <option value="">Semua...</option>
+          <option value="ya">Publik Ya</option>
+          <option value="tidak">Publik Tidak</option>
+        </select>
+        <button class="filter-btn" onclick="applyFilters()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+      </div>
+      <div class="search-wrap">
+        <input type="text" class="search-input" id="search-input" placeholder="Ketik sesuatu..." onkeyup="applyFilters()" onkeydown="if(event.key==='Enter')applyFilters()">
+        <button class="search-btn" onclick="applyFilters()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Button -->
+    <div style="margin-bottom:16px">
+      <button class="btn add-btn" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Payment Method
+      </button>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        Payment Method
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortBy('id')">ID <span class="sort-icon">⇅</span></th>
+              <th class="sortable" onclick="sortBy('tipe')">TIPE <span class="sort-icon">⇅</span></th>
+              <th class="sortable" onclick="sortBy('nama')">NAMA <span class="sort-icon">⇅</span></th>
+              <th class="sortable" onclick="sortBy('fee')">FEE <span class="sort-icon">⇅</span></th>
+              <th>PAYMENT GATEWAY <span class="sort-icon">⇅</span></th>
+              <th>PUBLIK</th>
+              <th>MANUAL</th>
+              <th>STATUS</th>
+              <th>AKSI</th>
+            </tr>
+          </thead>
+          <tbody id="payment-table-body"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" style="display:none">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <p>Tidak ada metode pembayaran ditemukan</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /main -->
+
+<!-- ═══════════ MODAL: TAMBAH / EDIT ═══════════ -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal wide">
+    <div class="modal-title">
+      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <span id="modal-form-title">Tambah Payment Method</span>
+    </div>
+    <div class="form-grid">
+      <div class="field-group">
+        <label class="field-label">Nama Metode *</label>
+        <input type="text" id="f-nama" placeholder="Contoh: GOPAY, BRI VIRTUAL ACCOUNT...">
+        <span class="field-hint">Nama yang ditampilkan ke pengguna</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Tipe *</label>
+        <select class="form-select" id="f-tipe">
+          <option value="ewallet">E-Wallet</option>
+          <option value="va">Virtual Account</option>
+          <option value="qris">QRIS</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="convience">Convenience Store</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Kode Channel Tokopay *</label>
+        <input type="text" id="f-channel" placeholder="Contoh: gopay, bri_va, QRISREALTIME">
+        <span class="field-hint">Sesuaikan dengan kode metode di Tokopay</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Payment Gateway</label>
+        <select class="form-select" id="f-gateway">
+          <option value="">- (Manual / Tidak ada)</option>
+          <option value="XENDIT (BCA)">XENDIT (BCA)</option>
+          <option value="XENDIT (BNI)">XENDIT (BNI)</option>
+          <option value="XENDIT (BRI)">XENDIT (BRI)</option>
+          <option value="XENDIT (MANDIRI)">XENDIT (MANDIRI)</option>
+          <option value="XENDIT (PERMATA)">XENDIT (PERMATA)</option>
+          <option value="XENDIT (INDOMARET)">XENDIT (INDOMARET)</option>
+          <option value="XENDIT (ALFAMART)">XENDIT (ALFAMART)</option>
+          <option value="TOKOPAY">TOKOPAY</option>
+          <option value="MIDTRANS">MIDTRANS</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Biaya Layanan (Rp)</label>
+        <input type="number" id="f-fee" value="0" min="0" placeholder="0">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Fee Persen (%)</label>
+        <input type="number" id="f-fee-pct" value="0" min="0" max="100" step="0.1" placeholder="0">
+      </div>
+      <div class="field-group form-full">
+        <label class="field-label">Logo Metode</label>
+        <div class="logo-upload-area" id="logo-upload-area" onclick="document.getElementById('f-logo-file').click()">
+          <img id="f-logo-preview" src="" alt="">
+          <input type="file" id="f-logo-file" accept="image/*" onchange="handleLogoUpload(event)">
+          <div class="upload-placeholder">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#999" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <strong>Klik untuk upload logo</strong>
+            <span>PNG, JPG, SVG — max 500KB</span>
+          </div>
+        </div>
+        <button onclick="clearLogo()" id="btn-clear-logo" style="display:none;background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;margin-top:4px;align-self:flex-start">✕ Hapus logo</button>
+      </div>
+      <!-- Toggles -->
+      <div class="field-group">
+        <label class="field-label">Tampil Publik</label>
+        <div class="toggle-wrap" style="margin-top:4px">
+          <label class="toggle"><input type="checkbox" id="f-publik" checked><span class="toggle-slider"></span></label>
+          <span class="toggle-label" id="f-publik-label">Ya</span>
+        </div>
+        <span class="field-hint">Apakah metode ini terlihat oleh pengguna</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Manual</label>
+        <div class="toggle-wrap" style="margin-top:4px">
+          <label class="toggle"><input type="checkbox" id="f-manual"><span class="toggle-slider"></span></label>
+          <span class="toggle-label" id="f-manual-label">Tidak</span>
+        </div>
+        <span class="field-hint">Pembayaran dikonfirmasi manual oleh admin</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Status</label>
+        <div class="toggle-wrap" style="margin-top:4px">
+          <label class="toggle"><input type="checkbox" id="f-status" checked><span class="toggle-slider"></span></label>
+          <span class="toggle-label" id="f-status-label">Aktif</span>
+        </div>
+        <span class="field-hint">Metode ini bisa digunakan untuk transaksi</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-form')">Batal</button>
+      <button class="btn primary" id="btn-save-form" onclick="saveMethod()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: DETAIL ═══════════ -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Detail Payment Method
+    </div>
+    <div id="detail-logo-wrap" style="margin-bottom:16px;display:none;text-align:center">
+      <img id="detail-logo" src="" style="max-height:64px;max-width:140px;object-fit:contain;border-radius:8px;border:.5px solid var(--border)">
+    </div>
+    <div id="detail-rows"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-detail')">Tutup</button>
+      <button class="btn primary" id="detail-edit-btn" onclick="editFromDetail()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: CONFIRM DELETE ═══════════ -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal" style="width:380px;text-align:center">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+    <div class="confirm-text">Hapus Metode Pembayaran?</div>
+    <div class="confirm-sub" id="delete-name-label" style="margin-bottom:12px"></div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:4px">Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn" onclick="closeModal('modal-delete')">Batal</button>
+      <button class="btn danger" id="btn-confirm-delete" onclick="confirmDelete()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Ya, Hapus
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+// ── Auth token ────────────────────────────────────────────────────────────────
+function getToken() {
+  return localStorage.getItem('admin_token') || sessionStorage.getItem('admin_token') || '';
+}
+
+// ── API helper ────────────────────────────────────────────────────────────────
+async function apiCall(path, options = {}) {
+  const token = getToken();
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const data = await res.json();
+  if (res.status === 401) {
+    window.location.href = '/login';
+    throw new Error('Unauthorized');
+  }
+  return data;
+}
+
+// ── Data store ────────────────────────────────────────────────────────────────
+// Daftar channel yang dikenal + metadata default
+// Data aktual (enabled/fee/logo) dimuat dari /api/settings/all
+const KNOWN_METHODS = [
+  {id:1,  tipe:'qris',      nama:'QRIS',                    channel:'QRIS',         gateway:'TOKOPAY'},
+  {id:2,  tipe:'ewallet',   nama:'DANA',                    channel:'DANA',         gateway:'TOKOPAY'},
+  {id:3,  tipe:'ewallet',   nama:'OVO',                     channel:'OVO',          gateway:'TOKOPAY'},
+  {id:4,  tipe:'ewallet',   nama:'GOPAY',                   channel:'GOPAY',        gateway:'TOKOPAY'},
+  {id:5,  tipe:'ewallet',   nama:'SHOPEEPAY',               channel:'SHOPEEPAY',    gateway:'TOKOPAY'},
+  {id:6,  tipe:'va',        nama:'BCA VIRTUAL ACCOUNT',     channel:'BCA',          gateway:'TOKOPAY'},
+  {id:7,  tipe:'va',        nama:'BNI VIRTUAL ACCOUNT',     channel:'BNI',          gateway:'TOKOPAY'},
+  {id:8,  tipe:'va',        nama:'BRI VIRTUAL ACCOUNT',     channel:'BRI',          gateway:'TOKOPAY'},
+  {id:9,  tipe:'va',        nama:'MANDIRI VIRTUAL ACCOUNT', channel:'MANDIRI',      gateway:'TOKOPAY'},
+  {id:10, tipe:'va',        nama:'PERMATA VIRTUAL ACCOUNT', channel:'PERMATA',      gateway:'TOKOPAY'},
+];
+
+let methods = [];
+let filteredMethods = [];
+let sortField = 'id', sortAsc = false;
+let editingId = null, deletingId = null;
+let formLogoBase64 = '';
+let savingInline = false;
+
+// ── Load settings dari backend ────────────────────────────────────────────────
+async function loadSettings() {
+  const tbody = document.getElementById('payment-table-body');
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text3)">
+    <div class="spinner-sm" style="margin:0 auto 8px"></div><br>Memuat data...
+  </td></tr>`;
+
+  try {
+    const data = await apiCall('/api/settings/all');
+    if (!data.success) throw new Error(data.message);
+    const s = data.settings || {};
+
+    // Bangun array methods dari KNOWN_METHODS + settings
+    methods = KNOWN_METHODS.map(km => {
+      const ch = km.channel; // e.g. 'QRIS', 'DANA', 'BCA'
+      return {
+        id:      km.id,
+        tipe:    km.tipe,
+        nama:    km.nama,
+        channel: s[`pay_channel_${ch}`] || ch,
+        gateway: km.gateway,
+        fee:     parseFloat(s[`fee_${ch}`] || 0),
+        feePct:  0,
+        publik:  (s[`pay_enabled_${ch}`] === '1' || s[`pay_enabled_${ch}`] === 1 || s[`pay_enabled_${ch}`] === true),
+        manual:  false,
+        status:  (s[`pay_enabled_${ch}`] === '1' || s[`pay_enabled_${ch}`] === 1 || s[`pay_enabled_${ch}`] === true),
+        logo:    s[`pay_logo_${ch}`] || '',
+        _key:    ch, // key suffix untuk settings
+      };
+    });
+
+    filteredMethods = [...methods];
+    applyFilters();
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--red)">
+      Gagal memuat data: ${err.message}
+    </td></tr>`;
+    toast('Gagal memuat data dari server', 'error');
+  }
+}
+
+// ── Save settings ke backend ──────────────────────────────────────────────────
+async function saveSettings(payload, successMsg) {
+  const data = await apiCall('/api/settings', { method: 'PUT', body: payload });
+  if (!data.success) throw new Error(data.message || 'Gagal menyimpan');
+  toast(successMsg || 'Berhasil disimpan', 'success');
+  return data;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt = n => 'Rp ' + Number(n).toLocaleString('id-ID');
+
+function tipeLabel(t) {
+  const m = {ewallet:'E-WALLET', va:'VIRTUAL ACCOUNT', qris:'QRIS', bank:'BANK TRANSFER', convience:'CONVIENCE STORE'};
+  return m[t] || t.toUpperCase();
+}
+function tipeClass(t) {
+  const m = {ewallet:'ewallet', va:'va', qris:'qris', bank:'bank', convience:'convience'};
+  return 'type-badge type-' + (m[t] || 'ewallet');
+}
+
+// ── Render table ──────────────────────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('payment-table-body');
+  const empty = document.getElementById('empty-state');
+  if (!filteredMethods.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = filteredMethods.map(m => `
+    <tr>
+      <td><strong style="color:var(--text)">${m.id}</strong></td>
+      <td><span class="${tipeClass(m.tipe)}">${tipeLabel(m.tipe)}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="logo-thumb">${m.logo ? `<img src="${m.logo}" style="width:100%;height:100%;object-fit:contain">` : logoEmoji(m.tipe)}</div>
+          <span style="font-weight:500;color:var(--text)">${m.nama}</span>
+        </div>
+      </td>
+      <td>
+        <div class="fee-display">
+          <div class="fee-flat">FEE : ${fmt(m.fee)}</div>
+          <div class="fee-pct">FEE PERSEN ${m.feePct}%</div>
+        </div>
+      </td>
+      <td>${m.gateway ? `<span class="gw-chip">${m.gateway}</span>` : '<span style="color:var(--text3)">-</span>'}</td>
+      <td>
+        <div class="toggle-cell">
+          <label class="toggle" title="Toggle Publik">
+            <input type="checkbox" ${m.publik?'checked':''} onchange="toggleField(${m.id},'publik',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="tlabel" style="color:${m.publik?'var(--green)':'var(--text3)'}">${m.publik?'Ya':'Tidak'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="toggle-cell">
+          <label class="toggle" title="Toggle Manual">
+            <input type="checkbox" ${m.manual?'checked':''} onchange="toggleField(${m.id},'manual',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="tlabel" style="color:${m.manual?'var(--green)':'var(--text3)'}">${m.manual?'Ya':'Tidak'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="toggle-cell">
+          <label class="toggle" title="Toggle Status">
+            <input type="checkbox" ${m.status?'checked':''} onchange="toggleField(${m.id},'status',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="tlabel" style="color:${m.status?'var(--green)':'var(--red)'}">${m.status?'Aktif':'Nonaktif'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="action-btns">
+          <button class="icon-btn view" title="Detail" onclick="openDetail(${m.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="icon-btn edit" title="Edit" onclick="openEdit(${m.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn del" title="Hapus" onclick="openDelete(${m.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function logoEmoji(tipe) {
+  const m = {ewallet:'💳', va:'🏦', qris:'⚡', bank:'🏦', convience:'🏪'};
+  return `<span style="font-size:16px">${m[tipe]||'💳'}</span>`;
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────────
+function applyFilters() {
+  const status = document.getElementById('filter-status').value;
+  const tipe   = document.getElementById('filter-tipe').value;
+  const publik = document.getElementById('filter-publik').value;
+  const q      = document.getElementById('search-input').value.toLowerCase();
+
+  filteredMethods = methods.filter(m => {
+    if (status === 'aktif'    && !m.status) return false;
+    if (status === 'nonaktif' && m.status)  return false;
+    if (tipe && m.tipe !== tipe)            return false;
+    if (publik === 'ya'    && !m.publik)    return false;
+    if (publik === 'tidak' && m.publik)     return false;
+    if (q && !m.nama.toLowerCase().includes(q) && !m.channel.toLowerCase().includes(q) && !tipeLabel(m.tipe).toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Sort
+  filteredMethods.sort((a, b) => {
+    let va = a[sortField], vb = b[sortField];
+    if (typeof va === 'string') va = va.toLowerCase(), vb = vb.toLowerCase();
+    if (va < vb) return sortAsc ? -1 : 1;
+    if (va > vb) return sortAsc ? 1 : -1;
+    return 0;
+  });
+
+  renderTable();
+}
+
+function sortBy(field) {
+  if (sortField === field) sortAsc = !sortAsc;
+  else { sortField = field; sortAsc = true; }
+  applyFilters();
+}
+
+// ── Toggle in-place ───────────────────────────────────────────────────────────
+async function toggleField(id, field, val) {
+  const m = methods.find(x => x.id === id);
+  if (!m) return;
+  const prev = m[field];
+  m[field] = val;
+  applyFilters();
+
+  const labels = {publik:'Publik', manual:'Manual', status:'Status'};
+  const valLabel = field === 'status' ? (val ? 'Aktif' : 'Nonaktif') : (val ? 'Ya' : 'Tidak');
+
+  // Kirim ke API: status & publik → pay_enabled_KEY
+  if (field === 'status' || field === 'publik') {
+    try {
+      const payload = { [`pay_enabled_${m._key}`]: val ? '1' : '0' };
+      // Sinkronkan kedua field sekaligus (status & publik menggunakan key yang sama)
+      m.publik = val;
+      m.status = val;
+      applyFilters();
+      await saveSettings(payload, `${labels[field]} "${m.nama}" diperbarui: ${valLabel}`);
+    } catch (err) {
+      // Rollback jika gagal
+      m[field] = prev;
+      m.publik = prev;
+      m.status = prev;
+      applyFilters();
+      toast('Gagal memperbarui: ' + err.message, 'error');
+    }
+  } else {
+    toast(`${labels[field]} diperbarui: ${valLabel}`, 'success');
+  }
+}
+
+// ── Detail ────────────────────────────────────────────────────────────────────
+let detailCurrentId = null;
+function openDetail(id) {
+  const m = methods.find(x => x.id === id);
+  if (!m) return;
+  detailCurrentId = id;
+
+  const logoWrap = document.getElementById('detail-logo-wrap');
+  const logoEl   = document.getElementById('detail-logo');
+  if (m.logo) {
+    logoEl.src = m.logo;
+    logoWrap.style.display = 'block';
+  } else {
+    logoWrap.style.display = 'none';
+  }
+
+  document.getElementById('detail-rows').innerHTML = [
+    ['ID', m.id],
+    ['Nama', `<strong>${m.nama}</strong>`],
+    ['Tipe', `<span class="${tipeClass(m.tipe)}">${tipeLabel(m.tipe)}</span>`],
+    ['Kode Channel', `<code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:12px">${m.channel}</code>`],
+    ['Payment Gateway', m.gateway || '-'],
+    ['Biaya Layanan', fmt(m.fee)],
+    ['Fee Persen', m.feePct + '%'],
+    ['Publik', m.publik ? '<span class="badge green">Ya</span>' : '<span class="badge red">Tidak</span>'],
+    ['Manual', m.manual ? '<span class="badge green">Ya</span>' : '<span class="badge red">Tidak</span>'],
+    ['Status', m.status ? '<span class="badge green">Aktif</span>' : '<span class="badge red">Nonaktif</span>'],
+  ].map(([k,v]) => `<div class="detail-row"><div class="detail-key">${k}</div><div class="detail-val">${v}</div></div>`).join('');
+
+  openModal('modal-detail');
+}
+function editFromDetail() {
+  closeModal('modal-detail');
+  openEdit(detailCurrentId);
+}
+
+// ── Add / Edit Form ───────────────────────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  formLogoBase64 = '';
+  document.getElementById('modal-form-title').textContent = 'Tambah Payment Method';
+  document.getElementById('f-nama').value = '';
+  document.getElementById('f-tipe').value = 'ewallet';
+  document.getElementById('f-channel').value = '';
+  document.getElementById('f-gateway').value = '';
+  document.getElementById('f-fee').value = 0;
+  document.getElementById('f-fee-pct').value = 0;
+  document.getElementById('f-publik').checked = true;
+  document.getElementById('f-manual').checked = false;
+  document.getElementById('f-status').checked = true;
+  updateToggleLabels();
+  clearLogo();
+  openModal('modal-form');
+}
+
+function openEdit(id) {
+  const m = methods.find(x => x.id === id);
+  if (!m) return;
+  editingId = id;
+  formLogoBase64 = m.logo || '';
+  document.getElementById('modal-form-title').textContent = `Edit — ${m.nama}`;
+  document.getElementById('f-nama').value    = m.nama;
+  document.getElementById('f-tipe').value    = m.tipe;
+  document.getElementById('f-channel').value = m.channel;
+  document.getElementById('f-gateway').value = m.gateway;
+  document.getElementById('f-fee').value     = m.fee;
+  document.getElementById('f-fee-pct').value = m.feePct;
+  document.getElementById('f-publik').checked = m.publik;
+  document.getElementById('f-manual').checked = m.manual;
+  document.getElementById('f-status').checked = m.status;
+  updateToggleLabels();
+  // Logo
+  const area = document.getElementById('logo-upload-area');
+  const prev = document.getElementById('f-logo-preview');
+  const clearBtn = document.getElementById('btn-clear-logo');
+  if (m.logo) {
+    prev.src = m.logo;
+    area.classList.add('has-img');
+    clearBtn.style.display = 'inline-block';
+  } else {
+    clearLogo();
+  }
+  openModal('modal-form');
+}
+
+async function saveMethod() {
+  const nama    = document.getElementById('f-nama').value.trim();
+  const channel = document.getElementById('f-channel').value.trim().toUpperCase();
+  if (!nama)    { toast('Nama metode tidak boleh kosong', 'error'); return; }
+  if (!channel) { toast('Kode channel Tokopay tidak boleh kosong', 'error'); return; }
+
+  const data = {
+    nama,
+    tipe:    document.getElementById('f-tipe').value,
+    channel,
+    gateway: document.getElementById('f-gateway').value,
+    fee:     parseFloat(document.getElementById('f-fee').value) || 0,
+    feePct:  parseFloat(document.getElementById('f-fee-pct').value) || 0,
+    publik:  document.getElementById('f-publik').checked,
+    manual:  document.getElementById('f-manual').checked,
+    status:  document.getElementById('f-status').checked,
+    logo:    formLogoBase64,
+    _key:    channel,
+  };
+
+  const btn = document.getElementById('btn-save-form');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner-sm"></div> Menyimpan...';
+
+  try {
+    // Bangun payload settings
+    const payload = {};
+    payload[`pay_enabled_${channel}`] = data.status ? '1' : '0';
+    payload[`pay_channel_${channel}`] = channel;
+    payload[`fee_${channel}`]         = String(data.fee);
+    if (data.logo) payload[`pay_logo_${channel}`] = data.logo;
+
+    await saveSettings(payload);
+
+    if (editingId !== null) {
+      const idx = methods.findIndex(x => x.id === editingId);
+      if (idx >= 0) methods[idx] = { ...methods[idx], ...data };
+      toast(`Metode "${nama}" berhasil diperbarui`, 'success');
+    } else {
+      const newId = methods.length ? Math.max(...methods.map(x=>x.id)) + 1 : 1;
+      methods.unshift({ id: newId, ...data });
+      toast(`Metode "${nama}" berhasil ditambahkan`, 'success');
+    }
+
+    closeModal('modal-form');
+    applyFilters();
+  } catch (err) {
+    toast('Gagal menyimpan: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Simpan';
+  }
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────────
+function openDelete(id) {
+  const m = methods.find(x => x.id === id);
+  if (!m) return;
+  deletingId = id;
+  document.getElementById('delete-name-label').textContent = `"${m.nama}" (ID: ${m.id})`;
+  openModal('modal-delete');
+}
+async function confirmDelete() {
+  if (deletingId === null) return;
+  const m = methods.find(x => x.id === deletingId);
+  if (!m) return;
+
+  const btn = document.getElementById('btn-confirm-delete');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner-sm"></div> Menghapus...';
+
+  try {
+    // Nonaktifkan metode di settings (set enabled = '0')
+    const payload = { [`pay_enabled_${m._key}`]: '0' };
+    await saveSettings(payload);
+
+    methods = methods.filter(x => x.id !== deletingId);
+    deletingId = null;
+    closeModal('modal-delete');
+    applyFilters();
+    toast(`Metode "${m.nama}" dinonaktifkan & dihapus dari daftar`, 'error');
+  } catch (err) {
+    toast('Gagal menghapus: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Ya, Hapus';
+  }
+}
+
+// ── Logo upload ───────────────────────────────────────────────────────────────
+function handleLogoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 512000) { toast('Ukuran logo terlalu besar (maks 500KB)', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    formLogoBase64 = ev.target.result;
+    const prev = document.getElementById('f-logo-preview');
+    prev.src = formLogoBase64;
+    document.getElementById('logo-upload-area').classList.add('has-img');
+    document.getElementById('btn-clear-logo').style.display = 'inline-block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearLogo() {
+  formLogoBase64 = '';
+  const prev = document.getElementById('f-logo-preview');
+  prev.src = '';
+  document.getElementById('logo-upload-area').classList.remove('has-img');
+  document.getElementById('btn-clear-logo').style.display = 'none';
+  document.getElementById('f-logo-file').value = '';
+}
+
+// ── Toggle label updates ──────────────────────────────────────────────────────
+function updateToggleLabels() {
+  const p = document.getElementById('f-publik');
+  const m = document.getElementById('f-manual');
+  const s = document.getElementById('f-status');
+  if (p) { document.getElementById('f-publik-label').textContent = p.checked ? 'Ya' : 'Tidak'; }
+  if (m) { document.getElementById('f-manual-label').textContent = m.checked ? 'Ya' : 'Tidak'; }
+  if (s) { document.getElementById('f-status-label').textContent = s.checked ? 'Aktif' : 'Nonaktif'; }
+}
+document.getElementById('f-publik').addEventListener('change', updateToggleLabels);
+document.getElementById('f-manual').addEventListener('change', updateToggleLabels);
+document.getElementById('f-status').addEventListener('change', updateToggleLabels);
+
+// ── Modal helpers ─────────────────────────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function toast(msg, type = '') {
+  const wrap = document.getElementById('toast-wrap');
+  const el   = document.createElement('div');
+  el.className = 'toast' + (type ? ` ${type}` : '');
+  el.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">${type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>':'<polyline points="20 6 9 17 4 12"/>'}</svg>${msg}`;
+  wrap.appendChild(el);
+  requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('show')); });
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2800);
+}
+
+// ── Nav placeholder ───────────────────────────────────────────────────────────
+function navTo(page) {
+  toast(`Navigasi ke: ${page}`);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadSettings();
+</script>
+</body>
+</html>

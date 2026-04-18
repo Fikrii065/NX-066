@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Admin — GameFlash</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d14;
+  --surface:#16161f;
+  --border:rgba(255,255,255,0.08);
+  --text:#f0f0f5;
+  --text2:#9090a8;
+  --accent:#6c47ff;
+  --accent-glow:rgba(108,71,255,0.35);
+  --radius:14px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+/* animated bg */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(108,71,255,0.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:40px 36px;
+  width:100%;
+  max-width:400px;
+  position:relative;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:32px;
+  justify-content:center;
+}
+.logo-icon{
+  width:40px;height:40px;
+  background:var(--accent);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 20px var(--accent-glow);
+}
+.logo-icon svg{width:22px;height:22px;fill:#fff}
+.logo-name{font-size:20px;font-weight:700;letter-spacing:-0.4px}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px}
+h2{font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:6px;text-align:center}
+.subtitle{font-size:14px;color:var(--text2);text-align:center;margin-bottom:28px}
+.field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+label{font-size:12px;font-weight:500;color:var(--text2)}
+input{
+  height:44px;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:0 14px;
+  font-size:14px;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  font-family:inherit;
+  width:100%;
+}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+input::placeholder{color:rgba(144,144,168,0.5)}
+.btn-login{
+  width:100%;height:46px;
+  background:var(--accent);
+  color:#fff;border:none;
+  border-radius:10px;
+  font-size:15px;font-weight:600;
+  cursor:pointer;margin-top:8px;
+  transition:opacity .15s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:inherit;
+}
+.btn-login:hover:not(:disabled){opacity:.9}
+.btn-login:active:not(:disabled){transform:scale(.99)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed}
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{
+  background:rgba(163,45,45,.15);
+  border:0.5px solid rgba(163,45,45,.3);
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:13px;
+  color:#f08080;
+  margin-bottom:16px;
+  display:none;
+}
+.back-link{
+  display:block;text-align:center;
+  font-size:13px;color:var(--text2);
+  text-decoration:none;margin-top:20px;
+  transition:color .15s;
+}
+.back-link:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div><div class="logo-name">GameFlash</div><div class="logo-sub">Admin Panel</div></div>
+  </div>
+
+  <h2>Selamat Datang</h2>
+  <p class="subtitle">Masuk ke panel administrasi</p>
+
+  <div class="error-box" id="error-box"></div>
+
+  <div class="field-group">
+    <label for="username">Username atau Email</label>
+    <input type="text" id="username" placeholder="admin" autocomplete="username">
+  </div>
+  <div class="field-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button class="btn-login" id="login-btn" onclick="doLogin()">
+    <span id="btn-text">Masuk</span>
+    <div class="spinner" id="spinner"></div>
+  </button>
+
+  <a href="/" class="back-link">← Kembali ke Toko</a>
+</div>
+
+<script>
+  // Cek token — validasi ke server dulu, jangan langsung redirect
+  (async () => {
+    const token = localStorage.getItem('gf_token');
+    if (token) {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.ok) {
+          window.location.href = '/admin';
+        } else {
+          // Token invalid/expired — hapus dan tampilkan login
+          localStorage.removeItem('gf_token');
+          localStorage.removeItem('gf_admin');
+        }
+      } catch(_) {
+        // Kalau network error, tetap tampilkan login
+        localStorage.removeItem('gf_token');
+        localStorage.removeItem('gf_admin');
+      }
+    }
+  })();
+
+  document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  async function doLogin() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const errBox   = document.getElementById('error-box');
+    const btn      = document.getElementById('login-btn');
+    const btnText  = document.getElementById('btn-text');
+    const spinner  = document.getElementById('spinner');
+
+    errBox.style.display = 'none';
+
+    if (!username || !password) {
+      errBox.textContent = 'Username dan password wajib diisi';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+
+    try {
+      const res  = await fetch('/api/auth/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('gf_token', data.token);
+        localStorage.setItem('gf_admin', JSON.stringify(data.admin));
+        window.location.href = '/admin';
+      } else {
+        errBox.textContent = data.message || 'Login gagal';
+        errBox.style.display = 'block';
+      }
+    } catch (e) {
+      errBox.textContent = 'Tidak dapat terhubung ke server';
+      errBox.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btnText.style.display = '';
+    spinner.style.display = 'none';
+  }
+</script>
+
+<!-- Floating Hubungi CS Button -->
+<style>
+#cs-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  padding: 13px 18px;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: cs-pop-in 0.4s ease;
+}
+#cs-float-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 28px rgba(37,211,102,0.55);
+}
+@keyframes cs-pop-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+</style>
+<a id="cs-float-btn" href="#" target="_blank" rel="noopener noreferrer" title="Hubungi CS">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.535 5.845L.057 23.486a.5.5 0 0 0 .612.612l5.684-1.49A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.688-.528-5.207-1.442l-.376-.224-3.879 1.018 1.023-3.783-.238-.388A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+  </svg>
+  <span>Hubungi CS</span>
+</a>
+<script>
+fetch('/api/settings').then(r=>r.json()).then(d=>{
+  if(d && d.success && d.settings && d.settings.contact_wa){
+    const num = d.settings.contact_wa.replace(/\D/g,'');
+    const btn = document.getElementById('cs-float-btn');
+    btn.href = 'https://wa.me/' + num;
+    btn.style.display = 'flex';
+  }
+}).catch(()=>{});
+</script>
+
+</body>
+</html>

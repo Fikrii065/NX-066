@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameFlash — Top Up Murah & Terpercaya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e1420;
+  --surface:#161e2e;
+  --surface2:#1c2640;
+  --surface3:#222d4a;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:#eef0f6;
+  --text2:#8b95b0;
+  --text3:#525d78;
+  --accent:#e63946;
+  --accent2:#ff6b6b;
+  --accent-glow:rgba(230,57,70,0.3);
+  --green:#25c55e;
+  --gold:#f4c430;
+  --radius:14px;
+  --radius-sm:10px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:32px;}
+
+/* HEADER */
+.header{background:rgba(14,20,32,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 14px;height:56px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;}
+.logo-icon img{width:34px;height:34px;border-radius:8px;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.hdr-icon{width:36px;height:36px;background:transparent;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:color .2s;}
+.hdr-icon:hover{color:var(--text);}
+.hdr-menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;cursor:pointer;color:var(--text2);}
+
+/* HERO BANNER */
+.hero-wrap{margin:0;border-radius:0;overflow:hidden;position:relative;height:180px;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;cursor:pointer;}
+.hero-slide.active{opacity:1;}
+.hero-slide img{width:100%;height:100%;object-fit:cover;object-position:center;}
+.hero-slide-default{width:100%;height:180px;display:flex;align-items:center;justify-content:flex-end;padding:0 20px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#1a0520 40%,#050515 100%);}
+.hero-text-wrap{position:relative;z-index:2;flex:1;}
+.hero-badge{font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;margin-bottom:4px;}
+.hero-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;line-height:1;color:#fff;text-transform:uppercase;}
+.hero-title .highlight{color:var(--accent);}
+.hero-sub{font-size:10px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.5;}
+.hero-games-row{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.hero-game-icon{width:24px;height:24px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid rgba(255,255,255,0.1);}
+.hero-char{position:relative;z-index:2;width:110px;flex-shrink:0;}
+.hero-char-emoji{font-size:80px;line-height:1;text-align:center;}
+.hero-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all .3s;cursor:pointer;}
+.hero-dot.active{background:#fff;width:20px;border-radius:3px;}
+
+/* POPULER */
+.section-title{display:flex;align-items:center;gap:7px;padding:18px 14px 10px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.4px;}
+.section-title .icon{font-size:18px;}
+.pop-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 12px;}
+.pop-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:11px;padding:10px 12px;cursor:pointer;transition:all .2s;}
+.pop-card:hover{border-color:var(--accent);background:rgba(230,57,70,0.07);}
+.pop-thumb{width:56px;height:56px;border-radius:10px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.pop-thumb img{width:100%;height:100%;object-fit:cover;}
+.pop-info{flex:1;min-width:0;}
+.pop-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+.pop-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* CATEGORY TABS */
+.cat-scroll-wrap{overflow-x:auto;scrollbar-width:none;padding:4px 12px 2px;}
+.cat-scroll-wrap::-webkit-scrollbar{display:none;}
+.cat-tabs{display:flex;gap:8px;width:max-content;}
+.cat-tab{flex-shrink:0;padding:8px 18px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:50px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Nunito',sans-serif;}
+.cat-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cat-tab:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+
+/* GAME SECTION */
+.games-section{padding:10px 12px 4px;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.game-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .22s;}
+.game-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3);}
+.gc-thumb{width:100%;aspect-ratio:1/1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.gc-thumb img{width:100%;height:100%;object-fit:cover;}
+.gc-thumb-emoji{font-size:40px;}
+.gc-badge{position:absolute;top:6px;left:6px;font-size:8px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:.4px;}
+.gc-badge-topup{background:var(--accent);color:#fff;}
+.gc-badge-pulsa{background:#3b82f6;color:#fff;}
+.gc-badge-ewallet{background:#8b5cf6;color:#fff;}
+.gc-badge-streaming{background:#10b981;color:#fff;}
+.gc-badge-voucher{background:var(--gold);color:#000;}
+.gc-info{padding:7px 9px 9px;}
+.gc-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gc-pub{font-size:9px;color:var(--text3);margin-top:2px;}
+
+/* SHOW MORE BTN */
+.show-more-wrap{padding:12px 12px 4px;text-align:center;}
+.show-more-btn{width:100%;padding:12px;background:transparent;border:1.5px solid var(--border2);border-radius:10px;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:.3px;transition:all .2s;}
+.show-more-btn:hover{background:rgba(230,57,70,0.08);border-color:var(--accent);}
+
+/* PULSA REGULER */
+.pulsa-section{padding:4px 12px 4px;}
+.pulsa-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.pulsa-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.pulsa-card:hover{border-color:var(--accent);}
+.pc-thumb{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:38px;background:var(--surface3);}
+.pc-thumb img{width:100%;height:100%;object-fit:cover;}
+.pc-info{padding:6px 8px 8px;}
+.pc-name{font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* GAME COLORS */
+.gc-ml{background:linear-gradient(135deg,#1a2060,#2030a0);}
+.gc-ff{background:linear-gradient(135deg,#7a1a00,#c03000);}
+.gc-val{background:linear-gradient(135deg,#6a0000,#aa1010);}
+.gc-genshin{background:linear-gradient(135deg,#052060,#1040a0);}
+.gc-pubg{background:linear-gradient(135deg,#2a3000,#5a6000);}
+.gc-def{background:linear-gradient(135deg,#141e30,#1c2840);}
+.gc-telkom{background:linear-gradient(135deg,#8b0000,#c00000);}
+.gc-honkai{background:linear-gradient(135deg,#200040,#400080);}
+
+
+
+/* SEARCH OVERLAY */
+#search-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:flex-start;padding:60px 14px 20px;}
+.search-inner{width:100%;}
+.search-row{display:flex;gap:8px;}
+.search-inp{flex:1;height:46px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 14px;font-size:14px;color:var(--text);outline:none;font-family:'Nunito',sans-serif;}
+.search-inp:focus{border-color:var(--accent);}
+.search-close{height:46px;padding:0 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;}
+#search-results{margin-top:8px;display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow-y:auto;}
+.sr-item{display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;}
+
+/* FLOATING CS */
+#cs-btn{position:fixed;bottom:22px;right:16px;z-index:9999;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:11px 16px;border-radius:50px;box-shadow:0 4px 20px rgba(37,211,102,0.35);text-decoration:none;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s;}
+#cs-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,0.5);}
+
+/* MAINT */
+.maint{text-align:center;padding:80px 20px;}
+.maint h2{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;margin:12px 0 8px;}
+.maint p{font-size:14px;color:var(--text2);}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+#side-menu{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);}
+#side-panel{
+  position:absolute;left:0;top:0;bottom:0;width:80%;max-width:290px;
+  background:#181818;
+  transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;display:flex;flex-direction:column;
+  scrollbar-width:none;
+}
+#side-panel::-webkit-scrollbar{display:none;}
+
+.menu-header{
+  padding:22px 20px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.menu-logo-row{display:flex;align-items:center;gap:10px;}
+.menu-logo-box{display:flex;align-items:center;}
+.menu-site-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px;}
+.menu-close{
+  background:none;border:none;color:rgba(255,255,255,0.5);
+  font-size:22px;cursor:pointer;line-height:1;padding:0;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  transition:color .15s;
+}
+.menu-close:hover{color:#fff;}
+.menu-section-label{display:none;}
+
+.menu-item{
+  display:flex;align-items:center;
+  padding:18px 22px;
+  color:#fff;text-decoration:none;
+  font-size:15px;font-weight:700;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  transition:background .15s;cursor:pointer;
+}
+.menu-item:hover{background:rgba(255,255,255,0.04);}
+.menu-item:active{background:rgba(255,255,255,0.08);}
+.menu-item span{flex:1;}
+.menu-item .mi-svg{
+  width:22px;height:22px;color:rgba(255,255,255,0.45);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.menu-item.danger span{color:#ef4444;}
+.menu-item.danger .mi-svg{color:rgba(239,68,68,0.6);}
+.menu-divider{height:8px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.07);}
+
+/* RATING STARS */
+#rating-stars span{transition:all .15s;user-select:none;}
+#rating-stars span:hover{transform:scale(1.2);}
+
+@media(min-width:480px){#side-panel{max-width:300px;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="logo" href="/">
+    <div class="logo-icon">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="34" rx="8" fill="#e63946"/>
+        <path d="M17 6L8 20h7l-2 8 13-14h-8l2-8z" fill="white"/>
+      </svg>
+    </div>
+    <span class="logo-name" id="site-name">GameFlash</span>
+  </a>
+  <div class="header-right">
+    <button class="hdr-icon" onclick="document.getElementById('search-overlay').style.display='flex'" aria-label="Cari">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="hdr-icon hdr-menu-btn" onclick="openMenu()" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div class="search-inner">
+    <div class="search-row">
+      <input id="search-inp" class="search-inp" type="text" placeholder="Cari game atau layanan..." oninput="filterGames(this.value)">
+      <button class="search-close" onclick="document.getElementById('search-overlay').style.display='none'">Tutup</button>
+    </div>
+    <div id="search-results"></div>
+  </div>
+</div>
+
+<!-- SIDE MENU -->
+<div id="side-menu" onclick="if(event.target===this)closeMenu()">
+  <div id="side-panel">
+
+    <!-- Header -->
+    <div class="menu-header">
+      <div class="menu-logo-row">
+        <div class="menu-logo-box">
+          <svg width="38" height="28" viewBox="0 0 80 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="7" fill="#e63946"/>
+            <path d="M18 5L9 19h7l-2 8 13-14h-8l2-8z" fill="white"/>
+            <text x="44" y="26" font-family="Rajdhani,sans-serif" font-weight="700" font-size="18" fill="white" letter-spacing="1">GAME</text>
+          </svg>
+        </div>
+        <span class="menu-site-name" id="menu-site-name" style="margin-left:6px"></span>
+      </div>
+      <button class="menu-close" onclick="closeMenu()">✕</button>
+    </div>
+
+    <!-- Akun info -->
+    <div id="sidebar-user-wrap"></div>
+
+    <nav style="flex:1;">
+
+      <a class="menu-item" href="/" onclick="closeMenu()">
+        <span>Top Up Game</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><rect x="8" y="9" width="2" height="4"/><rect x="6" y="11" width="6" height="2"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="19" cy="9" r="1" fill="currentColor"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="/cek-order" onclick="closeMenu()">
+        <span>Cek Transaksi</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" id="menu-cek-otomatis" href="/cek-order" onclick="closeMenu()">
+        <span>Cek Transaksi Otomatis</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="/voucher-order" onclick="closeMenu()">
+        <span>Voucher Diskon</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="#" onclick="closeMenu();openTransaksiTanpaLogin()">
+        <span>Transaksi Tanpa Login</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="#" id="menu-jual-akun" onclick="closeMenu()">
+        <span>Jual Akun</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="#" onclick="closeMenu();openSyaratKetentuan()">
+        <span>Syarat &amp; Ketentuan</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+      </a>
+      <a class="menu-item" href="#" onclick="closeMenu();openRatingModal()">
+        <span>Rating &amp; Ulasan</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+      </a>
+
+      <!-- divider before auth -->
+      <div class="menu-divider"></div>
+
+      <a class="menu-item menu-item-login-only" href="/dashboard" onclick="closeMenu()" style="display:none">
+        <span>Dashboard Saya</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+      </a>
+      <a class="menu-item menu-item-guest" href="/user-auth" onclick="closeMenu()">
+        <span>Masuk</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        </div>
+      </a>
+      <a class="menu-item menu-item-guest" href="/user-auth?tab=register" onclick="closeMenu()">
+        <span>Daftar</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </div>
+      </a>
+      <a class="menu-item danger menu-item-login-only" href="#" onclick="closeMenu();doSidebarLogout()" style="display:none">
+        <span>Keluar</span>
+        <div class="mi-svg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+      </a>
+
+    </nav>
+
+    <!-- Sosmed -->
+    <div id="sidebar-sosmed" style="padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07);"></div>
+
+  </div>
+</div>
+
+<!-- MODAL: Transaksi Tanpa Login -->
+<div id="modal-tanpa-login" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#161e2e;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700">👤 Transaksi Tanpa Login</h3>
+      <button onclick="document.getElementById('modal-tanpa-login').style.display='none'" style="background:none;border:none;color:#8b95b0;font-size:22px;cursor:pointer">✕</button>
+    </div>
+    <p style="color:#8b95b0;font-size:13px;margin-bottom:16px;line-height:1.6">Kamu bisa melakukan transaksi tanpa perlu membuat akun. Cukup masukkan data pembelian di halaman utama dan lanjutkan ke pembayaran.</p>
+    <div style="background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);border-radius:10px;padding:12px 14px;font-size:13px;color:#eef0f6;margin-bottom:16px">
+      ✅ Pilih game → Pilih paket → Masukkan ID → Bayar<br>
+      📱 Tidak perlu daftar atau login!
+    </div>
+    <a href="/" onclick="document.getElementById('modal-tanpa-login').style.display='none'" style="display:block;width:100%;padding:13px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;text-align:center;text-decoration:none;cursor:pointer">⚡ Mulai Transaksi</a>
+  </div>
+</div>
+
+<!-- MODAL: Syarat & Ketentuan -->
+<div id="modal-syarat" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#161e2e;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700">📋 Syarat &amp; Ketentuan</h3>
+      <button onclick="document.getElementById('modal-syarat').style.display='none'" style="background:none;border:none;color:#8b95b0;font-size:22px;cursor:pointer">✕</button>
+    </div>
+    <div id="syarat-content" style="font-size:13px;color:#8b95b0;line-height:1.8">
+      <div style="text-align:center;padding:20px;color:#525d78">⏳ Memuat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Rating & Ulasan -->
+<div id="modal-rating" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#161e2e;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3 style="font-size:17px;font-weight:700">⭐ Rating &amp; Ulasan</h3>
+      <button onclick="document.getElementById('modal-rating').style.display='none'" style="background:none;border:none;color:#8b95b0;font-size:22px;cursor:pointer">✕</button>
+    </div>
+    <div id="rating-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <div style="text-align:center;padding:20px;color:#525d78">⏳ Memuat ulasan...</div>
+    </div>
+    <div id="rating-form-wrap" style="border-top:1px solid rgba(255,255,255,0.07);padding-top:16px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">Tulis Ulasan</div>
+      <div id="rating-stars" style="display:flex;gap:6px;margin-bottom:10px;font-size:28px;cursor:pointer">
+        <span onclick="setRating(1)" data-star="1">☆</span>
+        <span onclick="setRating(2)" data-star="2">☆</span>
+        <span onclick="setRating(3)" data-star="3">☆</span>
+        <span onclick="setRating(4)" data-star="4">☆</span>
+        <span onclick="setRating(5)" data-star="5">☆</span>
+      </div>
+      <textarea id="rating-text" placeholder="Ceritakan pengalaman kamu..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 14px;font-size:13px;color:#eef0f6;outline:none;resize:vertical;min-height:80px;font-family:inherit;margin-bottom:10px"></textarea>
+      <div id="rating-msg" style="display:none;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:8px"></div>
+      <button onclick="submitRating()" style="width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">⭐ Kirim Ulasan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAINTENANCE SCREEN -->
+<div id="maint-screen" class="maint" style="display:none">
+  <div style="font-size:48px">🔧</div>
+  <h2>Sedang Maintenance</h2>
+  <p>Kami sedang melakukan pemeliharaan.<br>Silakan kembali beberapa saat lagi.</p>
+</div>
+
+<div id="main-wrap">
+
+  <!-- HERO BANNER SLIDER -->
+  <div class="hero-wrap" id="hero-slider">
+    <!-- Default slide (will be replaced by DB banners) -->
+    <div class="hero-slide active">
+      <div class="hero-slide-default">
+        <div class="hero-bg"></div>
+        <div class="hero-text-wrap">
+          <div class="hero-badge">Only at GameFlash</div>
+          <div class="hero-title">TOPUP LEGAL<br><span class="highlight">GAPERLU MAHAL!</span></div>
+          <div class="hero-sub">Murah, Lengkap dan Terpercaya</div>
+          <div class="hero-games-row">
+            <div class="hero-game-icon">🎮</div>
+            <div class="hero-game-icon">⚔️</div>
+            <div class="hero-game-icon">🔥</div>
+            <div class="hero-game-icon">🎯</div>
+          </div>
+        </div>
+        <div class="hero-char">
+          <div class="hero-char-emoji">🦸</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-dots" id="hero-dots">
+      <div class="hero-dot active" onclick="goSlide(0)"></div>
+    </div>
+  </div>
+
+  <!-- POPULER -->
+  <div class="section-title">
+    <span class="icon">🔥</span>
+    <span>Populer</span>
+  </div>
+  <div class="pop-grid" id="pop-grid">
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+    <div class="skel" style="height:78px;border-radius:12px;"></div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div style="padding:16px 0 4px;">
+    <div class="cat-scroll-wrap">
+      <div class="cat-tabs" id="cat-tabs">
+        <button class="cat-tab active" data-cat="game" onclick="setCat(this)">ISI ULANG GAME</button>
+        <button class="cat-tab" data-cat="pulsa" onclick="setCat(this)">PULSA REGULER</button>
+        <button class="cat-tab" data-cat="ewallet" onclick="setCat(this)">SALDO EMONEY</button>
+        <button class="cat-tab" data-cat="voucher" onclick="setCat(this)">PERMAINAN VOUCHER</button>
+        <button class="cat-tab" data-cat="streaming" onclick="setCat(this)">STREAMING TV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION HEADER -->
+  <div class="section-title" id="cat-section-title" style="padding-top:10px;">
+    <span>Isi Ulang Game</span>
+  </div>
+
+  <!-- GAMES GRID -->
+  <div class="games-section">
+    <div class="games-grid" id="cat-grid">
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:12px;"></div>
+    </div>
+  </div>
+
+  <!-- SHOW MORE -->
+  <div class="show-more-wrap">
+    <button class="show-more-btn" id="show-more-btn" onclick="showMore()">TAMPILKAN LEBIH BANYAK ↓</button>
+  </div>
+
+</div><!-- #main-wrap -->
+
+<!-- FLOATING CS -->
+<a id="cs-btn" href="#" target="_blank" rel="noopener" title="Hubungi CS" style="display:none;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.535 5.845L.057 23.486a.5.5 0 0 0 .612.612l5.684-1.49A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.688-.528-5.207-1.442l-.376-.224-3.879 1.018 1.023-3.783-.238-.388A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+  <span>Hubungi CS</span>
+</a>
+
+<script>
+let GAMES = [], CFG = {};
+let currentCat = 'game';
+let showCount = 8; // how many to show initially
+
+const GAME_THEMES = {
+  'mobile-legends':        { cls:'gc-ml',      emoji:'⚔️' },
+  'mobile-legends-region': { cls:'gc-ml',      emoji:'🗺️' },
+  'free-fire':             { cls:'gc-ff',      emoji:'🔥' },
+  'free-fire-max':         { cls:'gc-ff',      emoji:'💥' },
+  'pubgm':                 { cls:'gc-pubg',    emoji:'🪖' },
+  'valorant':              { cls:'gc-val',     emoji:'🎯' },
+  'genshin-impact':        { cls:'gc-genshin', emoji:'🌸' },
+  'honkai-star-rail':      { cls:'gc-honkai',  emoji:'🚂' },
+  'roblox':                { cls:'gc-def',     emoji:'🟥' },
+  'telkomsel':             { cls:'gc-telkom',  emoji:'📱' },
+};
+
+const CAT_LABELS = {
+  game: 'Isi Ulang Game',
+  pulsa: 'Pulsa Reguler',
+  ewallet: 'Saldo Emoney',
+  voucher: 'Permainan Voucher',
+  streaming: 'Streaming TV',
+  lainnya: 'Lainnya'
+};
+
+const BADGE_CLASS = {
+  game: 'gc-badge-topup',
+  pulsa: 'gc-badge-pulsa',
+  ewallet: 'gc-badge-ewallet',
+  streaming: 'gc-badge-streaming',
+  voucher: 'gc-badge-voucher',
+  default: 'gc-badge-topup'
+};
+
+const BADGE_TEXT = {
+  game: 'Isi Ulang',
+  pulsa: 'Pulsa',
+  ewallet: 'E-Money',
+  streaming: 'Streaming',
+  voucher: 'Voucher',
+  default: 'Top Up'
+};
+
+const _ICON_MAP = {};
+
+function getTheme(g) {
+  if (GAME_THEMES[g.code]) return GAME_THEMES[g.code];
+  const k = Object.keys(GAME_THEMES).find(k => g.code && g.code.toLowerCase().includes(k.replace(/-/g,'').substring(0,6)));
+  return k ? GAME_THEMES[k] : { cls:'gc-def', emoji: g.icon || '🎮' };
+}
+
+function gameImg(g, size) {
+  const t = getTheme(g);
+  if (g.icon_url) {
+    const key = 'gimg_' + (g.code||'x').replace(/[^a-z0-9]/gi,'_') + '_' + size;
+    _ICON_MAP[key] = g.icon_url;
+    if (size === 'full') {
+      return `<img id="${key}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="gc-thumb-emoji" style="display:none">${t.emoji}</span>`;
+    }
+    return `<img id="${key}" style="width:${size};height:${size};border-radius:10px;object-fit:cover;" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="font-size:24px;display:none">${t.emoji}</span>`;
+  }
+  return `<span ${size==='full'?'class="gc-thumb-emoji"':'style="font-size:24px"'}>${t.emoji}</span>`;
+}
+
+function applyIconSrcs() {
+  Object.keys(_ICON_MAP).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.src) el.src = _ICON_MAP[id];
+  });
+}
+
+const DEFAULT_GAMES = [
+  {code:'mobile-legends',        name:'Mobile Legends B',       icon:'⚔️', icon_url:null, category:'game',  params:'userId,zoneId'},
+  {code:'valorant',              name:'Valorant',               icon:'🎯', icon_url:null, category:'game',  params:'userId'},
+  {code:'free-fire',             name:'Free Fire',              icon:'🔥', icon_url:null, category:'game',  params:'userId'},
+  {code:'mobile-legends-region', name:'Mobile Legends A',       icon:'🗺️', icon_url:null, category:'game',  params:'userId,zoneId'},
+  {code:'telkomsel',             name:'Telkomsel',              icon:'📱', icon_url:null, category:'pulsa', params:'phone'},
+  {code:'pembalap-ulung',        name:'Pembalap Ulung',         icon:'🏎️', icon_url:null, category:'game',  params:'userId'},
+  {code:'honkai-star-rail',      name:'Kereta Api Bintang Honkai',icon:'🚂',icon_url:null, category:'game', params:'userId,zone'},
+  {code:'ml-joker',              name:'Joker Mobile Legends Peringkat',icon:'🃏',icon_url:null, category:'game', params:'userId'},
+  {code:'arena-breakout',        name:'Arena Breakout',         icon:'💥', icon_url:null, category:'game',  params:'userId'},
+  {code:'arena-keberanian',      name:'Arena Keberanian',       icon:'🛡️', icon_url:null, category:'game',  params:'userId'},
+  {code:'jadilah-raja',          name:'Jadilah Raja',           icon:'👑', icon_url:null, category:'game',  params:'userId'},
+  {code:'cod-mobile',            name:'Call of Duty Mobile',    icon:'🔫', icon_url:null, category:'game',  params:'userId'},
+  {code:'chimerland',            name:'Negeri Chimera',         icon:'🦎', icon_url:null, category:'game',  params:'userId'},
+  {code:'dragon-raja',           name:'Raja Naga',              icon:'🐉', icon_url:null, category:'game',  params:'userId'},
+  {code:'dragonheir',            name:'Dewa-Dewa Pendiam',      icon:'⚔️', icon_url:null, category:'game',  params:'userId'},
+  {code:'free-fire-max',         name:'Free Fire Max',          icon:'💥', icon_url:null, category:'game',  params:'userId'},
+  {code:'garena-undawn',         name:'Garena Undawn',          icon:'🌙', icon_url:null, category:'game',  params:'userId'},
+  {code:'genshin-impact',        name:'Genshin Impact',         icon:'🌸', icon_url:null, category:'game',  params:'userId,zone'},
+];
+
+async function safeFetch(url) {
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+async function init() {
+  const [sD, gD, bD] = await Promise.all([
+    safeFetch('/api/settings'),
+    safeFetch('/api/games'),
+    safeFetch('/api/banners'),
+  ]);
+
+  if (sD && sD.success) {
+    CFG = sD.settings;
+    if (CFG.site_name) {
+      document.getElementById('site-name').textContent = CFG.site_name;
+      document.getElementById('menu-site-name').textContent = CFG.site_name;
+    }
+    if (CFG.feature_maintenance === '1') {
+      document.getElementById('main-wrap').style.display = 'none';
+      document.getElementById('maint-screen').style.display = '';
+      return;
+    }
+    if (CFG.contact_wa) {
+      const num = CFG.contact_wa.replace(/\D/g, '');
+      const csBtn = document.getElementById('cs-btn');
+      csBtn.href = 'https://wa.me/' + num;
+      csBtn.style.display = 'flex';
+    }
+  }
+
+  if (bD && bD.success && bD.banners && bD.banners.length) {
+    renderBanners(bD.banners);
+  }
+
+  GAMES = (gD && gD.success && gD.games && gD.games.length) ? gD.games : DEFAULT_GAMES;
+
+  renderPopuler();
+  renderCatSection('game');
+  requestAnimationFrame(applyIconSrcs);
+}
+
+function renderBanners(banners) {
+  const slider = document.getElementById('hero-slider');
+  const dotsEl = document.getElementById('hero-dots');
+  slider.querySelectorAll('.hero-slide').forEach(s => s.remove());
+
+  banners.forEach((b, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
+    if (b.image_url) {
+      slide.innerHTML = `<img src="${b.image_url}" alt="${b.title}" style="width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.parentElement.innerHTML='<div class=hero-slide-default><div class=hero-bg></div><div class=hero-text-wrap><div class=hero-title><span class=highlight>${b.title}</span></div></div></div>'">`;
+    } else {
+      slide.innerHTML = `<div class="hero-slide-default"><div class="hero-bg"></div><div class="hero-text-wrap"><div class="hero-title"><span class="highlight">${b.title}</span></div></div></div>`;
+    }
+    if (b.link_url) { slide.style.cursor = 'pointer'; slide.onclick = () => window.open(b.link_url, '_blank'); }
+    slider.insertBefore(slide, dotsEl);
+  });
+
+  dotsEl.innerHTML = banners.map((_, i) => `<div class="hero-dot${i===0?' active':''}" onclick="goSlide(${i})"></div>`).join('');
+  slideIdx = 0;
+  clearInterval(sliderTimer);
+  sliderTimer = setInterval(() => goSlide((slideIdx + 1) % banners.length), 4000);
+}
+
+function renderPopuler() {
+  const trending = GAMES.filter(g => g.is_trending == 1 || g.is_trending === true);
+  const popGames = trending.length ? trending : GAMES.slice(0, 6);
+  const grid = document.getElementById('pop-grid');
+
+  grid.innerHTML = popGames.map(g => {
+    const t = getTheme(g);
+    return `<div class="pop-card" onclick="goOrder('${g.code}')">
+      <div class="pop-thumb ${t.cls}">${gameImg(g, '56px')}</div>
+      <div class="pop-info">
+        <div class="pop-name">${g.name}</div>
+        <div class="pop-sub">Top Up</div>
+      </div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(applyIconSrcs);
+}
+
+function renderCatSection(cat) {
+  currentCat = cat;
+  showCount = 8;
+  const title = CAT_LABELS[cat] || 'Layanan';
+  document.getElementById('cat-section-title').innerHTML = `<span>${title}</span>`;
+
+  if (cat === 'voucher') { renderVoucherSection(); return; }
+
+  const filtered = GAMES.filter(g => (g.category || 'game') === cat);
+  renderGrid(filtered, cat);
+}
+
+function renderGrid(items, cat) {
+  const grid = document.getElementById('cat-grid');
+  const badgeCls = BADGE_CLASS[cat] || 'gc-badge-topup';
+  const badgeTxt = BADGE_TEXT[cat] || 'Top Up';
+  const showBtn = document.getElementById('show-more-btn');
+
+  const toShow = items.slice(0, showCount);
+  const hasMore = items.length > showCount;
+
+  if (!toShow.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 16px;">
+      <div style="font-size:36px;margin-bottom:10px">🚧</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;">Segera Hadir</div>
+      <div style="font-size:12px;color:var(--text2)">Belum ada produk di kategori ini.</div>
+    </div>`;
+    showBtn.style.display = 'none';
+    return;
+  }
+
+  grid.innerHTML = toShow.map(g => {
+    const t = getTheme(g);
+    const dest = (g.params === 'none' && g.link_url) ? g.link_url : ('/order?game=' + g.code);
+    return `<div class="game-card" onclick="window.location.href='${dest}'">
+      <div class="gc-thumb ${t.cls}" style="position:relative;">
+        ${gameImg(g, 'full')}
+        <div class="gc-badge ${badgeCls}">${badgeTxt}</div>
+      </div>
+      <div class="gc-info">
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-pub">${g.category === 'pulsa' ? 'Provider' : 'Top Up'}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  showBtn.style.display = hasMore ? 'block' : 'none';
+  showBtn.textContent = `TAMPILKAN LEBIH BANYAK ↓`;
+
+  requestAnimationFrame(applyIconSrcs);
+}
+
+function showMore() {
+  showCount += 8;
+  const cat = currentCat;
+  if (cat === 'voucher') return;
+  const filtered = GAMES.filter(g => (g.category || 'game') === cat);
+  renderGrid(filtered, cat);
+}
+
+function renderVoucherSection() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = `<div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>`;
+  document.getElementById('show-more-btn').style.display = 'none';
+
+  fetch('/api/vouchers').then(r => r.json()).then(d => {
+    if (!d.success || !d.vouchers || !d.vouchers.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 16px;color:var(--text3);">Belum ada voucher</div>`;
+      return;
+    }
+    grid.innerHTML = d.vouchers.map(v => {
+      const dest = v.link_url || '/order?game=' + v.code;
+      const imgEl = v.icon_url ? `<img src="${v.icon_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">` : '';
+      return `<div class="game-card" onclick="window.location.href='${dest}'">
+        <div class="gc-thumb gc-def" style="position:relative;">${imgEl}<span class="gc-thumb-emoji" ${v.icon_url?'style="display:none"':''}>${v.icon||'🎟️'}</span>
+          <div class="gc-badge gc-badge-voucher">VOUCHER</div>
+        </div>
+        <div class="gc-info"><div class="gc-name">${v.name}</div><div class="gc-pub">Voucher</div></div>
+      </div>`;
+    }).join('');
+  }).catch(() => {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">Gagal memuat</div>`;
+  });
+}
+
+function setCat(el) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderCatSection(el.dataset.cat);
+}
+
+function goOrder(code) {
+  window.location.href = '/order?game=' + code;
+}
+
+function filterGames(q) {
+  const res = document.getElementById('search-results');
+  if (!q.trim()) { res.innerHTML = ''; return; }
+  const filtered = GAMES.filter(g => g.name.toLowerCase().includes(q.toLowerCase()));
+  res.innerHTML = filtered.map(g => {
+    const t = getTheme(g);
+    return `<div class="sr-item" onclick="document.getElementById('search-overlay').style.display='none';goOrder('${g.code}')">
+      <div style="width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;" class="${t.cls}">${t.emoji}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">${g.name}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px;">Top Up</div>
+      </div>
+    </div>`;
+  }).join('') || `<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px">Tidak ditemukan</div>`;
+}
+
+// Menu
+function openMenu() {
+  const menu = document.getElementById('side-menu');
+  const panel = document.getElementById('side-panel');
+  menu.style.display = 'block';
+  setTimeout(() => panel.style.transform = 'translateX(0)', 10);
+  renderSidebarSosmed();
+}
+function closeMenu() {
+  const panel = document.getElementById('side-panel');
+  panel.style.transform = 'translateX(-100%)';
+  setTimeout(() => document.getElementById('side-menu').style.display = 'none', 300);
+}
+
+// Slider
+let slideIdx = 0, sliderTimer;
+const slides = () => document.querySelectorAll('.hero-slide');
+const dots = () => document.querySelectorAll('.hero-dot');
+function goSlide(n) {
+  slides().forEach((s, i) => s.classList.toggle('active', i === n));
+  dots().forEach((d, i) => d.classList.toggle('active', i === n));
+  slideIdx = n;
+}
+sliderTimer = setInterval(() => goSlide((slideIdx + 1) % Math.max(slides().length, 1)), 4000);
+
+// User Session
+function renderUserSession() {
+  const token = localStorage.getItem('gf_user_token');
+  const userRaw = localStorage.getItem('gf_user');
+  const wrap = document.getElementById('sidebar-user-wrap');
+  // Show/hide login-only and guest items
+  document.querySelectorAll('.menu-item-login-only').forEach(el => el.style.display = (token && userRaw) ? 'flex' : 'none');
+  document.querySelectorAll('.menu-item-guest').forEach(el => el.style.display = (token && userRaw) ? 'none' : 'flex');
+  if (token && userRaw) {
+    try {
+      const user = JSON.parse(userRaw);
+      const initial = (user.name || 'U')[0].toUpperCase();
+      wrap.innerHTML = `<a href="/dashboard" style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.07);text-decoration:none;background:rgba(230,57,70,0.08);">
+        <div style="width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;">${initial}</div>
+        <div><div style="font-size:15px;font-weight:700;color:#fff;">${user.name||'User'}</div><div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px;">Lihat Dashboard →</div></div>
+      </a>`;
+    } catch(e) { localStorage.removeItem('gf_user_token'); localStorage.removeItem('gf_user'); wrap.innerHTML = ''; }
+  } else {
+    wrap.innerHTML = '';
+  }
+}
+
+function renderLoggedOut(wrap) { wrap.innerHTML = ''; }
+
+function doLogout() {
+  localStorage.removeItem('gf_user_token');
+  localStorage.removeItem('gf_user');
+  renderUserSession();
+}
+
+renderUserSession();
+init();
+</script>
+</body>
+</html>

@@ -1203,7 +1203,25 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
           </div>
           <div class="field-group" style="margin-top:12px"><label class="field-label">Judul Pop-up</label><input type="text" id="popup-title" placeholder="Promo Hari Ini!"></div>
           <div class="field-group" style="margin-top:10px"><label class="field-label">Isi Pesan</label><textarea id="popup-msg" placeholder="Dapatkan diskon 20% untuk semua top up hari ini..."></textarea></div>
-          <div class="field-group" style="margin-top:10px"><label class="field-label">Gambar Pop-up (URL)</label><input type="text" id="popup-img" placeholder="https://..."></div>
+          <div class="field-group" style="margin-top:10px">
+            <label class="field-label">Gambar Pop-up</label>
+            <div class="dropzone" id="dz-popup" onclick="document.getElementById('popup-img-file').click()" style="cursor:pointer">
+              <input type="file" id="popup-img-file" accept="image/*" style="display:none" onchange="handlePopupImage(this)">
+              <div id="dz-popup-empty" class="dz-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="width:32px;height:32px;color:var(--text3)"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+                <div class="dz-empty-text">Klik untuk upload gambar pop-up</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">JPG, PNG, WebP — maks 2MB</div>
+              </div>
+              <div id="dz-popup-preview" style="display:none;position:relative">
+                <img id="popup-img-preview" src="" style="width:100%;max-height:180px;object-fit:cover;display:block;border-radius:var(--radius-sm)">
+                <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.55);padding:6px 10px;display:flex;align-items:center;justify-content:space-between;border-radius:0 0 var(--radius-sm) var(--radius-sm)">
+                  <span id="popup-img-fname" style="font-size:11px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px"></span>
+                  <button onclick="removePopupImage(event)" style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer">Hapus</button>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="popup-img" value="">
+          </div>
           <button class="btn primary" style="margin-top:12px;width:100%" onclick="savePopup()">💾 Simpan Pop-up</button>
         </div>
       </div>
@@ -5146,9 +5164,29 @@ async function deleteBannerBP(id) {
   } catch { toast('Gagal menghapus banner', 'error'); }
 }
 function openPopupModal() {
-  // Tombol "+ Tambah Pop-up" fokus ke form popup yang sudah ada di halaman
   document.getElementById('popup-title').focus();
   document.getElementById('popup-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function handlePopupImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Ukuran gambar maksimal 2MB', 'error'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('popup-img').value = e.target.result;
+    document.getElementById('popup-img-preview').src = e.target.result;
+    document.getElementById('popup-img-fname').textContent = file.name;
+    document.getElementById('dz-popup-preview').style.display = '';
+    document.getElementById('dz-popup-empty').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+function removePopupImage(e) {
+  e.stopPropagation();
+  document.getElementById('popup-img').value = '';
+  document.getElementById('popup-img-file').value = '';
+  document.getElementById('dz-popup-preview').style.display = 'none';
+  document.getElementById('dz-popup-empty').style.display = '';
 }
 async function loadPopupSettings() {
   try {
@@ -5161,8 +5199,14 @@ async function loadPopupSettings() {
       document.getElementById('popup-title').value = s.popup_title;
     if ((s.popup_message || s.popup_msg) && document.getElementById('popup-msg'))
       document.getElementById('popup-msg').value = s.popup_message || s.popup_msg;
-    if ((s.popup_image || s.popup_img) && document.getElementById('popup-img'))
-      document.getElementById('popup-img').value = s.popup_image || s.popup_img;
+    const imgVal = s.popup_image || s.popup_img || '';
+    if (imgVal && document.getElementById('popup-img')) {
+      document.getElementById('popup-img').value = imgVal;
+      document.getElementById('popup-img-preview').src = imgVal;
+      document.getElementById('popup-img-fname').textContent = 'gambar-popup';
+      document.getElementById('dz-popup-preview').style.display = '';
+      document.getElementById('dz-popup-empty').style.display = 'none';
+    }
   } catch {}
 }
 async function savePopupStatus(active) {

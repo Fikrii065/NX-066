@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kategori Layanan — Admin Dashboard</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f0;--surface:#fff;--surface2:#f8f8f5;--surface3:#f0f0ea;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --accent:#6c47ff;--accent-bg:#eeebff;--accent-text:#3d1fa8;
+  --green:#0f6e56;--green-bg:#e1f5ee;
+  --red:#a32d2d;--red-bg:#fcebeb;
+  --amber:#854f0b;--amber-bg:#faeeda;
+  --blue:#185fa5;--blue-bg:#e6f1fb;
+  --cyan:#0e7490;--cyan-bg:#e0f7fa;
+  --sidebar:220px;--radius:10px;--radius-sm:7px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:18px 16px 14px;display:flex;align-items:center;gap:9px;border-bottom:.5px solid var(--border)}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:16px;height:16px;fill:#fff}
+.logo-name{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--text3)}
+.nav{padding:10px 8px;flex:1}
+.nav-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:background .12s,color .12s;user-select:none;margin-bottom:1px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent-text)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:12px;border-top:.5px solid var(--border)}
+.admin-badge{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer}
+.admin-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.admin-name{font-size:12px;font-weight:500}
+.admin-role{font-size:10px;color:var(--text3)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:.5px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.hamburger{display:none;align-items:center;justify-content:center;width:32px;height:32px;background:none;border:.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer}
+.hamburger svg{width:16px;height:16px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-admin{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:var(--radius-sm);border:.5px solid var(--border2);background:var(--surface);cursor:pointer}
+.topbar-admin:hover{background:var(--surface2)}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.topbar-admin-info{text-align:right}
+.topbar-admin-name{font-size:12px;font-weight:500}
+.topbar-admin-role{font-size:10px;color:var(--text3)}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299}
+.sidebar-backdrop.open{display:block}
+.page{padding:24px;flex:1;overflow-y:auto}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title-row{display:flex;align-items:center;gap:10px}
+.page-ttl{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.breadcrumb{font-size:12px;color:var(--accent);cursor:pointer}
+.btn{height:34px;padding:0 14px;border:.5px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text);transition:background .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit;line-height:1}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{opacity:.9}
+.btn svg{width:13px;height:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.filter-bar{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.filter-label{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.filter-select-wrap{position:relative;display:flex}
+.filter-select-wrap select{flex:1;height:36px;border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 36px 0 12px;font-size:13px;color:var(--text);background:var(--surface);appearance:none;cursor:pointer;outline:none;transition:border-color .15s;font-family:inherit}
+.filter-select-wrap select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,71,255,.08)}
+.filter-btn{width:36px;height:36px;background:var(--accent);color:#fff;border:none;border-radius:0 var(--radius-sm) var(--radius-sm) 0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-1px}
+.filter-btn svg{width:14px;height:14px;fill:#fff}
+.search-wrap{position:relative;display:flex}
+.search-input{flex:1;height:36px;border:.5px solid var(--border2);border-radius:var(--radius-sm) 0 0 var(--radius-sm);padding:0 12px;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s;font-family:inherit}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,71,255,.08)}
+.search-input::placeholder{color:var(--text3)}
+.search-btn{width:36px;height:36px;background:var(--accent);color:#fff;border:none;border-radius:0 var(--radius-sm) var(--radius-sm) 0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.search-btn svg{width:14px;height:14px;fill:#fff}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.card-head{background:var(--accent);padding:12px 16px;display:flex;align-items:center;gap:8px}
+.card-head-title{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:7px}
+.card-head-title svg{width:14px;height:14px;fill:#fff;opacity:.85}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--surface2);border-bottom:.5px solid var(--border);white-space:nowrap}
+th .sort-icon{display:inline-flex;flex-direction:column;margin-left:4px;gap:1px;opacity:.4;vertical-align:middle}
+th .sort-icon span{display:block;width:0;height:0}
+th .sort-icon span:first-child{border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:4px solid currentColor}
+th .sort-icon span:last-child{border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid currentColor}
+td{padding:10px 12px;border-bottom:.5px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.no-col{width:60px;color:var(--text3);font-size:12px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:20px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px)}
+.toggle-cell{display:flex;align-items:center;gap:6px}
+.toggle-label{font-size:11px;font-weight:500;color:var(--text3)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.red{background:var(--red-bg);color:var(--red)}
+.badge.blue{background:var(--blue-bg);color:var(--blue)}
+.badge.amber{background:var(--amber-bg);color:var(--amber)}
+.action-row{display:flex;gap:5px;align-items:center}
+.act-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s,transform .1s}
+.act-btn:hover{opacity:.85;transform:translateY(-1px)}
+.act-btn:active{transform:scale(.95)}
+.act-btn.detail{background:var(--cyan-bg);color:var(--cyan)}
+.act-btn.edit{background:var(--amber-bg);color:var(--amber)}
+.act-btn.del{background:var(--red-bg);color:var(--red)}
+.act-btn svg{width:13px;height:13px;fill:currentColor}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);border:.5px solid var(--border);width:620px;max-width:100%;animation:modalIn .18s ease;margin:auto}
+@keyframes modalIn{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;background:var(--accent);padding:13px 18px;border-radius:var(--radius) var(--radius) 0 0}
+.modal-title{font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.modal-title svg{width:14px;height:14px;fill:#fff;opacity:.85}
+.modal-close{width:26px;height:26px;border:none;background:rgba(255,255,255,.2);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;line-height:1}
+.modal-close:hover{background:rgba(255,255,255,.35)}
+.modal-body{padding:20px 22px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;padding:14px 22px;border-top:.5px solid var(--border)}
+
+/* Form */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field-label{font-size:13px;font-weight:500;color:var(--text)}
+.field-label .opt{font-size:11px;font-weight:400;color:var(--accent);margin-left:3px}
+.field-label .opt.red{color:var(--red)}
+.field input,.field select,.field textarea{height:36px;border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 10px;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s;font-family:inherit;width:100%}
+.field textarea{height:82px;padding:8px 10px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,71,255,.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3)}
+.field-hint{font-size:11px;color:var(--text3)}
+
+/* Dropzone */
+.dropzone{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);background:var(--surface2);position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s;min-height:120px}
+.dropzone:hover{border-color:var(--accent)}
+.dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;width:100%;height:100%}
+.dz-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;gap:8px;text-align:center;min-height:120px}
+.dz-empty svg{width:36px;height:36px;color:var(--text3)}
+.dz-empty-text{font-size:12px;color:var(--text3)}
+.dz-preview{position:relative}
+.dz-preview img{width:100%;max-height:200px;object-fit:cover;display:block}
+.dz-overlay{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);padding:6px 12px;display:flex;align-items:center;justify-content:space-between}
+.dz-fname{font-size:11px;color:#fff}
+.dz-replace{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);font-size:12px;pointer-events:none}
+.dz-remove{background:rgba(255,255,255,.25);border:none;color:#fff;font-size:11px;padding:3px 10px;border-radius:4px;cursor:pointer;pointer-events:all;position:relative;z-index:3}
+.dz-remove:hover{background:rgba(255,255,255,.4)}
+
+/* Toggle row in modal */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px;background:var(--surface2)}
+.toggle-row-label{font-size:13px;font-weight:500;color:var(--text)}
+.toggle-row-hint{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Section divider */
+.section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding-bottom:6px;border-bottom:.5px solid var(--border);margin-bottom:12px;margin-top:4px}
+
+/* Rich toolbar */
+.rich-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:5px 8px;background:var(--surface2);border:.5px solid var(--border2);border-bottom:none;border-radius:var(--radius-sm) var(--radius-sm) 0 0;align-items:center}
+.rich-btn{width:26px;height:26px;border:none;background:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2)}
+.rich-btn:hover{background:var(--surface3)}
+.rich-btn svg{width:13px;height:13px;fill:currentColor}
+.rich-sep{width:1px;height:18px;background:var(--border2);margin:0 3px}
+.rich-select{height:24px;border:.5px solid var(--border2);border-radius:4px;font-size:11px;padding:0 5px;background:var(--surface);color:var(--text);outline:none;cursor:pointer;max-width:100px}
+.rich-content{border:.5px solid var(--border2);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);padding:10px 12px;min-height:100px;font-size:13px;color:var(--text);line-height:1.6;outline:none;font-family:inherit}
+.rich-content:focus{border-color:var(--accent)}
+.rich-content ol,.rich-content ul{padding-left:18px}
+
+/* Detail */
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:.5px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:var(--text3);font-size:12px}
+.detail-val{font-weight:500;color:var(--text);text-align:right}
+.confirm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px}
+.pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:16px;flex-wrap:wrap}
+.pg-btn{height:30px;min-width:30px;padding:0 10px;border:.5px solid var(--border2);border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text2);transition:background .12s;display:inline-flex;align-items:center;justify-content:center}
+.pg-btn:hover{background:var(--surface2)}
+.pg-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-info{font-size:12px;color:var(--text3);padding:0 6px}
+.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-text{font-size:13px}
+.shimmer{background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px;height:44px;margin-bottom:1px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;display:flex;align-items:center;gap:8px;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success .t-icon{color:#4ade80}
+.toast.error .t-icon{color:#f87171}
+@media(max-width:900px){.filter-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){
+  .sidebar{display:none;position:fixed;z-index:300;width:240px;height:100vh}
+  .sidebar.mobile-open{display:flex}
+  .hamburger{display:flex}
+  .filter-grid{grid-template-columns:1fr}
+  th.hide-sm,td.hide-sm{display:none}
+  .page{padding:14px}
+  .modal{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div><div class="logo-name">GameFlash</div><div class="logo-sub">Admin Panel</div></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Main Menu</div>
+    <div class="nav-item" onclick="location.href='dashboard.html'">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z"/></svg>Dashboard
+    </div>
+    <div class="nav-section">Super Admin</div>
+    <div class="nav-item" onclick="location.href='admin.html'">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>Admin
+    </div>
+    <div class="nav-item" onclick="location.href='pengguna.html'">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 8a3 3 0 100-6 3 3 0 000 6zm-3 6a5 5 0 0110 0H2zm9-10a2 2 0 110 4 2 2 0 010-4zm2 10a3 3 0 00-5.2-2H13a3 3 0 011 2.24V14z"/></svg>Pengguna
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 100 6A3 3 0 008 1zm0 8c-3.31 0-6 1.34-6 3v1h12v-1c0-1.66-2.69-3-6-3z"/></svg>Level Pengguna
+    </div>
+    <div class="nav-section">Layanan</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v1H1V3zm2 3h10v1H3V6zm2 3h6v1H5V9z"/></svg>Tipe Kategori
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2V2zm1 1v10h10V3H3z"/></svg>Kategori Layanan
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2.5 5 5.5.8-4 3.9.9 5.5L8 13.5 3.1 16.2l.9-5.5L0 6.8l5.5-.8z"/></svg>Layanan
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3z"/></svg>Provider
+    </div>
+    <div class="nav-section">Deposit &amp; Pembayaran</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v3H1V3zm0 5h14v5H1V8z"/></svg>Metode Pembayaran
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4h12a1 1 0 011 1v7a1 1 0 01-1 1H2a1 1 0 01-1-1V5a1 1 0 011-1zm6 5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>Deposit
+    </div>
+    <div class="nav-section">Pesanan</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12l-1.5 9H3.5L2 2zm3 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>Pesanan
+    </div>
+    <div class="nav-section">Log &amp; Laporan</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 5h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z"/></svg>Peningkatan Peng...
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zm-.75 3h1.5v4h-1.5V5zm0 5h1.5v1.5h-1.5V10z"/></svg>Mutasi Saldo
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <div class="admin-avatar">JD</div>
+      <div><div class="admin-name">John Doe</div><div class="admin-role">Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()">
+        <svg viewBox="0 0 18 18" fill="currentColor"><path d="M2 4h14v1.5H2V4zm0 4h14v1.5H2V8zm0 4h14v1.5H2V12z"/></svg>
+      </button>
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;color:var(--text3)"><path d="M9 3a6 6 0 100 12A6 6 0 009 3z"/><path d="M5 9c0-2.2 1.8-4 4-4"/></svg>
+    </div>
+    <div class="topbar-actions">
+      <div class="topbar-admin">
+        <div class="topbar-admin-info">
+          <div class="topbar-admin-name">John Doe</div>
+          <div class="topbar-admin-role">Admin</div>
+        </div>
+        <div class="topbar-avatar">JD</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="page-header">
+      <div class="page-title-row">
+        <div class="page-ttl">Kategori Layanan</div>
+        <span style="color:var(--text3)">|</span>
+        <div class="breadcrumb">Admin Dashboard</div>
+      </div>
+      <button class="btn" style="background:var(--surface2)" title="Grid view">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:15px;height:15px"><path d="M1 1h6v6H1V1zm8 0h6v6H9V1zM1 9h6v6H1V9zm8 0h6v6H9V9z"/></svg>
+      </button>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-grid">
+        <div>
+          <div class="filter-label">Filter Status</div>
+          <div class="filter-select-wrap">
+            <select id="filter-status" onchange="applyFilters()">
+              <option value="">Semua...</option>
+              <option value="1">Aktif</option>
+              <option value="0">Nonaktif</option>
+            </select>
+            <button class="filter-btn" onclick="applyFilters()"><svg viewBox="0 0 16 16"><path d="M1 3h14v2L9 11v4l-2-1V11L1 5V3z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <div class="filter-label">Filter Additional Data</div>
+          <div class="filter-select-wrap">
+            <select id="filter-additional" onchange="applyFilters()">
+              <option value="">Semua...</option>
+              <option value="ya">Ya</option>
+              <option value="tidak">Tidak</option>
+            </select>
+            <button class="filter-btn" onclick="applyFilters()"><svg viewBox="0 0 16 16"><path d="M1 3h14v2L9 11v4l-2-1V11L1 5V3z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <div class="filter-label">Filter Check ID</div>
+          <div class="filter-select-wrap">
+            <select id="filter-checkid" onchange="applyFilters()">
+              <option value="">Semua...</option>
+              <option value="ya">Ya</option>
+              <option value="tidak">Tidak</option>
+            </select>
+            <button class="filter-btn" onclick="applyFilters()"><svg viewBox="0 0 16 16"><path d="M1 3h14v2L9 11v4l-2-1V11L1 5V3z"/></svg></button>
+          </div>
+        </div>
+        <div>
+          <div class="filter-label">Cari</div>
+          <div class="search-wrap">
+            <input type="text" id="search-input" class="search-input" placeholder="Ketik sesuatu..." oninput="debounceSearch()" onkeydown="if(event.key==='Enter')applyFilters()">
+            <button class="search-btn" onclick="applyFilters()"><svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1.007 1.007 0 00-.115-.1zM12 6.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <button class="btn primary" onclick="openModal('modal-produk-baru')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/></svg>
+        Tambah Kategori Layanan
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title">
+          <svg viewBox="0 0 16 16"><path d="M2 2h12v1.5H2V2zm0 4h12v1.5H2V6zm0 4h8v1.5H2V10z"/></svg>
+          Kategori Layanan
+          <span id="total-badge" style="background:rgba(255,255,255,.2);font-size:11px;padding:1px 8px;border-radius:20px;margin-left:4px"></span>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="no-col">ID <span class="sort-icon"><span></span><span></span></span></th>
+              <th>NAMA <span class="sort-icon"><span></span><span></span></span></th>
+              <th class="hide-sm">ZONE ID</th>
+              <th class="hide-sm">ADD. DATA</th>
+              <th class="hide-sm">CHECK ID</th>
+              <th>STATUS</th>
+              <th>AKSI</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-body">
+            <tr><td colspan="7"><div class="shimmer"></div><div class="shimmer"></div><div class="shimmer"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- MODAL: Tambah Produk Baru -->
+<div class="modal-overlay" id="modal-produk-baru">
+  <div class="modal" style="width:480px">
+    <div class="modal-header" style="background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:18px 20px 10px">
+      <div class="modal-title" style="color:var(--text);font-size:16px;font-weight:700;gap:10px">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:18px;height:18px;color:var(--text)"><path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/></svg>
+        <span style="color:var(--text)">Tambah Produk Baru</span>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0 20px 8px">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Pilih jenis produk yang ingin ditambahkan:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="produk-card" onclick="pilihProduk('game')">
+          <div class="produk-icon">🎮</div>
+          <div class="produk-name">Game</div>
+          <div class="produk-sub">Mobile Legends, Free Fire, PUBG, dll</div>
+        </div>
+        <div class="produk-card" onclick="pilihProduk('voucher')">
+          <div class="produk-icon">🎫</div>
+          <div class="produk-name">Voucher</div>
+          <div class="produk-sub">UniPin, Razer Gold, Steam, dll</div>
+        </div>
+        <div class="produk-card" onclick="pilihProduk('pulsa')">
+          <div class="produk-icon">📱</div>
+          <div class="produk-name">Pulsa & Data</div>
+          <div class="produk-sub">Telkomsel, Indosat, XL, dll</div>
+        </div>
+        <div class="produk-card" onclick="pilihProduk('ewallet')">
+          <div class="produk-icon">💳</div>
+          <div class="produk-name">E-Wallet</div>
+          <div class="produk-sub">GoPay, OVO, DANA, ShopeePay, dll</div>
+        </div>
+        <div class="produk-card" onclick="pilihProduk('streaming')">
+          <div class="produk-icon">📺</div>
+          <div class="produk-name">Streaming</div>
+          <div class="produk-sub">Netflix, Spotify, YouTube Premium, dll</div>
+        </div>
+        <div class="produk-card" onclick="pilihProduk('lainnya')">
+          <div class="produk-icon">📦</div>
+          <div class="produk-name">Lainnya</div>
+          <div class="produk-sub">Joki, Custom, atau kategori lainnya</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;border-top:none;padding-top:8px">
+      <button class="btn" onclick="closeModal('modal-produk-baru')">Batal</button>
+    </div>
+  </div>
+</div>
+<style>
+.produk-card{border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px 14px 12px;cursor:pointer;transition:border-color .15s,background .15s;background:var(--surface)}
+.produk-card:hover{border-color:var(--accent);background:var(--accent-bg)}
+.produk-icon{font-size:24px;margin-bottom:8px;line-height:1}
+.produk-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.produk-sub{font-size:11px;color:var(--text3);line-height:1.4}
+</style>
+
+<!-- MODAL: Tambah / Edit -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+        <span id="form-title">Tambah Kategori Layanan</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-form')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="form-id">
+
+      <div class="field">
+        <label class="field-label">Nama</label>
+        <input type="text" id="form-name" placeholder="Nama kategori">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Gambar</label>
+        <div class="dropzone" id="dz-img">
+          <input type="file" id="fi-img" accept="image/*" onchange="handleFile('dz-img','fi-img','pv-img','pv-img-tag','pv-img-name','hid-img')">
+          <div class="dz-empty" id="dz-img-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+            <div class="dz-empty-text">Drag and drop or click to upload</div>
+          </div>
+          <div class="dz-preview" id="pv-img" style="display:none">
+            <img id="pv-img-tag" src="" alt="">
+            <div class="dz-replace">Drag and drop or click to replace</div>
+            <div class="dz-overlay">
+              <span class="dz-fname" id="pv-img-name"></span>
+              <button class="dz-remove" onclick="rmFile(event,'dz-img','pv-img','hid-img')">REMOVE</button>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="hid-img">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Gambar Petunjuk</label>
+        <div class="dropzone" id="dz-guide">
+          <input type="file" id="fi-guide" accept="image/*" onchange="handleFile('dz-guide','fi-guide','pv-guide','pv-guide-tag','pv-guide-name','hid-guide')">
+          <div class="dz-empty" id="dz-guide-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+            <div class="dz-empty-text">Drag and drop or click to upload</div>
+          </div>
+          <div class="dz-preview" id="pv-guide" style="display:none">
+            <img id="pv-guide-tag" src="" alt="">
+            <div class="dz-replace">Drag and drop or click to replace</div>
+            <div class="dz-overlay">
+              <span class="dz-fname" id="pv-guide-name"></span>
+              <button class="dz-remove" onclick="rmFile(event,'dz-guide','pv-guide','hid-guide')">REMOVE</button>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="hid-guide">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Deskripsi</label>
+        <textarea id="form-desc" placeholder="Deskripsi singkat kategori"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Information</label>
+        <div class="rich-toolbar">
+          <button class="rich-btn" title="Special chars">
+            <svg viewBox="0 0 16 16"><path d="M2 2h5v1H2zm0 3h5v1H2zm0 3h5v1H2zm7-6h5v1H9zm0 3h5v1H9zm0 3h5v1H9z"/></svg>
+          </button>
+          <button class="rich-btn" title="Bold" onclick="richCmd('bold')"><b>B</b></button>
+          <button class="rich-btn" title="Underline" onclick="richCmd('underline')"><u style="text-decoration:underline">U</u></button>
+          <button class="rich-btn" title="Italic" onclick="richCmd('italic')"><em>I</em></button>
+          <button class="rich-btn" title="Strike" onclick="richCmd('strikeThrough')"><s>S</s></button>
+          <div class="rich-sep"></div>
+          <select class="rich-select" onchange="richCmd('fontName',this.value);this.value=''">
+            <option value="">Montserrat ▾</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+          </select>
+          <div class="rich-sep"></div>
+          <button class="rich-btn" title="Font Color" style="font-weight:700;color:#e8b000">A</button>
+          <div class="rich-sep"></div>
+          <button class="rich-btn" title="Bullet list" onclick="richCmd('insertUnorderedList')">
+            <svg viewBox="0 0 16 16"><circle cx="2.5" cy="4" r="1.2"/><path d="M5.5 3.5h9v1h-9zm0 4h9v1h-9zm0 4h9v1h-9z"/><circle cx="2.5" cy="8" r="1.2"/><circle cx="2.5" cy="12" r="1.2"/></svg>
+          </button>
+          <button class="rich-btn" title="Ordered list" onclick="richCmd('insertOrderedList')">
+            <svg viewBox="0 0 16 16"><path d="M1.5 2h1v3h-1zm0 4.5h1v3h-1zM5 3h9v1H5zm0 4h9v1H5zm0 4h9v1H5z"/></svg>
+          </button>
+          <button class="rich-btn" title="Align left" onclick="richCmd('justifyLeft')">
+            <svg viewBox="0 0 16 16"><path d="M1 3h14v1H1zm0 3h9v1H1zm0 3h14v1H1zm0 3h9v1H1z"/></svg>
+          </button>
+          <div class="rich-sep"></div>
+          <button class="rich-btn" title="Table">
+            <svg viewBox="0 0 16 16"><path d="M1 1h14v14H1V1zm1 6h5V2H2v5zm6 0h6V2H8v5zM2 13h5V8H2v5zm6 0h6V8H8v5z" opacity=".5"/></svg>
+          </button>
+          <div class="rich-sep"></div>
+          <button class="rich-btn" title="Link" onclick="richInsertLink()">
+            <svg viewBox="0 0 16 16"><path d="M6.75 7.5a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5h-2.5zm-2-3a3.75 3.75 0 000 7.5h.5a.75.75 0 000-1.5h-.5a2.25 2.25 0 010-4.5h.5a.75.75 0 000-1.5h-.5zm6.5 0h-.5a.75.75 0 000 1.5h.5a2.25 2.25 0 010 4.5h-.5a.75.75 0 000 1.5h.5a3.75 3.75 0 000-7.5z"/></svg>
+          </button>
+          <button class="rich-btn" title="Image">
+            <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1"/><path d="M1 11l4-4 3 3 2-2 5 5"/><circle cx="5" cy="6" r="1.2"/></svg>
+          </button>
+          <button class="rich-btn" title="Video">
+            <svg viewBox="0 0 16 16"><rect x="1" y="3" width="10" height="10" rx="1"/><path d="M11 6l4-2v8l-4-2V6z"/></svg>
+          </button>
+          <button class="rich-btn" title="Fullscreen">
+            <svg viewBox="0 0 16 16"><path d="M1 1h5v1.5H2.5V5H1V1zm9 0h5v4h-1.5V2.5H10V1zM1 11h1.5v2.5H5V15H1v-4zm10 2.5V11h1.5v4H10v-1.5h1.5z"/></svg>
+          </button>
+          <button class="rich-btn" title="Source">
+            <svg viewBox="0 0 16 16"><path d="M5.5 3.5L2 8l3.5 4.5 1.2-.9L4 8l2.7-3.6-1.2-.9zm5 0l-1.2.9L12 8l-2.7 3.6 1.2.9L14 8l-3.5-4.5z"/></svg>
+          </button>
+          <button class="rich-btn" title="Help" style="color:var(--text3)">?</button>
+        </div>
+        <div class="rich-content" id="form-info" contenteditable="true"></div>
+      </div>
+
+      <!-- Check ID toggle -->
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-row-label">Check ID</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="form-checkid" onchange="onCheckIdChange()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Kode Validasi Nickname -->
+      <div class="field" id="field-nickname" style="display:none">
+        <label class="field-label">Kode Validasi Nickname</label>
+        <input type="text" id="form-nickname" placeholder="contoh: mobile-legends">
+      </div>
+
+      <!-- Zone ID toggle -->
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-row-label">Zone ID</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="form-zoneid">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Setting Form -->
+      <div class="section-title">Setting Form</div>
+
+      <div class="field">
+        <label class="field-label">Placeholder Data / User ID <span class="opt">* Opsional</span></label>
+        <input type="text" id="form-ph-uid" placeholder="User ID">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Placeholder Additional Data / Zone ID <span class="opt">* Opsional</span></label>
+        <input type="text" id="form-ph-zid" placeholder="Zone ID">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Server List Additional Data <span class="opt red">* Kosongkan jika tidak membutuhkan list server, ex: asia|Asia,Euro|Euro</span></label>
+        <textarea id="form-serverlist" placeholder="ex: asia|Asia,euro|Europa"></textarea>
+      </div>
+
+      <!-- Status toggle -->
+      <div class="toggle-row" style="margin-bottom:0">
+        <div>
+          <div class="toggle-row-label">Status</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="form-status" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-form')">Batal</button>
+      <button class="btn primary" id="btn-submit" onclick="submitForm()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detail -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-1 3a1 1 0 012 0v4a1 1 0 11-2 0V4zm1 7.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+        Detail Kategori Layanan
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-detail')">×</button>
+    </div>
+    <div class="modal-body" id="detail-content" style="padding-top:16px"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-detail')">Tutup</button>
+      <button class="btn primary" id="btn-detail-edit" onclick="switchToEdit()">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:12px;height:12px"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+        Edit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Konfirmasi Hapus -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="width:360px;text-align:center">
+    <div class="modal-header" style="justify-content:center">
+      <div class="modal-title">Konfirmasi Hapus</div>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-icon" style="background:var(--red-bg);color:var(--red)">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width:22px;height:22px"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      </div>
+      <div id="confirm-text" style="font-size:13px;color:var(--text3);line-height:1.5"></div>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn" onclick="closeModal('modal-confirm')">Batal</button>
+      <button class="btn" id="btn-confirm-del" onclick="executeDelete()" style="background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2)">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="t-icon">✓</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const API_BASE = '/api';
+const TOKEN = localStorage.getItem('admin_token') || '';
+let items = [], currentPage = 1, PER_PAGE = 20, searchTimer = null, editingId = null, deletingId = null;
+
+function api(path, opts={}) {
+  return fetch(API_BASE + path, {
+    ...opts,
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN,...(opts.headers||{})},
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  }).then(r=>r.json());
+}
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg,type='success'){
+  const el=document.getElementById('toast');
+  el.className='toast '+type;
+  el.querySelector('.t-icon').textContent=type==='success'?'✓':'✕';
+  document.getElementById('toast-msg').textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3200);
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openSidebar(){document.getElementById('sidebar').classList.add('mobile-open');document.getElementById('sidebar-backdrop').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('sidebar-backdrop').classList.remove('open');}
+
+// Image handling
+function handleFile(dzId, inputId, pvId, imgId, nameId, hidId) {
+  const file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById(hidId).value = e.target.result;
+    document.getElementById(imgId).src = e.target.result;
+    document.getElementById(nameId).textContent = file.name;
+    document.getElementById(pvId).style.display = '';
+    document.getElementById(dzId+'-empty').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+function rmFile(e, dzId, pvId, hidId) {
+  e.stopPropagation();
+  document.getElementById(hidId).value = '';
+  document.getElementById(pvId).style.display = 'none';
+  document.getElementById(dzId+'-empty').style.display = '';
+}
+
+// Rich text
+function richCmd(cmd,val){document.getElementById('form-info').focus();document.execCommand(cmd,false,val||null);}
+function richInsertLink(){const url=prompt('Masukkan URL:');if(url)richCmd('createLink',url);}
+
+// Check ID visibility
+function onCheckIdChange(){
+  const on = document.getElementById('form-checkid').checked;
+  document.getElementById('field-nickname').style.display = on ? '' : 'none';
+}
+
+// Demo data
+const demoData = [
+  {id:84,name:'XL',slug:'xl',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:83,name:'TRI',slug:'tri',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:82,name:'TELKOMSEL',slug:'telkomsel',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:81,name:'SMARTFREN',slug:'smartfren',is_active:0,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:80,name:'SMART',slug:'smart',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:79,name:'PLN PROMO',slug:'pln-promo',is_active:0,additional_data:0,check_id:1,has_zone_id:0,description:'Promo token listrik PLN',information:'',image_url:null,guide_image_url:null,nickname_code:'pln',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:78,name:'PLN',slug:'pln',is_active:1,additional_data:0,check_id:1,has_zone_id:0,description:'Token listrik PLN reguler',information:'',image_url:null,guide_image_url:null,nickname_code:'pln',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:77,name:'ORANGE TV',slug:'orange-tv',is_active:1,additional_data:0,check_id:1,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'orange-tv',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:76,name:'NEX PARABOLA',slug:'nex-parabola',is_active:1,additional_data:0,check_id:1,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'nex-parabola',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:75,name:'K VISION DAN GOL',slug:'k-vision',is_active:1,additional_data:1,check_id:1,has_zone_id:1,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'k-vision',placeholder_uid:'User ID',placeholder_zid:'Zone ID',server_list:''},
+  {id:74,name:'INDOSAT',slug:'indosat',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:73,name:'BY.U',slug:'byu',is_active:1,additional_data:0,check_id:0,has_zone_id:0,description:'',information:'',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'',server_list:''},
+  {id:37,name:'MOBILE LEGENDS',slug:'mobile-legends',is_active:1,additional_data:1,check_id:1,has_zone_id:1,description:'Top Up Diamond ML',information:'<ol><li>Masukan User ID dan Server.</li><li>Pilih Nominal Layanan.</li><li>Pilih Metode Pembayaran.</li><li>Masukan Email Untuk Notifikasi Pesanan.</li><li>Pesanan Akan di Proses Oleh Sistem.</li></ol>',image_url:null,guide_image_url:null,nickname_code:'mobile-legends',placeholder_uid:'User ID',placeholder_zid:'Zone ID',server_list:''},
+  {id:17,name:'GENSHIN IMPACT',slug:'genshin-impact',is_active:1,additional_data:0,check_id:0,has_zone_id:1,description:'TopUp Genshin Impact Proses Otomatis Selama 24 Jam dan Dapatkan Harga Terbaik!',information:'<ol><li>Masukan User ID.</li><li>Pilih Nominal Layanan.</li><li>Pilih Metode Pembayaran.</li><li>Masukan Email Untuk Notifikasi Pesanan.</li><li>Pesanan Akan di Proses Oleh Sistem.</li></ol>',image_url:null,guide_image_url:null,nickname_code:'',placeholder_uid:'User ID',placeholder_zid:'Zone ID',server_list:''},
+];
+
+async function loadData(){
+  const search=document.getElementById('search-input').value.trim();
+  const status=document.getElementById('filter-status').value;
+  const additional=document.getElementById('filter-additional').value;
+  const checkid=document.getElementById('filter-checkid').value;
+  const tbody=document.getElementById('tbl-body');
+  tbody.innerHTML=`<tr><td colspan="7"><div class="shimmer"></div><div class="shimmer" style="margin-top:2px"></div><div class="shimmer" style="margin-top:2px"></div><div class="shimmer" style="margin-top:2px"></div></td></tr>`;
+  try {
+    const params=new URLSearchParams({page:currentPage,limit:PER_PAGE});
+    if(search)params.append('search',search);
+    if(status)params.append('is_active',status);
+    const data=await api('/admin/categories?'+params);
+    if(!data.success)throw new Error(data.message);
+    items=data.categories;
+    document.getElementById('total-badge').textContent=data.total+' kategori';
+    renderTable(items);
+    renderPagination(data.total,data.page,data.limit);
+  } catch {
+    let f=[...demoData];
+    if(search)f=f.filter(d=>d.name.toLowerCase().includes(search.toLowerCase())||d.slug.includes(search.toLowerCase()));
+    if(status!=='')f=f.filter(d=>String(d.is_active)===status);
+    if(additional!=='')f=f.filter(d=>String(d.additional_data||0)===(additional==='ya'?'1':'0'));
+    if(checkid!=='')f=f.filter(d=>String(d.check_id||0)===(checkid==='ya'?'1':'0'));
+    items=f;
+    document.getElementById('total-badge').textContent=f.length+' kategori';
+    renderTable(f);
+    renderPagination(f.length,1,PER_PAGE);
+  }
+}
+
+function renderTable(list){
+  const tbody=document.getElementById('tbl-body');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📂</div><div class="empty-text">Tidak ada kategori ditemukan</div></div></td></tr>`;return;}
+  tbody.innerHTML=list.map(d=>`
+    <tr>
+      <td class="no-col" style="font-weight:600;color:var(--text)">${d.id}</td>
+      <td>
+        <div style="font-weight:500;color:var(--text)">${escHtml(d.name)}</div>
+        ${d.slug?`<div style="font-size:11px;color:var(--text3);margin-top:1px">${escHtml(d.slug)}</div>`:''}
+      </td>
+      <td class="hide-sm">
+        <div class="toggle-cell">
+          <label class="toggle"><input type="checkbox" ${d.has_zone_id?'checked':''} disabled><span class="toggle-slider"></span></label>
+          <span class="toggle-label">${d.has_zone_id?'Ya':'Tidak'}</span>
+        </div>
+      </td>
+      <td class="hide-sm">
+        <div class="toggle-cell">
+          <label class="toggle"><input type="checkbox" ${d.additional_data?'checked':''} disabled><span class="toggle-slider"></span></label>
+          <span class="toggle-label">${d.additional_data?'Ya':'Tidak'}</span>
+        </div>
+      </td>
+      <td class="hide-sm">
+        <div class="toggle-cell">
+          <label class="toggle"><input type="checkbox" ${d.check_id?'checked':''} disabled><span class="toggle-slider"></span></label>
+          <span class="toggle-label">${d.check_id?'Ya':'Tidak'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="toggle-cell">
+          <label class="toggle"><input type="checkbox" ${d.is_active?'checked':''} onchange="toggleStatus(${d.id},this)"><span class="toggle-slider"></span></label>
+          <span class="toggle-label">${d.is_active?'Aktif':'Nonaktif'}</span>
+        </div>
+      </td>
+      <td>
+        <div class="action-row">
+          <button class="act-btn detail" title="Detail" onclick="openDetail(${d.id})">
+            <svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-1 3a1 1 0 012 0v4a1 1 0 11-2 0V4zm1 7.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+          </button>
+          <button class="act-btn edit" title="Edit" onclick="openEdit(${d.id})">
+            <svg viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+          </button>
+          <button class="act-btn del" title="Hapus" onclick="openDelete(${d.id},'${escHtml(d.name).replace(/'/g,"\\'")}')">
+            <svg viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 01.5.5v1H6v-1a.5.5 0 01.5-.5zm4.5 1.5v-1a2 2 0 00-2-2h-3a2 2 0 00-2 2v1H1.5a.5.5 0 000 1h.538l.853 10.66A2 2 0 004.885 16h6.23a2 2 0 001.994-1.84L13.962 3.5h.538a.5.5 0 000-1H11z"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function renderPagination(total,page,limit){
+  const totalPages=Math.ceil(total/limit);
+  const pgEl=document.getElementById('pagination');
+  if(totalPages<=1){pgEl.innerHTML='';return;}
+  let html=`<button class="pg-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=totalPages;p++){
+    if(p===1||p===totalPages||(p>=page-2&&p<=page+2))html+=`<button class="pg-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    else if(p===page-3||p===page+3)html+=`<span class="pg-info">…</span>`;
+  }
+  html+=`<button class="pg-btn" onclick="goPage(${page+1})" ${page>=totalPages?'disabled':''}>›</button>`;
+  html+=`<span class="pg-info">${total} data</span>`;
+  pgEl.innerHTML=html;
+}
+function goPage(p){currentPage=p;loadData();}
+function applyFilters(){currentPage=1;loadData();}
+function debounceSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(()=>{currentPage=1;loadData();},350);}
+
+async function toggleStatus(id,checkbox){
+  const prev=!checkbox.checked;
+  try{
+    const data=await api('/admin/categories/'+id+'/toggle',{method:'PATCH'});
+    if(!data.success){checkbox.checked=prev;toast(data.message||'Gagal','error');return;}
+    const label=checkbox.closest('.toggle-cell').querySelector('.toggle-label');
+    if(label)label.textContent=checkbox.checked?'Aktif':'Nonaktif';
+    toast(data.message||'Status berhasil diubah');
+  }catch{
+    const label=checkbox.closest('.toggle-cell').querySelector('.toggle-label');
+    if(label)label.textContent=checkbox.checked?'Aktif':'Nonaktif';
+    toast('Status diubah (demo mode)');
+  }
+}
+
+function resetForm(){
+  ['form-id','form-name','form-desc','form-nickname','form-ph-uid','form-ph-zid','form-serverlist','hid-img','hid-guide'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('form-info').innerHTML='';
+  document.getElementById('form-checkid').checked=false;
+  document.getElementById('form-zoneid').checked=false;
+  document.getElementById('form-status').checked=true;
+  document.getElementById('field-nickname').style.display='none';
+  // reset dropzones
+  ['img','guide'].forEach(k=>{
+    document.getElementById('pv-'+k).style.display='none';
+    document.getElementById('dz-'+k+'-empty').style.display='';
+  });
+}
+
+function pilihProduk(tipe){
+  closeModal('modal-produk-baru');
+  openAddModal(tipe);
+}
+
+function openAddModal(tipe){
+  editingId=null;
+  resetForm();
+  const labels={game:'Game',voucher:'Voucher',pulsa:'Pulsa & Data',ewallet:'E-Wallet',streaming:'Streaming',lainnya:'Lainnya'};
+  const label=tipe&&labels[tipe]?' — '+labels[tipe]:'';
+  document.getElementById('form-title').textContent='Tambah Kategori Layanan'+label;
+  document.getElementById('btn-submit').textContent='Tambah';
+  openModal('modal-form');
+}
+
+function openEdit(id){
+  const d=items.find(x=>x.id===id);
+  if(!d){toast('Data tidak ditemukan','error');return;}
+  editingId=id;
+  resetForm();
+  document.getElementById('form-title').textContent='Edit #'+id;
+  document.getElementById('btn-submit').textContent='Simpan Perubahan';
+  document.getElementById('form-id').value=id;
+  document.getElementById('form-name').value=d.name||'';
+  document.getElementById('form-desc').value=d.description||d.desc||'';
+  document.getElementById('form-info').innerHTML=d.information||'';
+  const hasCheckId=!!(d.check_id);
+  document.getElementById('form-checkid').checked=hasCheckId;
+  document.getElementById('field-nickname').style.display=hasCheckId?'':'none';
+  document.getElementById('form-nickname').value=d.nickname_code||'';
+  document.getElementById('form-zoneid').checked=!!(d.has_zone_id);
+  document.getElementById('form-ph-uid').value=d.placeholder_uid||'';
+  document.getElementById('form-ph-zid').value=d.placeholder_zid||'';
+  document.getElementById('form-serverlist').value=d.server_list||'';
+  document.getElementById('form-status').checked=!!d.is_active;
+  if(d.image_url){
+    document.getElementById('pv-img-tag').src=d.image_url;
+    document.getElementById('pv-img-name').textContent='gambar-kategori.jpg';
+    document.getElementById('pv-img').style.display='';
+    document.getElementById('dz-img-empty').style.display='none';
+  }
+  if(d.guide_image_url){
+    document.getElementById('pv-guide-tag').src=d.guide_image_url;
+    document.getElementById('pv-guide-name').textContent='gambar-petunjuk.jpg';
+    document.getElementById('pv-guide').style.display='';
+    document.getElementById('dz-guide-empty').style.display='none';
+  }
+  openModal('modal-form');
+}
+
+async function submitForm(){
+  const name=document.getElementById('form-name').value.trim();
+  if(!name){toast('Nama kategori wajib diisi','error');return;}
+  const btn=document.getElementById('btn-submit');
+  const origText=btn.textContent;
+  btn.disabled=true;btn.textContent='Menyimpan...';
+  const imgData=document.getElementById('hid-img').value||undefined;
+  const guideData=document.getElementById('hid-guide').value||undefined;
+  const body={
+    name,
+    description:document.getElementById('form-desc').value.trim()||undefined,
+    information:document.getElementById('form-info').innerHTML.trim()||undefined,
+    check_id:document.getElementById('form-checkid').checked?1:0,
+    has_zone_id:document.getElementById('form-zoneid').checked?1:0,
+    is_active:document.getElementById('form-status').checked?1:0,
+    placeholder_uid:document.getElementById('form-ph-uid').value.trim()||undefined,
+    placeholder_zid:document.getElementById('form-ph-zid').value.trim()||undefined,
+    server_list:document.getElementById('form-serverlist').value.trim()||undefined,
+    nickname_code:document.getElementById('form-nickname').value.trim()||undefined,
+  };
+  if(imgData)body.image_url=imgData;
+  if(guideData)body.guide_image_url=guideData;
+  try{
+    const isEdit=!!editingId;
+    const data=await api(isEdit?'/admin/categories/'+editingId:'/admin/categories',{method:isEdit?'PUT':'POST',body});
+    if(!data.success){toast(data.message||'Gagal','error');return;}
+    toast(isEdit?'Kategori berhasil diperbarui':'Kategori berhasil ditambahkan');
+    closeModal('modal-form');loadData();
+  }catch{
+    toast(editingId?'Perubahan disimpan (demo mode)':'Kategori ditambahkan (demo mode)');
+    closeModal('modal-form');loadData();
+  }finally{btn.disabled=false;btn.textContent=origText;}
+}
+
+function openDetail(id){
+  const d=items.find(x=>x.id===id);
+  document.getElementById('btn-detail-edit').setAttribute('data-id',id);
+  const content=document.getElementById('detail-content');
+  if(!d){content.innerHTML='<div class="empty-state"><div class="empty-text">Data tidak ditemukan</div></div>';openModal('modal-detail');return;}
+  content.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:.5px solid var(--border)">
+      <div style="width:44px;height:44px;background:var(--accent-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--accent)">${escHtml(d.name).charAt(0)}</div>
+      <div><div style="font-size:15px;font-weight:600">${escHtml(d.name)}</div><div style="font-size:12px;color:var(--text3)">ID #${d.id}</div></div>
+    </div>
+    <div>
+      <div class="detail-row"><span class="detail-label">Slug</span><span class="detail-val">${escHtml(d.slug||'—')}</span></div>
+      <div class="detail-row"><span class="detail-label">Zone ID</span><span class="detail-val"><span class="badge ${d.has_zone_id?'green':'red'}">${d.has_zone_id?'Ya':'Tidak'}</span></span></div>
+      <div class="detail-row"><span class="detail-label">Additional Data</span><span class="detail-val"><span class="badge ${d.additional_data?'green':'red'}">${d.additional_data?'Ya':'Tidak'}</span></span></div>
+      <div class="detail-row"><span class="detail-label">Check ID</span><span class="detail-val"><span class="badge ${d.check_id?'blue':'amber'}">${d.check_id?'Aktif':'Tidak'}</span></span></div>
+      <div class="detail-row"><span class="detail-label">Status</span><span class="detail-val"><span class="badge ${d.is_active?'green':'red'}">${d.is_active?'Aktif':'Nonaktif'}</span></span></div>
+      ${d.description||d.desc?`<div class="detail-row" style="flex-direction:column;gap:4px"><span class="detail-label">Deskripsi</span><span style="font-size:13px;color:var(--text);line-height:1.5;text-align:left">${escHtml(d.description||d.desc)}</span></div>`:''}
+    </div>`;
+  openModal('modal-detail');
+}
+function switchToEdit(){
+  const id=parseInt(document.getElementById('btn-detail-edit').getAttribute('data-id'));
+  closeModal('modal-detail');openEdit(id);
+}
+
+function openDelete(id,name){
+  deletingId=id;
+  document.getElementById('confirm-text').textContent='Apakah Anda yakin ingin menghapus kategori "'+name+'"? Tindakan ini tidak dapat dibatalkan.';
+  openModal('modal-confirm');
+}
+async function executeDelete(){
+  if(!deletingId)return;
+  const btn=document.getElementById('btn-confirm-del');
+  btn.disabled=true;btn.textContent='Menghapus...';
+  try{
+    const data=await api('/admin/categories/'+deletingId,{method:'DELETE'});
+    if(!data.success){toast(data.message||'Gagal','error');return;}
+    toast('Kategori berhasil dihapus');closeModal('modal-confirm');loadData();
+  }catch{
+    toast('Kategori dihapus (demo mode)');closeModal('modal-confirm');
+    items=items.filter(x=>x.id!==deletingId);renderTable(items);
+    document.getElementById('total-badge').textContent=items.length+' kategori';
+  }finally{btn.disabled=false;btn.textContent='Ya, Hapus';deletingId=null;}
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
+});
+
+loadData();
+</script>
+</body>
+</html>

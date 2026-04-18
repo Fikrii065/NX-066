@@ -2105,9 +2105,9 @@ async function init() {
   }
 
   // Load semua data
-  loadDashboard();
-  setTimeout(() => loadDVouchers(), 200);
-  setTimeout(() => loadGames(), 400);
+  try { loadDashboard(); } catch(e) { alert('loadDashboard error: ' + e.message); }
+  setTimeout(() => { try { loadDVouchers(); } catch(e) {} }, 200);
+  setTimeout(() => { try { loadGames(); } catch(e) {} }, 400);
 
   // Load site name di background
   setTimeout(async () => {
@@ -2224,7 +2224,15 @@ async function loadDashboard() {
   const dashSafetyTimer = setTimeout(() => showDashError('⚠️ Koneksi lambat'), 6000);
 
   try {
-    const data = await API('/admin/dashboard', {}, 5000);
+    let data;
+    try {
+      data = await API('/admin/dashboard', {}, 5000);
+    } catch(apiErr) {
+      clearTimeout(dashSafetyTimer);
+      alert('Dashboard API error: ' + apiErr.message);
+      showDashError('Error: ' + apiErr.message);
+      return;
+    }
     clearTimeout(dashSafetyTimer);
 
     if (!data) return; // 401 redirect, sudah handle di API()

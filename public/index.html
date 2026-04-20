@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameFlash — Top Up Murah & Terpercaya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e1420;
+  --surface:#161e2e;
+  --surface2:#1c2640;
+  --surface3:#222d4a;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#eef0f6;
+  --text2:#8b95b0;
+  --text3:#525d78;
+  --accent:#e63946;
+  --green:#25c55e;
+  --gold:#f4c430;
+  --blue:#3b82f6;
+  --purple:#8b5cf6;
+  --radius:14px;
+  --radius-sm:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
+
+/* HEADER */
+.header{background:rgba(14,20,32,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 14px;height:56px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:300;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-icon img{width:34px;height:34px;border-radius:8px;object-fit:cover;}
+.logo-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.hdr-btn{width:38px;height:38px;background:none;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:color .2s,background .2s;}
+.hdr-btn:hover{color:var(--text);background:var(--surface2);}
+
+/* HERO */
+.hero-wrap{overflow:hidden;position:relative;height:190px;background:var(--surface);}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;cursor:pointer;}
+.hero-slide.active{opacity:1;}
+.hero-slide img{width:100%;height:100%;object-fit:cover;}
+.hero-default{width:100%;height:190px;display:flex;align-items:center;padding:0 20px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a0f1e,#1a0820 50%,#060610);}
+.hero-glow{position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(230,57,70,0.28),transparent 70%);}
+.hero-text{position:relative;z-index:2;flex:1;}
+.hero-badge{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:5px;}
+.hero-title{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;line-height:1.05;color:#fff;text-transform:uppercase;}
+.hero-title .hl{color:var(--accent);}
+.hero-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:5px;line-height:1.5;}
+.hero-cta{margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;padding:7px 14px;border-radius:20px;text-decoration:none;letter-spacing:.5px;}
+.hero-emoji{position:relative;z-index:2;font-size:80px;line-height:1;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));}
+.hero-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all .3s;cursor:pointer;border:none;}
+.hero-dot.active{background:#fff;width:20px;border-radius:3px;}
+
+/* QUICK BAR */
+.quick-bar{display:flex;gap:8px;padding:14px 12px 6px;overflow-x:auto;scrollbar-width:none;}
+.quick-bar::-webkit-scrollbar{display:none;}
+.qb-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;text-decoration:none;border:none;background:none;}
+.qb-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--border2);transition:transform .2s,border-color .2s;}
+.qb-item:hover .qb-icon{transform:translateY(-2px);border-color:var(--accent);}
+.qb-label{font-size:10px;font-weight:700;color:var(--text2);white-space:nowrap;}
+
+/* INFO STRIP */
+.info-strip{display:flex;margin:6px 12px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.info-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 6px;background:var(--surface2);border-right:1px solid var(--border);}
+.info-item:last-child{border-right:none;}
+.info-icon{font-size:18px;}
+.info-label{font-size:9px;font-weight:700;color:var(--text3);text-align:center;line-height:1.3;}
+
+/* SECTION TITLE */
+.sec-title{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 10px;}
+.sec-left{display:flex;align-items:center;gap:7px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;}
+
+/* TRENDING */
+.trending-scroll{overflow-x:auto;scrollbar-width:none;padding:0 12px 4px;}
+.trending-scroll::-webkit-scrollbar{display:none;}
+.trending-row{display:flex;gap:10px;width:max-content;}
+.tr-card{width:110px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.tr-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.tr-thumb{width:100%;height:110px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.tr-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.tr-emoji{font-size:38px;position:relative;z-index:1;}
+.tr-badge{position:absolute;top:5px;left:5px;font-size:8px;font-weight:800;padding:2px 6px;border-radius:20px;background:var(--accent);color:#fff;z-index:2;}
+.tr-info{padding:6px 8px 8px;}
+.tr-name{font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tr-sub{font-size:9px;color:var(--text3);margin-top:1px;}
+
+/* CEK PESANAN */
+.cek-section{margin:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.cek-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.cek-row{display:flex;gap:8px;}
+.cek-input{flex:1;height:42px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:0 12px;font-size:13px;color:var(--text);outline:none;font-family:'Nunito',sans-serif;}
+.cek-input:focus{border-color:var(--accent);}
+.cek-btn{height:42px;padding:0 16px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;}
+.cek-btn:disabled{opacity:.6;cursor:default;}
+.cek-result{margin-top:12px;display:none;}
+.cek-box{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;}
+.cek-row2{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);}
+.cek-row2:last-child{border-bottom:none;}
+.cek-key{color:var(--text3);}
+.cek-val{font-weight:700;text-align:right;max-width:60%;}
+.sp{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.sp-pending{background:rgba(244,196,48,.15);color:var(--gold);}
+.sp-paid{background:rgba(37,197,94,.15);color:var(--green);}
+.sp-success{background:rgba(37,197,94,.15);color:var(--green);}
+.sp-failed{background:rgba(230,57,70,.15);color:var(--accent);}
+.sp-processing{background:rgba(59,130,246,.15);color:var(--blue);}
+
+/* CAT TABS */
+.cat-scroll{overflow-x:auto;scrollbar-width:none;padding:4px 12px 2px;}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-tabs{display:flex;gap:7px;width:max-content;}
+.cat-tab{flex-shrink:0;padding:7px 16px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:50px;font-size:11px;font-weight:800;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Nunito',sans-serif;}
+.cat-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cat-tab:hover:not(.active){border-color:var(--accent);color:var(--accent);}
+
+/* GAME GRID */
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:10px 12px 4px;}
+.game-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .22s;}
+.game-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.gc-thumb{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.gc-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.gc-emoji{font-size:38px;position:relative;z-index:1;}
+.gc-badge{position:absolute;top:5px;left:5px;font-size:8px;font-weight:800;padding:2px 6px;border-radius:20px;z-index:2;}
+.bg{background:var(--accent);color:#fff;}
+.bp{background:var(--blue);color:#fff;}
+.be{background:var(--purple);color:#fff;}
+.bs{background:#10b981;color:#fff;}
+.bv{background:var(--gold);color:#000;}
+.bl{background:#6b7280;color:#fff;}
+.gc-info{padding:7px 9px 9px;}
+.gc-name{font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gc-sub{font-size:9px;color:var(--text3);margin-top:2px;}
+
+/* SHOW MORE */
+.show-more-wrap{padding:10px 12px 4px;}
+.show-more-btn{width:100%;padding:12px;background:transparent;border:1.5px solid var(--border2);border-radius:10px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.show-more-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* GAME THEMES */
+.t-ml{background:linear-gradient(135deg,#1a2060,#2030a0);}
+.t-ff{background:linear-gradient(135deg,#7a1a00,#c03000);}
+.t-val{background:linear-gradient(135deg,#6a0000,#aa1010);}
+.t-genshin{background:linear-gradient(135deg,#052060,#1040a0);}
+.t-pubg{background:linear-gradient(135deg,#2a3000,#5a6000);}
+.t-honkai{background:linear-gradient(135deg,#200040,#400080);}
+.t-def{background:linear-gradient(135deg,#141e30,#1c2840);}
+.t-blue{background:linear-gradient(135deg,#0a1a3a,#0a2a5a);}
+.t-purple{background:linear-gradient(135deg,#1a0a3a,#2a0a5a);}
+.t-green{background:linear-gradient(135deg,#0a2a1a,#0a4a2a);}
+.t-gold{background:linear-gradient(135deg,#3a2a00,#5a4000);}
+
+/* SEARCH */
+#search-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);flex-direction:column;padding:14px;}
+#search-overlay.open{display:flex;}
+.search-box{display:flex;gap:8px;margin-bottom:10px;}
+.search-inp{flex:1;height:46px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 14px;font-size:14px;color:var(--text);outline:none;font-family:'Nunito',sans-serif;}
+.search-inp:focus{border-color:var(--accent);}
+.search-close{height:46px;padding:0 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;}
+#search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.sr-item{display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .2s;}
+.sr-item:hover{border-color:var(--accent);}
+.sr-thumb{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+.sr-thumb img{width:100%;height:100%;object-fit:cover;}
+
+/* SIDEBAR */
+#side-overlay{display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);}
+#side-panel{position:fixed;left:0;top:0;bottom:0;width:82%;max-width:300px;background:#12182a;z-index:999;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;scrollbar-width:none;}
+#side-panel::-webkit-scrollbar{display:none;}
+.side-header{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.side-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+.side-item{display:flex;align-items:center;gap:12px;padding:15px 20px;color:var(--text);text-decoration:none;font-size:14px;font-weight:700;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;font-family:'Nunito',sans-serif;}
+.side-item:hover{background:rgba(255,255,255,.04);}
+.side-icon{width:20px;height:20px;color:var(--text3);flex-shrink:0;}
+.side-item.danger{color:#ef4444;}
+.side-item.danger .side-icon{color:rgba(239,68,68,.6);}
+.side-div{height:8px;background:rgba(0,0,0,.3);}
+.side-user{display:flex;align-items:center;gap:12px;padding:16px 20px;background:rgba(230,57,70,.08);border-bottom:1px solid var(--border);text-decoration:none;}
+.side-avatar{width:40px;height:40px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0;}
+.side-sosmed{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;margin-top:auto;}
+.sm-btn{width:38px;height:38px;background:var(--surface2);border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:18px;transition:background .2s;}
+.sm-btn:hover{background:var(--surface3);}
+
+/* FLOATING CS */
+#cs-fab{display:none;position:fixed;bottom:20px;right:16px;z-index:9999;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:11px 16px;border-radius:50px;box-shadow:0 4px 20px rgba(37,211,102,.4);text-decoration:none;font-size:13px;font-weight:800;transition:transform .2s,box-shadow .2s;}
+#cs-fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.5);}
+
+/* PROMO POPUP */
+#promo-popup{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);}
+#promo-popup.open{display:flex;animation:fadeIn .25s ease;}
+.popup-card{position:relative;width:100%;max-width:360px;border-radius:18px;overflow:hidden;background:#1a1a2e;box-shadow:0 24px 60px rgba(0,0,0,.6);}
+.popup-close{position:absolute;top:10px;right:10px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.popup-img{width:100%;min-height:240px;background:#2a2a3e;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.popup-img img{width:100%;display:block;object-fit:cover;}
+.popup-footer{background:#111;padding:12px 16px 14px;}
+.popup-no-show{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.popup-no-show label{font-size:12px;color:rgba(255,255,255,.5);cursor:pointer;}
+
+/* MAINTENANCE */
+#maint-screen{display:none;text-align:center;padding:80px 20px;}
+#maint-screen h2{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;margin:12px 0 8px;}
+#maint-screen p{font-size:14px;color:var(--text2);}
+
+@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/">
+    <div class="logo-icon" id="logo-wrap">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="8" fill="#e63946"/><path d="M17 6L8 20h7l-2 8 13-14h-8l2-8z" fill="white"/></svg>
+    </div>
+    <span class="logo-name" id="site-name">GameFlash</span>
+  </a>
+  <div class="header-right">
+    <button class="hdr-btn" onclick="openSearch()" aria-label="Cari">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="hdr-btn" onclick="openSidebar()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- SEARCH -->
+<div id="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <input id="search-inp" class="search-inp" type="text" placeholder="Cari game, pulsa, e-wallet..." oninput="onSearch(this.value)" autocomplete="off">
+    <button class="search-close" onclick="closeSearch()">Tutup</button>
+  </div>
+  <div id="search-results"></div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="side-overlay" onclick="closeSidebar()"></div>
+<div id="side-panel">
+  <div class="side-header">
+    <div style="display:flex;align-items:center;gap:8px">
+      <svg width="30" height="30" viewBox="0 0 34 34" fill="none"><rect width="34" height="34" rx="7" fill="#e63946"/><path d="M17 6L8 20h7l-2 8 13-14h-8l2-8z" fill="white"/></svg>
+      <span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700" id="side-site-name">GameFlash</span>
+    </div>
+    <button class="side-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <div id="side-user-area"></div>
+  <nav>
+    <a class="side-item" href="/cek-order" onclick="closeSidebar()">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+      Cek Pesanan
+    </a>
+    <a class="side-item" id="side-cs" href="#" target="_blank" rel="noopener" onclick="closeSidebar()">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Hubungi CS
+    </a>
+    <div class="side-div"></div>
+    <a class="side-item guest-only" href="/user-auth" onclick="closeSidebar()">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Masuk
+    </a>
+    <a class="side-item guest-only" href="/user-auth?tab=register" onclick="closeSidebar()">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Daftar Akun
+    </a>
+    <a class="side-item login-only" href="/dashboard" onclick="closeSidebar()" style="display:none">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard Saya
+    </a>
+    <button class="side-item danger login-only" onclick="doLogout();closeSidebar()" style="display:none">
+      <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar
+    </button>
+  </nav>
+  <div class="side-sosmed" id="side-sosmed" style="display:none"></div>
+</div>
+
+<!-- MAINTENANCE -->
+<div id="maint-screen">
+  <div style="font-size:52px">🔧</div>
+  <h2>Sedang Maintenance</h2>
+  <p>Kami sedang melakukan pemeliharaan.<br>Silakan kembali beberapa saat lagi.</p>
+</div>
+
+<div id="main-wrap">
+
+  <!-- HERO -->
+  <div class="hero-wrap" id="hero-slider" style="visibility:hidden">
+    <div class="hero-slide active" id="hero-default">
+      <div class="hero-default">
+        <div class="hero-glow"></div>
+        <div class="hero-text">
+          <div class="hero-badge">⚡ Trusted &amp; Fast</div>
+          <div class="hero-title">TOP UP<br><span class="hl">ANTI RIBET!</span></div>
+          <div class="hero-sub">Murah, cepat &amp; 100% aman.<br>Ribuan produk siap top up.</div>
+          <a class="hero-cta" href="#cat-anchor">🎮 Mulai Top Up</a>
+        </div>
+        <div class="hero-emoji">🦸</div>
+      </div>
+    </div>
+    <div class="hero-dots" id="hero-dots">
+      <button class="hero-dot active" onclick="goSlide(0)"></button>
+    </div>
+  </div>
+
+  <!-- QUICK BAR -->
+  <div class="quick-bar">
+    <a class="qb-item" href="/cek-order">
+      <div class="qb-icon t-blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+      </div>
+      <span class="qb-label">Cek Order</span>
+    </a>
+    <a class="qb-item" href="/user-auth" id="qb-login">
+      <div class="qb-icon t-purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="qb-label">Akun</span>
+    </a>
+    <a class="qb-item" href="/dashboard" id="qb-dash" style="display:none">
+      <div class="qb-icon t-purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <span class="qb-label" id="qb-uname">Dashboard</span>
+    </a>
+    <button class="qb-item" onclick="scrollToCek()">
+      <div class="qb-icon t-green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <span class="qb-label">Cek Status</span>
+    </button>
+    <button class="qb-item" id="qb-wa" style="display:none" onclick="openCS()">
+      <div class="qb-icon" style="background:linear-gradient(135deg,#128C7E,#25D366)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.535 5.845L.057 23.486a.5.5 0 0 0 .612.612l5.684-1.49A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.688-.528-5.207-1.442l-.376-.224-3.879 1.018 1.023-3.783-.238-.388A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      </div>
+      <span class="qb-label">Hubungi CS</span>
+    </button>
+  </div>
+
+  <!-- INFO STRIP -->
+  <div class="info-strip">
+    <div class="info-item"><span class="info-icon">⚡</span><span class="info-label">Proses<br>Instan</span></div>
+    <div class="info-item"><span class="info-icon">🔒</span><span class="info-label">100%<br>Aman</span></div>
+    <div class="info-item"><span class="info-icon">💳</span><span class="info-label">Banyak<br>Metode</span></div>
+    <div class="info-item"><span class="info-icon">🎧</span><span class="info-label">CS<br>Online</span></div>
+  </div>
+
+  <!-- TRENDING -->
+  <div class="sec-title">
+    <div class="sec-left"><span>🔥</span><span>Trending</span></div>
+  </div>
+  <div class="trending-scroll">
+    <div class="trending-row" id="trending-row">
+      <div class="skel" style="width:110px;height:150px;flex-shrink:0;border-radius:12px;"></div>
+      <div class="skel" style="width:110px;height:150px;flex-shrink:0;border-radius:12px;"></div>
+      <div class="skel" style="width:110px;height:150px;flex-shrink:0;border-radius:12px;"></div>
+      <div class="skel" style="width:110px;height:150px;flex-shrink:0;border-radius:12px;"></div>
+      <div class="skel" style="width:110px;height:150px;flex-shrink:0;border-radius:12px;"></div>
+    </div>
+  </div>
+
+  <!-- CEK PESANAN INLINE -->
+  <div class="cek-section" id="cek-section">
+    <div class="cek-title">🔍 Cek Status Pesanan</div>
+    <div class="cek-row">
+      <input class="cek-input" id="cek-inp" type="text" placeholder="Masukkan ID pesanan..." maxlength="60">
+      <button class="cek-btn" id="cek-btn" onclick="doCekOrder()">Cek</button>
+    </div>
+    <div class="cek-result" id="cek-result"></div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div id="cat-anchor" style="padding:14px 0 4px;">
+    <div class="cat-scroll">
+      <div class="cat-tabs" id="cat-tabs">
+        <button class="cat-tab active" data-cat="game"      onclick="setCat(this)">🎮 Game</button>
+        <button class="cat-tab"        data-cat="pulsa"     onclick="setCat(this)">📱 Pulsa</button>
+        <button class="cat-tab"        data-cat="ewallet"   onclick="setCat(this)">💳 E-Wallet</button>
+        <button class="cat-tab"        data-cat="voucher"   onclick="setCat(this)">🎟️ Voucher</button>
+        <button class="cat-tab"        data-cat="streaming" onclick="setCat(this)">📺 Streaming</button>
+        <button class="cat-tab"        data-cat="lainnya"   onclick="setCat(this)">📦 Lainnya</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" style="padding-top:8px">
+    <div class="sec-left" id="cat-title"><span>Isi Ulang Game</span></div>
+  </div>
+
+  <div class="games-grid" id="cat-grid">
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+    <div class="skel" style="height:160px;border-radius:12px;"></div>
+  </div>
+
+  <div class="show-more-wrap">
+    <button class="show-more-btn" id="show-more-btn" onclick="showMore()" style="display:none">Tampilkan lebih banyak ↓</button>
+  </div>
+
+</div>
+
+<!-- FLOATING CS -->
+<a id="cs-fab" href="#" target="_blank" rel="noopener">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.535 5.845L.057 23.486a.5.5 0 0 0 .612.612l5.684-1.49A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.688-.528-5.207-1.442l-.376-.224-3.879 1.018 1.023-3.783-.238-.388A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+  <span>Hubungi CS</span>
+</a>
+
+<!-- PROMO POPUP -->
+<div id="promo-popup" onclick="if(event.target===this)closePromo()">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePromo()">✕</button>
+    <div class="popup-img" id="popup-img-area">
+      <div style="text-align:center;padding:40px 20px">
+        <div style="font-size:40px;margin-bottom:8px">🎁</div>
+        <div id="popup-msg-el" style="color:rgba(255,255,255,.5);font-size:13px;line-height:1.6"></div>
+      </div>
+    </div>
+    <div class="popup-footer">
+      <div style="font-size:14px;font-weight:800;color:#fff" id="popup-title-el"></div>
+      <div class="popup-no-show">
+        <input type="checkbox" id="popup-no-show" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer" onchange="if(this.checked)localStorage.setItem('promo_hide','1')">
+        <label for="popup-no-show">Jangan tampilkan lagi</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+let GAMES=[], CFG={}, WA_URL='';
+let _cat='game', _show=9;
+
+// themes
+const TH={
+  'mobile-legends':{c:'t-ml',e:'⚔️'},'mobile-legends-region':{c:'t-ml',e:'🗺️'},
+  'free-fire':{c:'t-ff',e:'🔥'},'free-fire-max':{c:'t-ff',e:'💥'},
+  'valorant':{c:'t-val',e:'🎯'},'genshin-impact':{c:'t-genshin',e:'🌸'},
+  'pubgm':{c:'t-pubg',e:'🪖'},'honkai-star-rail':{c:'t-honkai',e:'🚂'},
+  'roblox':{c:'t-def',e:'🟥'},
+};
+function th(g){
+  if(TH[g.code]) return TH[g.code];
+  const k=Object.keys(TH).find(k=>g.code&&g.code.startsWith(k.slice(0,5)));
+  if(k) return TH[k];
+  const fb={game:{c:'t-def',e:'🎮'},pulsa:{c:'t-blue',e:'📱'},ewallet:{c:'t-purple',e:'💳'},streaming:{c:'t-green',e:'📺'},voucher:{c:'t-gold',e:'🎟️'},lainnya:{c:'t-def',e:'📦'}};
+  return fb[g.category||'game']||{c:'t-def',e:'🎮'};
+}
+const BC={game:'bg',pulsa:'bp',ewallet:'be',streaming:'bs',voucher:'bv',lainnya:'bl'};
+const BT={game:'Top Up',pulsa:'Pulsa',ewallet:'E-Money',streaming:'Streaming',voucher:'Voucher',lainnya:'Lainnya'};
+const CL={game:'Isi Ulang Game',pulsa:'Pulsa & Data',ewallet:'Saldo E-Wallet',voucher:'Permainan Voucher',streaming:'Streaming TV',lainnya:'Produk Lainnya'};
+
+async function get(url){
+  try{const r=await fetch(url);if(!r.ok)return null;return await r.json();}catch{return null;}
+}
+
+async function init(){
+  const[sD,gD,bD]=await Promise.all([get('/api/settings'),get('/api/games'),get('/api/banners')]);
+
+  if(sD?.success){
+    CFG=sD.settings||{};
+    if(CFG.site_name){
+      document.getElementById('site-name').textContent=CFG.site_name;
+      document.getElementById('side-site-name').textContent=CFG.site_name;
+      document.title=CFG.site_name+' — Top Up Murah & Terpercaya';
+    }
+    if(CFG.logo_url){
+      document.getElementById('logo-wrap').innerHTML=`<img src="${CFG.logo_url}" alt="logo" style="width:34px;height:34px;border-radius:8px;object-fit:cover" onerror="this.outerHTML='<svg width=34 height=34 viewBox=&quot;0 0 34 34&quot; fill=none><rect width=34 height=34 rx=8 fill=&quot;#e63946&quot;/><path d=&quot;M17 6L8 20h7l-2 8 13-14h-8l2-8z&quot; fill=white/></svg>'">`;
+    }
+    if(CFG.feature_maintenance==='1'){
+      document.getElementById('main-wrap').style.display='none';
+      document.getElementById('maint-screen').style.display='block';
+      return;
+    }
+    if(CFG.contact_wa){
+      WA_URL='https://wa.me/'+CFG.contact_wa.replace(/\D/g,'');
+      const fab=document.getElementById('cs-fab');
+      fab.href=WA_URL; fab.style.display='flex';
+      document.getElementById('side-cs').href=WA_URL;
+      document.getElementById('qb-wa').style.display='flex';
+    }
+    if(CFG.social_instagram||CFG.social_telegram||CFG.contact_wa) renderSosmed();
+  }
+
+  if(bD?.success&&bD.banners?.length) renderBanners(bD.banners);
+  else document.getElementById('hero-slider').style.visibility='';
+
+  GAMES=(gD?.success&&gD.games?.length)?gD.games:[];
+  renderTrending();
+  renderCat('game');
+  syncAuthUI();
+  initPromo();
+}
+
+// BANNERS
+let _si=0,_st;
+function renderBanners(banners){
+  const sl=document.getElementById('hero-slider'),dt=document.getElementById('hero-dots');
+  sl.querySelectorAll('.hero-slide').forEach(s=>s.remove());
+  banners.forEach((b,i)=>{
+    const el=document.createElement('div');
+    el.className='hero-slide'+(i===0?' active':'');
+    if(b.image_url) el.innerHTML=`<img src="${b.image_url}" alt="" onerror="this.style.display='none'">`;
+    else el.innerHTML=`<div class="hero-default"><div class="hero-glow"></div><div class="hero-text"><div class="hero-title"><span class="hl">${b.title||''}</span></div></div></div>`;
+    if(b.link_url){el.style.cursor='pointer';el.onclick=()=>window.open(b.link_url,'_blank');}
+    sl.insertBefore(el,dt);
+  });
+  dt.innerHTML=banners.map((_,i)=>`<button class="hero-dot${i===0?' active':''}" onclick="goSlide(${i})"></button>`).join('');
+  sl.style.visibility='';
+  clearInterval(_st);
+  if(banners.length>1) _st=setInterval(()=>goSlide((_si+1)%banners.length),4500);
+}
+function goSlide(n){
+  document.querySelectorAll('.hero-slide').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.hero-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+  _si=n;
+}
+
+// TRENDING
+function renderTrending(){
+  const trending=GAMES.filter(g=>g.is_trending==1||g.is_trending===true);
+  const items=trending.length?trending:GAMES.filter(g=>(g.category||'game')==='game').slice(0,8);
+  const row=document.getElementById('trending-row');
+  if(!items.length){row.innerHTML=`<div style="padding:20px;color:var(--text3);font-size:13px">Belum ada trending</div>`;return;}
+  row.innerHTML=items.map(g=>{
+    const t=th(g),dest=(g.params==='none'&&g.link_url)?g.link_url:`/order?game=${g.code}`;
+    const img=g.icon_url?`<img src="${g.icon_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`:'';
+    return `<div class="tr-card" onclick="location.href='${dest}'"><div class="tr-thumb ${t.c}">${img}<span class="tr-emoji">${t.e}</span><div class="tr-badge">${BT[g.category||'game']||'Top Up'}</div></div><div class="tr-info"><div class="tr-name">${g.name}</div><div class="tr-sub">Top Up</div></div></div>`;
+  }).join('');
+}
+
+// CAT
+function setCat(el){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  _cat=el.dataset.cat; _show=9;
+  renderCat(_cat);
+}
+function renderCat(cat){
+  document.getElementById('cat-title').innerHTML=`<span>${CL[cat]||cat}</span>`;
+  if(cat==='voucher'){renderVouchers();return;}
+  renderGrid(GAMES.filter(g=>(g.category||'game')===cat),cat);
+}
+function renderGrid(items,cat){
+  const grid=document.getElementById('cat-grid'),btn=document.getElementById('show-more-btn');
+  const vis=items.slice(0,_show);
+  if(!vis.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px 16px"><div style="font-size:36px;margin-bottom:8px">🚧</div><div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700">Segera Hadir</div><div style="font-size:12px;color:var(--text2);margin-top:4px">Belum ada produk di kategori ini</div></div>`;
+    btn.style.display='none';return;
+  }
+  const bc=BC[cat]||'bg',bt=BT[cat]||'Top Up';
+  grid.innerHTML=vis.map(g=>{
+    const t=th(g),dest=(g.params==='none'&&g.link_url)?g.link_url:`/order?game=${g.code}`;
+    const img=g.icon_url?`<img src="${g.icon_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`:'';
+    return `<div class="game-card" onclick="location.href='${dest}'"><div class="gc-thumb ${t.c}">${img}<span class="gc-emoji">${t.e}</span><div class="gc-badge ${bc}">${bt}</div></div><div class="gc-info"><div class="gc-name">${g.name}</div><div class="gc-sub">${cat==='pulsa'?'Provider':'Top Up'}</div></div></div>`;
+  }).join('');
+  btn.style.display=items.length>_show?'block':'none';
+}
+function showMore(){_show+=9;if(_cat!=='voucher')renderGrid(GAMES.filter(g=>(g.category||'game')===_cat),_cat);}
+async function renderVouchers(){
+  const grid=document.getElementById('cat-grid');
+  document.getElementById('show-more-btn').style.display='none';
+  grid.innerHTML=`<div class="skel" style="height:160px;border-radius:12px"></div><div class="skel" style="height:160px;border-radius:12px"></div><div class="skel" style="height:160px;border-radius:12px"></div>`;
+  const d=await get('/api/vouchers');
+  if(!d?.success||!d.vouchers?.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);font-size:13px">Belum ada voucher</div>`;return;}
+  grid.innerHTML=d.vouchers.map(v=>{
+    const dest=v.link_url||`/order?game=${v.code}`;
+    const img=v.icon_url?`<img src="${v.icon_url}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`:'';
+    return `<div class="game-card" onclick="location.href='${dest}'"><div class="gc-thumb t-gold">${img}<span class="gc-emoji">${v.icon||'🎟️'}</span><div class="gc-badge bv">Voucher</div></div><div class="gc-info"><div class="gc-name">${v.name}</div><div class="gc-sub">Voucher</div></div></div>`;
+  }).join('');
+}
+
+// CEK PESANAN
+function scrollToCek(){
+  document.getElementById('cek-section').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>document.getElementById('cek-inp').focus(),400);
+}
+document.getElementById('cek-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doCekOrder();});
+async function doCekOrder(){
+  const id=document.getElementById('cek-inp').value.trim();
+  const btn=document.getElementById('cek-btn');
+  if(!id){showCek(`<div style="color:var(--text3);text-align:center;padding:12px;font-size:13px">Masukkan ID pesanan terlebih dahulu</div>`);return;}
+  btn.disabled=true; btn.textContent='...';
+  showCek(`<div style="text-align:center;padding:14px;color:var(--text3);font-size:13px">⏳ Memuat...</div>`);
+  const d=await get(`/api/orders/${encodeURIComponent(id)}`);
+  btn.disabled=false; btn.textContent='Cek';
+  if(!d){showCek(`<div style="color:var(--accent);text-align:center;padding:12px;font-size:13px">Gagal terhubung ke server</div>`);return;}
+  if(!d.success||!d.order){showCek(`<div style="color:var(--accent);text-align:center;padding:12px;font-size:13px">Pesanan tidak ditemukan</div>`);return;}
+  const o=d.order;
+  const SM={pending:'sp-pending',paid:'sp-paid',processing:'sp-processing',success:'sp-success',failed:'sp-failed'};
+  const SL={pending:'Menunggu Bayar',paid:'Sudah Dibayar',processing:'Sedang Diproses',success:'✅ Berhasil',failed:'❌ Gagal'};
+  const sc=SM[o.status]||'sp-pending',sl=SL[o.status]||o.status;
+  showCek(`<div class="cek-box">
+    <div class="cek-row2"><span class="cek-key">ID Pesanan</span><span class="cek-val" style="font-size:11px">${o.order_id||'-'}</span></div>
+    <div class="cek-row2"><span class="cek-key">Produk</span><span class="cek-val">${o.game_name||'-'}</span></div>
+    <div class="cek-row2"><span class="cek-key">Paket</span><span class="cek-val">${o.package_name||'-'}</span></div>
+    <div class="cek-row2"><span class="cek-key">Status</span><span class="cek-val"><span class="sp ${sc}">${sl}</span></span></div>
+    <div class="cek-row2"><span class="cek-key">Total</span><span class="cek-val">Rp ${Math.round(o.total_price||0).toLocaleString('id-ID')}</span></div>
+  </div>`);
+}
+function showCek(html){const el=document.getElementById('cek-result');el.style.display='block';el.innerHTML=html;}
+
+// SEARCH
+function openSearch(){document.getElementById('search-overlay').classList.add('open');setTimeout(()=>document.getElementById('search-inp').focus(),100);}
+function closeSearch(){document.getElementById('search-overlay').classList.remove('open');document.getElementById('search-inp').value='';document.getElementById('search-results').innerHTML='';}
+function onSearch(q){
+  const res=document.getElementById('search-results');
+  if(!q.trim()){res.innerHTML='';return;}
+  const filtered=GAMES.filter(g=>g.name.toLowerCase().includes(q.toLowerCase())||(g.code||'').includes(q.toLowerCase())).slice(0,15);
+  if(!filtered.length){res.innerHTML=`<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px">Tidak ditemukan</div>`;return;}
+  res.innerHTML=filtered.map(g=>{
+    const t=th(g),dest=(g.params==='none'&&g.link_url)?g.link_url:`/order?game=${g.code}`;
+    const img=g.icon_url?`<img src="${g.icon_url}" style="width:100%;height:100%;object-fit:cover;border-radius:9px" onerror="this.style.display='none';this.nextSibling.style.display='block'"><span style="font-size:20px;display:none">${t.e}</span>`:`<span style="font-size:20px">${t.e}</span>`;
+    return `<div class="sr-item" onclick="closeSearch();location.href='${dest}'"><div class="sr-thumb ${t.c}">${img}</div><div><div style="font-size:13px;font-weight:700">${g.name}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${CL[g.category||'game']||'Top Up'}</div></div></div>`;
+  }).join('');
+}
+
+// SIDEBAR
+function openSidebar(){document.getElementById('side-overlay').style.display='block';setTimeout(()=>document.getElementById('side-panel').style.transform='translateX(0)',10);}
+function closeSidebar(){document.getElementById('side-panel').style.transform='translateX(-100%)';setTimeout(()=>document.getElementById('side-overlay').style.display='none',300);}
+function renderSosmed(){
+  const w=document.getElementById('side-sosmed');
+  let h='';
+  if(CFG.social_instagram) h+=`<a class="sm-btn" href="https://instagram.com/${CFG.social_instagram.replace('@','')}" target="_blank" rel="noopener" title="Instagram">📸</a>`;
+  if(CFG.social_telegram) h+=`<a class="sm-btn" href="https://t.me/${CFG.social_telegram.replace('@','')}" target="_blank" rel="noopener" title="Telegram">✈️</a>`;
+  if(CFG.contact_wa) h+=`<a class="sm-btn" href="${WA_URL}" target="_blank" rel="noopener" title="WhatsApp">💬</a>`;
+  if(h){w.innerHTML=h;w.style.display='flex';}
+}
+
+// AUTH
+function syncAuthUI(){
+  const token=localStorage.getItem('gf_user_token'),raw=localStorage.getItem('gf_user'),li=!!(token&&raw);
+  document.querySelectorAll('.guest-only').forEach(el=>el.style.display=li?'none':'flex');
+  document.querySelectorAll('.login-only').forEach(el=>el.style.display=li?'flex':'none');
+  const qbL=document.getElementById('qb-login'),qbD=document.getElementById('qb-dash'),su=document.getElementById('side-user-area');
+  if(li){
+    try{
+      const u=JSON.parse(raw),init=(u.name||'U')[0].toUpperCase();
+      qbL.style.display='none'; qbD.style.display='flex';
+      document.getElementById('qb-uname').textContent=(u.name||'User').split(' ')[0];
+      su.innerHTML=`<a class="side-user" href="/dashboard"><div class="side-avatar">${init}</div><div><div style="font-size:14px;font-weight:800;color:#fff">${u.name||'User'}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Lihat Dashboard →</div></div></a>`;
+    }catch{doLogout();}
+  }else{qbL.style.display='flex';qbD.style.display='none';su.innerHTML='';}
+}
+function doLogout(){localStorage.removeItem('gf_user_token');localStorage.removeItem('gf_user');syncAuthUI();}
+function openCS(){if(WA_URL)window.open(WA_URL,'_blank');}
+
+// PROMO POPUP
+async function initPromo(){
+  if(localStorage.getItem('promo_hide')==='1') return;
+  const s=CFG;
+  if(s.popup_active==='0'||s.popup_active===0) return;
+  const img=s.popup_image||'',title=s.popup_title||'',msg=s.popup_message||'';
+  if(!img&&!msg) return;
+  if(title) document.getElementById('popup-title-el').textContent=title;
+  if(msg) document.getElementById('popup-msg-el').textContent=msg;
+  if(img) document.getElementById('popup-img-area').innerHTML=`<img src="${img}" alt="" style="width:100%;display:block;object-fit:cover" onerror="this.style.display='none'">`;
+  setTimeout(()=>{const el=document.getElementById('promo-popup');el.style.display='flex';requestAnimationFrame(()=>el.classList.add('open'));},1200);
+}
+function closePromo(){const el=document.getElementById('promo-popup');el.classList.remove('open');el.style.display='none';}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();closeSidebar();closePromo();}});
+init();
+</script>
+</body>
+</html>

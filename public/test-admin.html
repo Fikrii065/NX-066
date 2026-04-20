@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Debug Tool</title>
+<style>
+  body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 700px; margin: 0 auto; }
+  h2 { color: #a78bfa; }
+  button { background: #6c47ff; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; margin: 5px; font-size: 13px; }
+  button:hover { background: #5535dd; }
+  button.red { background: #dc2626; }
+  pre { background: #1a1a2e; padding: 14px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; font-size: 12px; border: 1px solid #333; min-height: 60px; }
+  .label { color: #94a3b8; font-size: 11px; margin: 14px 0 4px; text-transform: uppercase; letter-spacing: 1px; }
+  input { background: #222; color: #fff; border: 1px solid #444; padding: 8px 12px; border-radius: 6px; width: 100%; box-sizing: border-box; font-family: monospace; margin-bottom: 8px; }
+  .ok { color: #4ade80; } .err { color: #f87171; } .warn { color: #facc15; }
+</style>
+</head>
+<body>
+<h2>🔧 Admin Debug Tool — GameFlash</h2>
+<p style="color:#94a3b8;font-size:12px">Buka halaman ini di browser yang sama dengan admin panel. Token akan terbaca otomatis dari localStorage.</p>
+
+<div class="label">Token dari localStorage</div>
+<pre id="token-display">—</pre>
+
+<div class="label">Jalankan Test</div>
+<button onclick="testPing()">1. POST /api/ping</button>
+<button onclick="testAuth()">2. GET /api/auth/me</button>
+<button onclick="testGetCats()">3. GET /api/categories</button>
+<button onclick="testAddCat()">4. POST Tambah Kategori Test</button>
+<button onclick="testGetGames()">5. GET /api/games/all</button>
+<button onclick="testAddGame()">6. POST Tambah Game Test</button>
+<button class="red" onclick="clearResult()">Clear</button>
+
+<div class="label">Hasil</div>
+<pre id="result">Tekan salah satu tombol di atas...</pre>
+
+<script>
+const token = localStorage.getItem('gf_token') || '';
+document.getElementById('token-display').innerHTML = token
+  ? `<span class="ok">✅ Token ditemukan (${token.length} karakter)</span>\n${token.substring(0,60)}...`
+  : '<span class="err">❌ Token TIDAK ADA — kamu belum login atau sedang di tab incognito</span>';
+
+const out = document.getElementById('result');
+function log(msg, cls) {
+  out.innerHTML += `<span class="${cls||''}">${msg}</span>\n`;
+}
+function clearResult() { out.innerHTML = ''; }
+
+async function req(method, path, body) {
+  const t0 = Date.now();
+  try {
+    const opts = {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(path, opts);
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch(_) { json = null; }
+    return { status: res.status, ok: res.ok, text, json, ms: Date.now()-t0 };
+  } catch(e) {
+    return { status: 0, ok: false, text: e.message, json: null, ms: Date.now()-t0 };
+  }
+}
+
+async function testPing() {
+  clearResult();
+  log(`→ POST /api/ping\n`);
+  const r = await req('POST', '/api/ping');
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  log(`Response: ${r.text}\n`);
+  if (r.status === 404) log('❌ Endpoint tidak ada — server.js belum di-update!', 'err');
+  else if (r.ok) log('✅ Server menerima POST request', 'ok');
+}
+
+async function testAuth() {
+  clearResult();
+  log(`→ GET /api/auth/me\n`);
+  const r = await req('GET', '/api/auth/me');
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  log(`Response: ${r.text}\n`);
+  if (r.status === 401) log('❌ Token tidak valid atau expired — coba logout & login ulang', 'err');
+  else if (r.status === 503) log('❌ JWT_SECRET belum diset di .env / Railway Variables!', 'err');
+  else if (r.ok) log('✅ Token valid, auth OK', 'ok');
+}
+
+async function testGetCats() {
+  clearResult();
+  log(`→ GET /api/categories\n`);
+  const r = await req('GET', '/api/categories');
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  if (r.json) log(`Total kategori: ${r.json.total ?? (r.json.categories?.length ?? '?')}`);
+  log(`Response: ${r.text.substring(0, 300)}\n`);
+  if (r.status === 401) log('❌ GET categories pun butuh auth — token bermasalah', 'err');
+  else if (r.ok) log('✅ Bisa baca kategori', 'ok');
+}
+
+async function testAddCat() {
+  clearResult();
+  const name = 'TEST_DIAG_' + Date.now();
+  log(`→ POST /api/categories  body: { name: "${name}", is_active: 0 }\n`);
+  const r = await req('POST', '/api/categories', { name, is_active: 0 });
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  log(`Response: ${r.text}\n`);
+  if (r.status === 503) log('❌ JWT_SECRET belum diset! Isi di file .env lalu restart server.', 'err');
+  else if (r.status === 401) log('❌ Token tidak valid — logout & login ulang', 'err');
+  else if (r.status === 201 || r.json?.success) {
+    log('✅ Tambah kategori BERHASIL! Backend berfungsi normal.', 'ok');
+    log('   Kalau di UI tetap gagal, masalahnya ada di frontend admin.html', 'warn');
+    // cleanup
+    if (r.json?.category?.id) {
+      const del = await req('DELETE', '/api/categories/' + r.json.category.id);
+      log(`   (Kategori test dihapus: ${del.status})`, '');
+    }
+  } else log(`❌ Error: ${r.json?.message || r.text}`, 'err');
+}
+
+async function testGetGames() {
+  clearResult();
+  log(`→ GET /api/games/all\n`);
+  const r = await req('GET', '/api/games/all');
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  if (r.json) log(`Total game: ${r.json.games?.length ?? '?'}`);
+  log(`Response: ${r.text.substring(0, 300)}\n`);
+  if (r.ok) log('✅ Bisa baca daftar game', 'ok');
+  else log('❌ Gagal baca games: ' + (r.json?.message || r.status), 'err');
+}
+
+async function testAddGame() {
+  clearResult();
+  const code = 'test-diag-' + Date.now();
+  log(`→ POST /api/games  body: { code: "${code}", name: "TEST GAME", category: "game" }\n`);
+  const r = await req('POST', '/api/games', { code, name: 'TEST GAME DIAG', category: 'game', params: 'userId', icon: '🧪' });
+  log(`Status: ${r.status} (${r.ms}ms)`, r.ok ? 'ok' : 'err');
+  log(`Response: ${r.text}\n`);
+  if (r.status === 503) log('❌ JWT_SECRET belum diset!', 'err');
+  else if (r.status === 401) log('❌ Token tidak valid', 'err');
+  else if (r.json?.success) {
+    log('✅ Tambah game BERHASIL! Backend OK.', 'ok');
+    if (r.json?.id) {
+      const del = await req('DELETE', '/api/games/' + r.json.id);
+      log(`   (Game test dihapus: ${del.status})`, '');
+    }
+  } else log(`❌ ${r.json?.message || r.text}`, 'err');
+}
+</script>
+</body>
+</html>

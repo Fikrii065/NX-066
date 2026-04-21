@@ -130,8 +130,8 @@ router.get('/orders', userAuth, async (req, res) => {
       `SELECT o.order_id, o.created_at, o.total_amount, o.payment_status, o.topup_status,
               o.payment_method, o.sn, g.name AS game_name, g.icon AS game_icon, p.name AS package_name
        FROM orders o
-       JOIN games g ON o.game_id = g.id
-       JOIN packages p ON o.package_id = p.id
+       LEFT JOIN games g ON o.game_id = g.id
+       LEFT JOIN packages p ON o.package_id = p.id
        WHERE o.customer_email = ?
        ORDER BY o.created_at DESC LIMIT ? OFFSET ?`,
       [req.user.email, parseInt(limit), offset]

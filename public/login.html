@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Login — GameFlash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0f;
+    --surface:#13131a;
+    --surface2:#1c1c27;
+    --border:#2a2a3d;
+    --text:#f0f0f8;
+    --text2:#9090b0;
+    --text3:#5a5a78;
+    --accent:#6c5ce7;
+    --accent2:#a29bfe;
+    --red:#ff5e5e;
+    --green:#00d48a;
+  }
+  body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  body::before{
+    content:'';
+    position:fixed;inset:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(108,92,231,.15) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .card{
+    width:100%;
+    max-width:400px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:40px 36px;
+    position:relative;
+    z-index:1;
+  }
+  .logo{
+    display:flex;align-items:center;gap:12px;margin-bottom:32px;
+  }
+  .logo-icon{
+    width:44px;height:44px;background:var(--accent);border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    box-shadow:0 0 20px rgba(108,92,231,.4);
+  }
+  .logo-text{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .logo-sub{font-size:12px;color:var(--text3);margin-top:1px}
+  h1{font-size:24px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+  .subtitle{font-size:14px;color:var(--text2);margin-bottom:28px}
+  .error-box{
+    background:rgba(255,94,94,.1);border:1px solid rgba(255,94,94,.25);
+    color:var(--red);font-size:13px;padding:10px 14px;border-radius:10px;
+    margin-bottom:16px;display:none;
+  }
+  .field{margin-bottom:16px}
+  label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase}
+  input{
+    width:100%;padding:12px 14px;background:var(--surface2);
+    border:1px solid var(--border);border-radius:10px;
+    color:var(--text);font-size:14px;font-family:inherit;
+    outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,92,231,.15)}
+  input::placeholder{color:var(--text3)}
+  .btn{
+    width:100%;padding:14px;background:var(--accent);color:#fff;
+    border:none;border-radius:10px;font-size:15px;font-weight:700;
+    font-family:inherit;cursor:pointer;margin-top:8px;
+    transition:background .2s,transform .1s,box-shadow .2s;
+    box-shadow:0 4px 20px rgba(108,92,231,.35);
+  }
+  .btn:hover{background:#5a4dd6;box-shadow:0 6px 24px rgba(108,92,231,.5)}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+  .back{
+    display:block;text-align:center;margin-top:20px;
+    font-size:13px;color:var(--text3);text-decoration:none;
+    transition:color .2s;
+  }
+  .back:hover{color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">GameFlash</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+  </div>
+  <h1>Selamat Datang</h1>
+  <p class="subtitle">Masuk ke panel administrasi</p>
+  <div class="error-box" id="err"></div>
+  <div class="field">
+    <label>Username atau Email</label>
+    <input type="text" id="username" placeholder="admin" autocomplete="username">
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn" id="btn" onclick="login()">Masuk</button>
+  <a href="/" class="back">← Kembali ke Toko</a>
+</div>
+<script>
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+async function login() {
+  const btn = document.getElementById('btn');
+  const err = document.getElementById('err');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if (!username || !password) { showErr('Username dan password wajib diisi'); return; }
+  btn.disabled = true; btn.textContent = 'Memverifikasi...';
+  err.style.display = 'none';
+  try {
+    const r = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const d = await r.json();
+    if (d.success) {
+      localStorage.setItem('gf_token', d.token);
+      window.location.href = '/admin';
+    } else {
+      showErr(d.message || 'Login gagal');
+    }
+  } catch (e) {
+    showErr('Tidak dapat terhubung ke server');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Masuk';
+  }
+}
+function showErr(msg) {
+  const e = document.getElementById('err');
+  e.textContent = msg; e.style.display = 'block';
+}
+// Auto-redirect if already logged in
+const t = localStorage.getItem('gf_token');
+if (t) {
+  fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + t } })
+    .then(r => r.json()).then(d => { if (d.success) window.location.href = '/admin'; }).catch(() => {});
+}
+</script>
+</body>
+</html>

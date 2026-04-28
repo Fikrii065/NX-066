@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameFlash — Top Up Game Murah & Cepat</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f0f8;--surface:#fff;--surface2:#f2f2f8;--border:#e4e4ee;
+  --text:#0d0d1a;--text2:#4a4a6a;--text3:#9090b0;
+  --accent:#6c5ce7;--accent2:#a29bfe;--accent-bg:#f0eeff;
+  --green:#00c47a;--red:#ff4757;--orange:#ff6b35;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;padding:0 20px}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.nav-actions{display:flex;gap:8px}
+.btn-sm{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid var(--border);background:transparent;color:var(--text2);transition:.15s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-sm.primary:hover{background:#5a4dd6}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d0d1a 0%,#1a1230 60%,#0d0d1a 100%);color:#fff;padding:48px 20px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(108,92,231,.35) 0%,transparent 70%)}
+.hero-inner{max-width:600px;margin:0 auto;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;margin-bottom:16px;letter-spacing:.5px}
+.hero h1{font-size:clamp(26px,6vw,42px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.hero h1 span{color:var(--accent2)}
+.hero p{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:24px;line-height:1.6}
+.hero-search{display:flex;gap:8px;max-width:420px;margin:0 auto}
+.hero-search input{flex:1;padding:12px 16px;border-radius:10px;border:none;font-family:inherit;font-size:14px;outline:none;color:var(--text)}
+.hero-search button{padding:12px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;font-size:14px}
+.hero-trust{display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,.5)}
+
+/* BANNER SLIDER */
+.banner-section{padding:20px 20px 0}
+.banner-inner{max-width:1100px;margin:0 auto}
+.slider-wrap{position:relative;overflow:hidden;border-radius:16px}
+.slider-track{display:flex;transition:transform .4s ease}
+.slide{flex-shrink:0;width:100%;aspect-ratio:16/5;background:linear-gradient(135deg,#1a1230,#2d1b69);border-radius:16px;overflow:hidden;position:relative;cursor:pointer}
+@media(max-width:600px){.slide{aspect-ratio:16/7}}
+.slide img{width:100%;height:100%;object-fit:cover}
+.slide-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3);font-size:14px}
+.slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:10;transition:.2s}
+.slider-btn:hover{background:rgba(0,0,0,.7)}
+.slider-btn.prev{left:10px}
+.slider-btn.next{right:10px}
+.slider-dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.slider-dot{width:8px;height:8px;border-radius:4px;background:var(--border);cursor:pointer;transition:.3s}
+.slider-dot.active{width:24px;background:var(--accent)}
+
+/* SECTION */
+.section{padding:24px 20px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-title{font-size:16px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* POPULAR SCROLL */
+.popular-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.popular-scroll::-webkit-scrollbar{display:none}
+.popular-card{flex-shrink:0;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-decoration:none;color:var(--text)}
+.popular-thumb{width:72px;height:72px;border-radius:16px;overflow:hidden;border:2px solid var(--border);background:var(--surface2);position:relative;transition:.2s}
+.popular-card:hover .popular-thumb{border-color:var(--accent);transform:translateY(-2px)}
+.popular-thumb img{width:100%;height:100%;object-fit:cover}
+.popular-thumb-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px}
+.popular-rank{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:6px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#fff}
+.popular-rank.r1{background:#f59e0b}
+.popular-rank.r2{background:#94a3b8}
+.popular-rank.r3{background:#cd7f32}
+.popular-rank.rn{background:rgba(0,0,0,.5)}
+.popular-name{font-size:11px;font-weight:600;text-align:center;line-height:1.2;max-width:80px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);transition:.15s;white-space:nowrap}
+.cat-tab.active,.cat-tab:hover{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+
+/* GAME GRID */
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+@media(max-width:500px){.game-grid{grid-template-columns:repeat(3,1fr);gap:8px}}
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s;text-decoration:none;color:var(--text);display:block}
+.game-card:hover{border-color:var(--accent);box-shadow:0 4px 20px rgba(108,92,231,.18);transform:translateY(-3px)}
+.game-thumb{aspect-ratio:1;background:var(--surface2);position:relative;overflow:hidden}
+.game-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.game-thumb-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px}
+.trending-badge{position:absolute;top:6px;right:6px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px}
+.game-info{padding:10px}
+.game-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-cat{font-size:11px;color:var(--text3);margin-top:2px;text-transform:capitalize}
+.game-price{font-size:11px;color:var(--accent);font-weight:700;margin-top:4px}
+
+/* SHOW MORE */
+.show-more-wrap{text-align:center;margin-top:16px}
+.show-more-btn{padding:10px 28px;border:1.5px solid var(--border);background:var(--surface);border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit;transition:.15s}
+.show-more-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* SHIMMER */
+.shimmer{background:linear-gradient(90deg,var(--surface2) 25%,#e8e8f0 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:12px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0d0d1a;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:.3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;padding:24px 20px;animation:slideUp .25s ease}
+@media(min-width:600px){.modal-overlay{align-items:center;padding:20px}.modal{border-radius:20px;max-height:90vh}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.cek-order-inner{display:flex;gap:8px}
+.cek-input{flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;outline:none;color:var(--text);background:var(--bg)}
+.cek-input:focus{border-color:var(--accent)}
+.cek-btn{padding:11px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit}
+.cek-result{margin-top:12px;font-size:13px}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.badge.green{background:rgba(0,196,122,.1);color:var(--green)}
+.badge.red{background:rgba(255,71,87,.1);color:var(--red)}
+.badge.amber{background:rgba(255,152,0,.1);color:#ff9800}
+.badge.blue{background:rgba(108,92,231,.1);color:var(--accent)}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 20px;text-align:center;font-size:12px;color:var(--text3);margin-top:16px}
+
+@media(max-width:600px){
+  .hero{padding:36px 16px 28px}
+  .section{padding:20px 16px}
+  nav{padding:0 16px}
+  .banner-section{padding:16px 16px 0}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">⚡</div>
+      Game<span>Flash</span>
+    </a>
+    <div class="nav-actions">
+      <button class="btn-sm" onclick="openCekOrder()">Cek Order</button>
+      <button class="btn-sm primary" id="nav-user-btn" onclick="handleNavUser()">Masuk</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">⚡ TRUSTED & FAST</div>
+    <h1>Top Up Game<br><span>Anti Ribet!</span></h1>
+    <p>Murah, cepat & 100% aman.<br>Ribuan produk siap top up.</p>
+    <div class="hero-search">
+      <input type="text" placeholder="Cari game atau produk..." id="hero-search" oninput="onSearch()">
+      <button onclick="onSearch()">Cari</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">⚡ Proses Instan</div>
+      <div class="trust-item">🔒 100% Aman</div>
+      <div class="trust-item">💳 Banyak Metode</div>
+      <div class="trust-item">🎧 CS Online</div>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER SLIDER -->
+<div class="banner-section" id="banner-section" style="display:none">
+  <div class="banner-inner">
+    <div class="slider-wrap">
+      <div class="slider-track" id="slider-track"></div>
+      <button class="slider-btn prev" id="slider-prev" onclick="slideMove(-1)">‹</button>
+      <button class="slider-btn next" id="slider-next" onclick="slideMove(1)">›</button>
+    </div>
+    <div class="slider-dots" id="slider-dots"></div>
+  </div>
+</div>
+
+<!-- PRODUK POPULER -->
+<div class="section" id="popular-section" style="display:none">
+  <div class="section-inner">
+    <div class="section-title">🔥 PRODUK POPULER</div>
+    <div class="popular-scroll" id="popular-scroll"></div>
+  </div>
+</div>
+
+<!-- SEMUA PRODUK -->
+<div class="section">
+  <div class="section-inner">
+    <div class="section-title" id="products-title">🎮 Semua Produk</div>
+
+    <!-- Category filter tabs -->
+    <div class="cat-tabs" id="cat-tabs">
+      <div class="cat-tab active" data-cat="" onclick="filterCat(this,'')">⊞ Semua</div>
+    </div>
+
+    <div class="game-grid" id="game-grid">
+      <div class="shimmer" style="height:180px"></div>
+      <div class="shimmer" style="height:180px"></div>
+      <div class="shimmer" style="height:180px"></div>
+      <div class="shimmer" style="height:180px"></div>
+      <div class="shimmer" style="height:180px"></div>
+      <div class="shimmer" style="height:180px"></div>
+    </div>
+
+    <div class="show-more-wrap" id="show-more-wrap" style="display:none">
+      <button class="show-more-btn" onclick="toggleShowAll()">
+        <span id="show-more-label">Tampilkan Semua</span>
+        <span id="show-more-count"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Cek Order Modal -->
+<div class="modal-overlay" id="modal-cek" onclick="if(event.target===this)closeModal('modal-cek')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔍 Cek Status Pesanan</div>
+    <div class="cek-order-inner">
+      <input class="cek-input" type="text" id="cek-input" placeholder="Masukkan Order ID..." style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+      <button class="cek-btn" onclick="cekOrder()">Cek</button>
+    </div>
+    <div class="cek-result" id="cek-result"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div id="footer-text">© 2025 GameFlash. Semua hak dilindungi.</div>
+</footer>
+
+<script>
+const fmt = n => 'Rp ' + Math.round(n||0).toLocaleString('id-ID');
+let ALL_GAMES = [], currentCat = '', searchQ = '', showAll = false;
+
+const CAT_LABELS = {
+  game:'🎮 Game', pulsa:'📱 Pulsa', ewallet:'💳 E-Wallet',
+  voucher:'🎟️ Voucher', streaming:'📺 Streaming', lainnya:'📦 Lainnya'
+};
+
+// ── BANNER SLIDER ─────────────────────────────────────────────────────────────
+let slides = [], slIdx = 0, slTimer;
+
+async function loadBanners() {
+  try {
+    const d = await fetch('/api/banners').then(r=>r.json());
+    slides = (d.banners||[]).filter(b=>b.image_url);
+    if (!slides.length) return;
+    const track = document.getElementById('slider-track');
+    const dots  = document.getElementById('slider-dots');
+    track.innerHTML = slides.map(b=>`
+      <div class="slide" onclick="${b.link_url?`window.location.href='${b.link_url}'`:''}">
+        <img src="${b.image_url}" alt="${b.title||''}" onerror="this.parentElement.innerHTML='<div class=slide-placeholder>Banner</div>'">
+      </div>`).join('');
+    dots.innerHTML = slides.map((_,i)=>`<div class="slider-dot${i===0?' active':''}" onclick="slideTo(${i})"></div>`).join('');
+    document.getElementById('banner-section').style.display = '';
+    if (slides.length < 2) {
+      document.getElementById('slider-prev').style.display='none';
+      document.getElementById('slider-next').style.display='none';
+    }
+    startSlider();
+  } catch(e){}
+}
+
+function slideTo(i) {
+  slIdx = (i + slides.length) % slides.length;
+  document.getElementById('slider-track').style.transform = `translateX(-${slIdx*100}%)`;
+  document.querySelectorAll('.slider-dot').forEach((d,j)=>d.classList.toggle('active',j===slIdx));
+  clearInterval(slTimer); startSlider();
+}
+function slideMove(dir) { slideTo(slIdx + dir); }
+function startSlider() { if(slides.length>1) slTimer = setInterval(()=>slideTo(slIdx+1), 4000); }
+
+// ── POPULAR ───────────────────────────────────────────────────────────────────
+function renderPopular(games) {
+  const trending = games.filter(g=>g.is_trending).slice(0,10);
+  if (!trending.length) return;
+  const el = document.getElementById('popular-scroll');
+  el.innerHTML = trending.map((g,i)=>`
+    <a href="/order?game=${g.code}" class="popular-card">
+      <div class="popular-thumb">
+        ${g.icon_url?`<img src="${g.icon_url}" onerror="this.remove()">`:''}
+        <div class="popular-thumb-emoji">${g.icon||'🎮'}</div>
+        <div class="popular-rank ${i===0?'r1':i===1?'r2':i===2?'r3':'rn'}">${i+1}</div>
+      </div>
+      <div class="popular-name">${g.name}</div>
+    </a>`).join('');
+  document.getElementById('popular-section').style.display='';
+}
+
+// ── GAMES ─────────────────────────────────────────────────────────────────────
+async function loadGames() {
+  try {
+    const d = await fetch('/api/games').then(r=>r.json());
+    if (!d.success) return;
+    ALL_GAMES = d.games || [];
+    buildCatTabs();
+    renderPopular(ALL_GAMES);
+    renderGames();
+    loadSiteSettings();
+  } catch(e){ console.error(e); }
+}
+
+function buildCatTabs() {
+  const cats = [...new Set(ALL_GAMES.map(g=>g.category).filter(Boolean))];
+  const tabs = document.getElementById('cat-tabs');
+  cats.forEach(c=>{
+    const t = document.createElement('div');
+    t.className='cat-tab'; t.dataset.cat=c;
+    t.textContent = CAT_LABELS[c]||c;
+    t.onclick=()=>filterCat(t,c);
+    tabs.appendChild(t);
+  });
+}
+
+function filterCat(el, cat) {
+  currentCat=cat; showAll=false;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderGames();
+}
+
+function onSearch() {
+  searchQ=document.getElementById('hero-search').value.toLowerCase();
+  showAll=false;
+  renderGames();
+}
+
+const INITIAL_LIMIT = 12;
+
+function renderGames() {
+  let games = ALL_GAMES.filter(g=>{
+    if (currentCat && g.category!==currentCat) return false;
+    if (searchQ && !g.name.toLowerCase().includes(searchQ) && !(g.code||'').toLowerCase().includes(searchQ)) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('game-grid');
+  const smWrap = document.getElementById('show-more-wrap');
+
+  if (!games.length) {
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">Tidak ada produk ditemukan</div>';
+    smWrap.style.display='none';
+    return;
+  }
+
+  const total = games.length;
+  const displayed = showAll ? games : games.slice(0, INITIAL_LIMIT);
+
+  grid.innerHTML = displayed.map(g=>`
+    <a href="/order?game=${g.code}" class="game-card">
+      <div class="game-thumb">
+        ${g.icon_url?`<img src="${g.icon_url}" onerror="this.remove()" loading="lazy">`:''}
+        <div class="game-thumb-emoji">${g.icon||'🎮'}</div>
+        ${g.is_trending?'<div class="trending-badge">🔥 Populer</div>':''}
+      </div>
+      <div class="game-info">
+        <div class="game-name">${g.name}</div>
+        <div class="game-cat">${CAT_LABELS[g.category]||g.category||'game'}</div>
+      </div>
+    </a>`).join('');
+
+  if (total > INITIAL_LIMIT) {
+    smWrap.style.display='';
+    const remaining = total - INITIAL_LIMIT;
+    document.getElementById('show-more-label').textContent = showAll ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Semua';
+    document.getElementById('show-more-count').textContent = showAll ? '' : ` (${remaining} lainnya)`;
+  } else {
+    smWrap.style.display='none';
+  }
+
+  // Update title
+  document.getElementById('products-title').textContent =
+    searchQ ? `🔍 Hasil pencarian "${searchQ}"`
+    : currentCat ? (CAT_LABELS[currentCat]||currentCat)
+    : '🎮 Semua Produk';
+}
+
+function toggleShowAll() {
+  showAll = !showAll;
+  renderGames();
+  if (!showAll) window.scrollTo({top: document.querySelector('.section').offsetTop - 70, behavior:'smooth'});
+}
+
+async function loadSiteSettings() {
+  try {
+    const d = await fetch('/api/settings').then(r=>r.json());
+    if (d.success) {
+      if (d.settings.site_name) document.title = d.settings.site_name + ' — Top Up Game';
+      if (d.settings.footer_text) document.getElementById('footer-text').textContent = d.settings.footer_text;
+    }
+  } catch(_){}
+}
+
+// ── CEK ORDER ─────────────────────────────────────────────────────────────────
+function openCekOrder() { document.getElementById('modal-cek').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+async function cekOrder() {
+  const id = document.getElementById('cek-input').value.trim().toUpperCase();
+  const res = document.getElementById('cek-result');
+  if (!id) { res.innerHTML='<span style="color:var(--red)">Masukkan Order ID</span>'; return; }
+  res.innerHTML='<span style="color:var(--text3)">Mencari...</span>';
+  try {
+    const d = await fetch('/api/orders/'+id).then(r=>r.json());
+    if (!d.success) { res.innerHTML='<span style="color:var(--red)">Order tidak ditemukan</span>'; return; }
+    const o = d.order;
+    const payBadge={paid:'green',unpaid:'amber',expired:'red',failed:'red'};
+    const topBadge={success:'green',processing:'blue',pending:'amber',failed:'red'};
+    res.innerHTML=`
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:4px">
+        <div style="font-family:monospace;font-size:13px;font-weight:700;margin-bottom:8px">${o.order_id}</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:4px">${o.game_name||''} — ${o.package_name||''}</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">${fmt(o.total_amount)}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge ${payBadge[o.payment_status]||'amber'}">Bayar: ${o.payment_status}</span>
+          <span class="badge ${topBadge[o.topup_status]||'amber'}">Top Up: ${o.topup_status}</span>
+        </div>
+        ${o.sn?`<div style="margin-top:8px;font-size:12px;color:var(--text3)">SN: ${o.sn}</div>`:''}
+      </div>`;
+  } catch(e){ res.innerHTML='<span style="color:var(--red)">Gagal memuat data</span>'; }
+}
+
+function handleNavUser() {
+  const t=localStorage.getItem('gf_token');
+  window.location.href = t ? '/admin' : '/login';
+}
+
+// Auth check
+if (localStorage.getItem('gf_token')) document.getElementById('nav-user-btn').textContent='Admin';
+
+// Init
+loadBanners();
+loadGames();
+</script>
+</body>
+</html>

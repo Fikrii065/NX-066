@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6c5ce7;--bg:#f4f4f8;--surface:#fff;--border:#e4e4ee;--text:#0d0d1a;--text2:#4a4a6a;--red:#ff4757}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#0d0d1a 0%,#1a1230 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{background:var(--surface);border-radius:20px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.logo{text-align:center;margin-bottom:24px}
+.logo-ic{width:52px;height:52px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;margin:0 auto 12px}
+.logo h1{font-size:20px;font-weight:800}
+.logo p{font-size:13px;color:var(--text2);margin-top:4px}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;outline:none;color:var(--text);background:var(--bg);transition:.15s}
+.inp:focus{border-color:var(--accent);background:var(--surface)}
+.login-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:6px;transition:.15s}
+.login-btn:hover{background:#5a4dd6}
+.login-btn:disabled{opacity:.6;cursor:default}
+.err{color:var(--red);font-size:13px;margin-top:10px;text-align:center;display:none}
+.back{display:block;text-align:center;margin-top:16px;color:var(--text2);font-size:13px;text-decoration:none;font-weight:600}
+.back:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">
+    <div class="logo-ic">⚡</div>
+    <h1>Admin Panel</h1>
+    <p>Masuk ke dashboard admin</p>
+  </div>
+  <div class="field"><label>Username</label><input class="inp" type="text" id="u" placeholder="admin" onkeydown="if(event.key==='Enter')login()"></div>
+  <div class="field"><label>Password</label><input class="inp" type="password" id="p" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"></div>
+  <button class="login-btn" id="btn" onclick="login()">Masuk →</button>
+  <div class="err" id="err"></div>
+  <a href="/" class="back">← Kembali ke beranda</a>
+</div>
+<script>
+if(localStorage.getItem('admin_token'))location.href='/admin';
+async function login(){
+  const btn=document.getElementById('btn'),err=document.getElementById('err');
+  btn.disabled=true;btn.textContent='Memproses...';err.style.display='none';
+  try{
+    const d=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})}).then(r=>r.json());
+    if(d.success){localStorage.setItem('admin_token',d.token);location.href='/admin';}
+    else{err.textContent=d.message||'Login gagal';err.style.display='block';}
+  }catch(e){err.textContent='Terjadi kesalahan';err.style.display='block';}
+  btn.disabled=false;btn.textContent='Masuk →';
+}
+</script>
+</body>
+</html>

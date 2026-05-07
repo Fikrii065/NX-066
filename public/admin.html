@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — TopUp Game</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6c5ce7;--accent2:#a29bfe;--accent-bg:#f0eeff;--bg:#f4f4f8;--surface:#fff;--border:#e4e4ee;--text:#0d0d1a;--text2:#4a4a6a;--text3:#9090b0;--green:#00c47a;--red:#ff4757;--orange:#ff6b35;--sidebar:240px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:#0d0d1a;color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:.3s}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.logo-ic{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-text{font-size:15px;font-weight:800}
+.logo-text span{color:var(--accent2)}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);padding:12px 18px 6px;text-transform:uppercase;letter-spacing:1px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;transition:.15s;border-radius:0;text-decoration:none;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;background:rgba(108,92,231,.2);border-left-color:var(--accent)}
+.nav-item .ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.saldo-badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px}
+.saldo-label{color:rgba(255,255,255,.4);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.saldo-val{font-weight:800;color:#fff;font-size:15px;margin-top:2px}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 0;font-size:13px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;font-family:inherit;transition:.15s}
+.logout-btn:hover{color:var(--red)}
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:800}
+.topbar-right{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text2)}
+.content{padding:24px;flex:1}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 80px;background:var(--accent-bg);opacity:.6}
+.stat-icon{font-size:22px;margin-bottom:8px}
+.stat-label{font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-size:24px;font-weight:800;margin:4px 0 2px}
+.stat-sub{font-size:12px;color:var(--text3)}
+/* TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.table-title{font-size:14px;font-weight:800}
+.table-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-inp{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;outline:none;color:var(--text);background:var(--bg);width:200px}
+.search-inp:focus{border-color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--bg);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafafe}
+.badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.bg-green{background:rgba(0,196,122,.12);color:var(--green)}
+.bg-red{background:rgba(255,71,87,.12);color:var(--red)}
+.bg-amber{background:rgba(255,152,0,.12);color:#ff9800}
+.bg-blue{background:rgba(108,92,231,.12);color:var(--accent)}
+.bg-gray{background:var(--bg);color:var(--text3)}
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid var(--border);background:transparent;color:var(--text2);transition:.15s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.pri:hover{background:#5a4dd6}
+.btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.sm{padding:5px 10px;font-size:12px}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:800}
+.modal-close{font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1}
+.modal-body{padding:20px 24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;outline:none;color:var(--text);background:var(--bg);transition:.15s}
+.inp:focus{border-color:var(--accent)}
+select.inp{cursor:pointer}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle-sw{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;transition:.3s;flex-shrink:0}
+.toggle-sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.3s}
+.toggle input:checked+.toggle-sw{background:var(--accent)}
+.toggle input:checked+.toggle-sw::after{left:21px}
+.toggle input{display:none}
+/* PAGINATION */
+.pagination{display:flex;gap:6px;align-items:center;justify-content:center;padding:16px}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:.15s}
+.pg-btn:hover,.pg-btn.active{border-color:var(--accent);color:var(--accent)}
+/* CHART */
+.chart-wrap{height:200px;display:flex;align-items:flex-end;gap:8px;padding:0 4px}
+.bar{flex:1;background:var(--accent-bg);border-radius:6px 6px 0 0;position:relative;min-height:4px;transition:.4s;cursor:default}
+.bar:hover{background:var(--accent2)}
+.bar::after{content:attr(data-label);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text3);white-space:nowrap;margin-bottom:4px;opacity:0}
+.bar:hover::after{opacity:1}
+.page-section{display:none}
+.page-section.active{display:block}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{left:-var(--sidebar);transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0d0d1a;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;transform:translateY(80px);opacity:0;transition:.3s}
+.toast.show{transform:translateY(0);opacity:1}
+.empty-row td{text-align:center;padding:40px;color:var(--text3)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-ic">⚡</div>
+    <div class="logo-text">TopUp<span>Game</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Menu Utama</div>
+    <a class="nav-item active" onclick="showPage('dashboard')"><span class="ic">📊</span>Dashboard</a>
+    <a class="nav-item" onclick="showPage('orders')"><span class="ic">📋</span>Manajemen Order</a>
+    <div class="nav-section">Produk</div>
+    <a class="nav-item" onclick="showPage('games')"><span class="ic">🎮</span>Game & Produk</a>
+    <a class="nav-item" onclick="showPage('packages')"><span class="ic">💎</span>Paket / Nominal</a>
+    <a class="nav-item" onclick="showPage('banners')"><span class="ic">🖼️</span>Banner & Promo</a>
+    <div class="nav-section">Konfigurasi</div>
+    <a class="nav-item" onclick="showPage('settings')"><span class="ic">⚙️</span>Pengaturan</a>
+    <a class="nav-item" onclick="showPage('api-settings')"><span class="ic">🔑</span>API Keys</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="saldo-badge">
+      <div class="saldo-label">Saldo Digiflazz</div>
+      <div class="saldo-val" id="saldo-val">Memuat...</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">🚪 Keluar</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <span id="admin-name">Admin</span>
+      <a href="/" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;font-size:12px">🌐 Lihat Website</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page-section active" id="page-dashboard">
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-label">Omset Hari Ini</div><div class="stat-val" id="st-today-rev">—</div><div class="stat-sub" id="st-today-cnt">— transaksi</div></div>
+        <div class="stat-card"><div class="stat-icon">📆</div><div class="stat-label">Omset Bulan Ini</div><div class="stat-val" id="st-month-rev">—</div><div class="stat-sub" id="st-month-cnt">— transaksi</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Total Omset</div><div class="stat-val" id="st-all-rev">—</div><div class="stat-sub" id="st-all-cnt">— transaksi</div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Order Pending</div><div class="stat-val" id="st-pending">—</div><div class="stat-sub">belum dibayar</div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-label">Gagal</div><div class="stat-val" id="st-failed">—</div><div class="stat-sub">top up gagal</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px" class="dash-charts">
+        <div class="table-card">
+          <div class="table-header"><div class="table-title">📈 Grafik 7 Hari Terakhir</div></div>
+          <div style="padding:20px">
+            <div class="chart-wrap" id="chart-wrap"></div>
+            <div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto" id="chart-labels"></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><div class="table-title">🏆 Top Game</div></div>
+          <div id="top-games" style="padding:0 0 4px"></div>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-top:16px">
+        <div class="table-header"><div class="table-title">📋 Order Terbaru</div><button class="btn sm" onclick="showPage('orders')">Lihat Semua →</button></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Order ID</th><th>Game</th><th>Item</th><th>Total</th><th>Bayar</th><th>Top Up</th><th>Waktu</th></tr></thead>
+            <tbody id="recent-orders"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page-section" id="page-orders">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">📋 Semua Order</div>
+          <div class="table-actions">
+            <input class="search-inp" type="text" placeholder="Cari order ID / game..." id="order-search" oninput="loadOrders()">
+            <select class="search-inp" id="filter-pay" onchange="loadOrders()" style="width:130px">
+              <option value="">Semua Bayar</option>
+              <option value="unpaid">Unpaid</option>
+              <option value="paid">Paid</option>
+              <option value="expired">Expired</option>
+            </select>
+            <select class="search-inp" id="filter-topup" onchange="loadOrders()" style="width:130px">
+              <option value="">Semua Status</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="success">Success</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Order ID</th><th>Game</th><th>Item</th><th>ID User</th><th>Total</th><th>Metode</th><th>Bayar</th><th>Top Up</th><th>Waktu</th><th>Aksi</th></tr></thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="orders-pagination"></div>
+      </div>
+    </div>
+
+    <!-- GAMES -->
+    <div class="page-section" id="page-games">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">🎮 Game & Produk</div>
+          <div class="table-actions">
+            <button class="btn pri" onclick="openGameModal()">+ Tambah Game</button>
+            <button class="btn" onclick="syncDigiflazz()">🔄 Sync Digiflazz</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Icon</th><th>Nama</th><th>Kode</th><th>Kategori</th><th>Trending</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="games-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGES -->
+    <div class="page-section" id="page-packages">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">💎 Paket / Nominal</div>
+          <div class="table-actions">
+            <select class="search-inp" id="filter-game-pkg" onchange="loadPackages()" style="width:180px">
+              <option value="">Semua Game</option>
+            </select>
+            <button class="btn pri" onclick="openPkgModal()">+ Tambah Paket</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Game</th><th>Nama Paket</th><th>SKU</th><th>Harga Modal</th><th>Harga Jual</th><th>Flash</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="pkg-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNERS -->
+    <div class="page-section" id="page-banners">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">🖼️ Banner & Promo</div>
+          <button class="btn pri" onclick="openBannerModal()">+ Tambah Banner</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Preview</th><th>Judul</th><th>Link</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="banners-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page-section" id="page-settings">
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">⚙️ Pengaturan Umum</div></div>
+        <div class="modal-body">
+          <div class="two-col">
+            <div class="field"><label>Nama Website</label><input class="inp" type="text" id="s-site_name" placeholder="TopUp Game"></div>
+            <div class="field"><label>Tagline</label><input class="inp" type="text" id="s-site_tagline" placeholder="Top Up Game Murah & Cepat"></div>
+          </div>
+          <div class="field"><label>Footer Text</label><input class="inp" type="text" id="s-footer_text" placeholder="© 2025 TopUp Game"></div>
+          <div class="field"><label>WhatsApp Admin (Notif)</label><input class="inp" type="text" id="s-admin_wa" placeholder="628xxxxxxxxxx"></div>
+          <div class="two-col">
+            <div class="field"><label>Notif WA Admin</label>
+              <label class="toggle"><input type="checkbox" id="s-wa_notif_admin"><div class="toggle-sw"></div><span>Aktif</span></label>
+            </div>
+            <div class="field"><label>Notif WA Pembeli</label>
+              <label class="toggle"><input type="checkbox" id="s-wa_notif_buyer"><div class="toggle-sw"></div><span>Aktif</span></label>
+            </div>
+          </div>
+          <div class="field"><label>Logo URL (opsional)</label><input class="inp" type="text" id="s-site_logo" placeholder="https://..."></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button class="btn pri" onclick="saveSettings()">💾 Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-card" style="margin-top:16px">
+        <div class="table-header"><div class="table-title">🔐 Ganti Password Admin</div></div>
+        <div class="modal-body">
+          <div class="field"><label>Password Lama</label><input class="inp" type="password" id="old-pass" placeholder="••••••••"></div>
+          <div class="two-col">
+            <div class="field"><label>Password Baru</label><input class="inp" type="password" id="new-pass" placeholder="••••••••"></div>
+            <div class="field"><label>Konfirmasi Password</label><input class="inp" type="password" id="confirm-pass" placeholder="••••••••"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button class="btn pri" onclick="changePassword()">🔐 Ganti Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API SETTINGS -->
+    <div class="page-section" id="page-api-settings">
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">🔑 Digiflazz</div></div>
+        <div class="modal-body">
+          <div class="two-col">
+            <div class="field"><label>Username Digiflazz</label><input class="inp" type="text" id="s-digiflazz_username" placeholder="username digiflazz"></div>
+            <div class="field"><label>API Key</label><input class="inp" type="password" id="s-digiflazz_api_key" placeholder="API Key"></div>
+          </div>
+          <div class="field"><label>Mode</label>
+            <select class="inp" id="s-digiflazz_mode">
+              <option value="development">Development (Testing)</option>
+              <option value="production">Production (Live)</option>
+            </select>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button class="btn pri" onclick="saveApiSettings()">💾 Simpan</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-card" style="margin-top:16px">
+        <div class="table-header"><div class="table-title">💳 Tokopay</div></div>
+        <div class="modal-body">
+          <div class="two-col">
+            <div class="field"><label>Merchant ID</label><input class="inp" type="text" id="s-tokopay_merchant_id" placeholder="Merchant ID"></div>
+            <div class="field"><label>Secret Key</label><input class="inp" type="password" id="s-tokopay_secret_key" placeholder="Secret Key"></div>
+          </div>
+          <div class="field"><label>Base URL Tokopay</label><input class="inp" type="text" id="s-tokopay_base_url" placeholder="https://api.tokopay.id"></div>
+          <div style="display:flex;justify-content:flex-end">
+            <button class="btn pri" onclick="saveApiSettings()">💾 Simpan</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-card" style="margin-top:16px">
+        <div class="table-header"><div class="table-title">📱 Fonnte (WhatsApp)</div></div>
+        <div class="modal-body">
+          <div class="field"><label>Fonnte Token</label><input class="inp" type="password" id="s-fonnte_token" placeholder="Token dari fonnte.com"></div>
+          <div style="font-size:12px;color:var(--text3);margin-top:6px">Dapatkan token di <a href="https://fonnte.com" target="_blank" style="color:var(--accent)">fonnte.com</a> setelah menghubungkan nomor WhatsApp</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px">
+            <button class="btn pri" onclick="saveApiSettings()">💾 Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Game Modal -->
+<div class="overlay" id="game-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="game-modal-title">Tambah Game</div>
+      <button class="modal-close" onclick="document.getElementById('game-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="gm-id">
+      <div class="two-col">
+        <div class="field"><label>Kode Game *</label><input class="inp" type="text" id="gm-code" placeholder="mobile-legends"></div>
+        <div class="field"><label>Nama Game *</label><input class="inp" type="text" id="gm-name" placeholder="Mobile Legends ID"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Kategori</label>
+          <select class="inp" id="gm-category">
+            <option value="game">🎮 Game</option><option value="pulsa">📱 Pulsa</option>
+            <option value="ewallet">💳 E-Wallet</option><option value="voucher">🎟️ Voucher</option>
+            <option value="streaming">📺 Streaming</option><option value="lainnya">📦 Lainnya</option>
+          </select>
+        </div>
+        <div class="field"><label>Emoji Icon</label><input class="inp" type="text" id="gm-icon" placeholder="🎮"></div>
+      </div>
+      <div class="field"><label>URL Icon (gambar)</label><input class="inp" type="text" id="gm-icon_url" placeholder="https://..."></div>
+      <div class="field"><label>URL Banner</label><input class="inp" type="text" id="gm-banner_url" placeholder="https://..."></div>
+      <div class="field"><label>Instruksi / Keterangan</label><input class="inp" type="text" id="gm-instructions" placeholder="Masukkan User ID dan Zone ID"></div>
+      <div class="two-col">
+        <div class="field"><label>Urutan</label><input class="inp" type="number" id="gm-sort_order" value="0"></div>
+        <div style="display:flex;gap:16px;align-items:center;padding-top:22px">
+          <label class="toggle"><input type="checkbox" id="gm-is_active" checked><div class="toggle-sw"></div><span style="font-size:12px">Aktif</span></label>
+          <label class="toggle"><input type="checkbox" id="gm-is_trending"><div class="toggle-sw"></div><span style="font-size:12px">Trending</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('game-modal').classList.remove('open')">Batal</button>
+      <button class="btn pri" onclick="saveGame()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Package Modal -->
+<div class="overlay" id="pkg-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="pkg-modal-title">Tambah Paket</div>
+      <button class="modal-close" onclick="document.getElementById('pkg-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="pm-id">
+      <div class="field"><label>Game *</label>
+        <select class="inp" id="pm-game_id" onchange="onPmGameChange()"><option value="">Pilih Game...</option></select>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Nama Paket *</label><input class="inp" type="text" id="pm-name" placeholder="10 Diamond"></div>
+        <div class="field"><label>SKU Digiflazz *</label><input class="inp" type="text" id="pm-sku" placeholder="ml-10-diamond"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Harga Modal (Rp)</label><input class="inp" type="number" id="pm-base_price" value="0"></div>
+        <div class="field"><label>Harga Jual (Rp)</label><input class="inp" type="number" id="pm-sell_price" value="0"></div>
+      </div>
+      <div class="field"><label>Catatan</label><input class="inp" type="text" id="pm-notes" placeholder="Opsional"></div>
+      <div class="two-col">
+        <div class="field"><label>Urutan</label><input class="inp" type="number" id="pm-sort_order" value="0"></div>
+        <div style="display:flex;gap:16px;align-items:center;padding-top:22px">
+          <label class="toggle"><input type="checkbox" id="pm-is_active" checked><div class="toggle-sw"></div><span style="font-size:12px">Aktif</span></label>
+          <label class="toggle"><input type="checkbox" id="pm-is_flash"><div class="toggle-sw"></div><span style="font-size:12px">Flash Sale</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('pkg-modal').classList.remove('open')">Batal</button>
+      <button class="btn pri" onclick="savePackage()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Banner Modal -->
+<div class="overlay" id="banner-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="banner-modal-title">Tambah Banner</div>
+      <button class="modal-close" onclick="document.getElementById('banner-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="bm-id">
+      <div class="field"><label>Judul Banner</label><input class="inp" type="text" id="bm-title" placeholder="Promo Ramadan"></div>
+      <div class="field"><label>URL Gambar *</label><input class="inp" type="text" id="bm-image_url" placeholder="https://...gambar.jpg"></div>
+      <div class="field"><label>URL Link (klik banner)</label><input class="inp" type="text" id="bm-link_url" placeholder="https://..."></div>
+      <div class="two-col">
+        <div class="field"><label>Urutan</label><input class="inp" type="number" id="bm-sort_order" value="0"></div>
+        <div style="padding-top:22px"><label class="toggle"><input type="checkbox" id="bm-is_active" checked><div class="toggle-sw"></div><span style="font-size:12px">Aktif</span></label></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('banner-modal').classList.remove('open')">Batal</button>
+      <button class="btn pri" onclick="saveBanner()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="overlay" id="order-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <div class="modal-title">Detail Order</div>
+      <button class="modal-close" onclick="document.getElementById('order-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body" id="order-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="document.getElementById('order-modal').classList.remove('open')">Tutup</button>
+      <button class="btn pri" id="retry-btn" onclick="retryTopup()">🔄 Proses Ulang</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TOKEN = localStorage.getItem('admin_token');
+if(!TOKEN){location.href='/login';throw new Error();}
+const H = {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN};
+const fmt = n=>'Rp '+Math.round(n||0).toLocaleString('id-ID');
+const pb={'paid':'bg-green','unpaid':'bg-amber','expired':'bg-red','failed':'bg-red'};
+const pt={'success':'bg-green','processing':'bg-blue','pending':'bg-amber','failed':'bg-red'};
+let currentPage=1, currentOrderId='', ALL_GAMES_ADMIN=[];
+
+function showPage(name){
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')?.includes(name))n.classList.add('active');});
+  const titles={dashboard:'Dashboard',orders:'Manajemen Order',games:'Game & Produk',packages:'Paket / Nominal',banners:'Banner & Promo',settings:'Pengaturan',['api-settings']:'API Keys'};
+  document.getElementById('page-title').textContent=titles[name]||name;
+  if(name==='dashboard')loadDashboard();
+  else if(name==='orders'){currentPage=1;loadOrders();}
+  else if(name==='games')loadGames();
+  else if(name==='packages')loadPackages();
+  else if(name==='banners')loadBanners();
+  else if(name==='settings'||name==='api-settings')loadAllSettings();
+}
+
+function toast(msg,ok=true){const t=document.getElementById('toast');t.textContent=msg;t.style.background=ok?'#00c47a':'#ff4757';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// DASHBOARD
+async function loadDashboard(){
+  try{
+    const d=await fetch('/api/orders/admin/stats/summary',{headers:H}).then(r=>r.json());
+    if(!d.success)return;
+    document.getElementById('st-today-rev').textContent=fmt(d.today.revenue);
+    document.getElementById('st-today-cnt').textContent=d.today.count+' transaksi';
+    document.getElementById('st-month-rev').textContent=fmt(d.month.revenue);
+    document.getElementById('st-month-cnt').textContent=d.month.count+' transaksi';
+    document.getElementById('st-all-rev').textContent=fmt(d.all.revenue);
+    document.getElementById('st-all-cnt').textContent=d.all.count+' transaksi';
+    document.getElementById('st-pending').textContent=d.pending.count;
+    document.getElementById('st-failed').textContent=d.failed.count;
+    // Chart
+    const chart=d.chart||[];const maxRev=Math.max(...chart.map(c=>c.revenue),1);
+    const cw=document.getElementById('chart-wrap');const cl=document.getElementById('chart-labels');
+    cw.innerHTML=chart.map(c=>`<div class="bar" style="height:${Math.max(4,Math.round(c.revenue/maxRev*100))}%" data-label="${fmt(c.revenue)} (${c.count} order)" title="${fmt(c.revenue)}"></div>`).join('');
+    cl.innerHTML=chart.map(c=>`<div style="flex:1;font-size:10px;color:var(--text3);text-align:center">${c.date?.slice(5)||''}</div>`).join('');
+    // Top games
+    document.getElementById('top-games').innerHTML=(d.topGames||[]).map((g,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)">
+        <div style="width:24px;height:24px;background:var(--accent-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--accent)">${i+1}</div>
+        <div style="flex:1;font-size:13px;font-weight:600">${g.game_name}</div>
+        <div style="font-size:12px;color:var(--text3)">${g.count}x</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent)">${fmt(g.revenue)}</div>
+      </div>`).join('');
+    // Recent orders
+    const ro=await fetch('/api/orders/admin/list?limit=5',{headers:H}).then(r=>r.json());
+    document.getElementById('recent-orders').innerHTML=(ro.orders||[]).map(o=>`
+      <tr>
+        <td><strong>${o.order_id}</strong></td>
+        <td>${o.game_name}</td>
+        <td style="max-width:120px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${o.package_name}</td>
+        <td><strong>${fmt(o.total)}</strong></td>
+        <td><span class="badge ${pb[o.payment_status]||'bg-amber'}">${o.payment_status}</span></td>
+        <td><span class="badge ${pt[o.topup_status]||'bg-amber'}">${o.topup_status}</span></td>
+        <td style="color:var(--text3)">${new Date(o.created_at).toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'})}</td>
+      </tr>`).join('');
+  }catch(e){console.error(e);}
+  loadSaldo();
+}
+
+async function loadSaldo(){
+  try{const d=await fetch('/api/settings/admin/saldo',{headers:H}).then(r=>r.json());document.getElementById('saldo-val').textContent=d.success?fmt(d.saldo):'Error';}catch(e){document.getElementById('saldo-val').textContent='Error';}
+}
+
+// ORDERS
+async function loadOrders(){
+  const search=document.getElementById('order-search').value;
+  const ps=document.getElementById('filter-pay').value;
+  const ts=document.getElementById('filter-topup').value;
+  try{
+    const d=await fetch(`/api/orders/admin/list?page=${currentPage}&limit=20&search=${encodeURIComponent(search)}&payment_status=${ps}&status=${ts}`,{headers:H}).then(r=>r.json());
+    document.getElementById('orders-tbody').innerHTML=(d.orders||[]).length?d.orders.map(o=>`
+      <tr>
+        <td><strong style="font-size:12px">${o.order_id}</strong></td>
+        <td>${o.game_name}</td>
+        <td style="max-width:100px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${o.package_name}</td>
+        <td style="font-size:12px">${o.customer_no}${o.zone_id?' / '+o.zone_id:''}</td>
+        <td><strong>${fmt(o.total)}</strong></td>
+        <td style="font-size:12px">${o.payment_method}</td>
+        <td><span class="badge ${pb[o.payment_status]||'bg-amber'}">${o.payment_status}</span></td>
+        <td><span class="badge ${pt[o.topup_status]||'bg-amber'}">${o.topup_status}</span></td>
+        <td style="color:var(--text3);font-size:12px">${new Date(o.created_at).toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'})}</td>
+        <td><button class="btn sm" onclick="openOrderDetail('${o.order_id}')">Detail</button></td>
+      </tr>`).join(''):
+      '<tr class="empty-row"><td colspan="10">Tidak ada order</td></tr>';
+    // Pagination
+    const total=d.total||0;const pages=Math.ceil(total/20);
+    const pg=document.getElementById('orders-pagination');
+    pg.innerHTML=Array.from({length:Math.min(pages,10)},(_,i)=>`<button class="pg-btn${i+1===currentPage?' active':''}" onclick="currentPage=${i+1};loadOrders()">${i+1}</button>`).join('');
+  }catch(e){console.error(e);}
+}
+
+async function openOrderDetail(id){
+  currentOrderId=id;
+  const d=await fetch('/api/orders/'+id,{headers:H}).then(r=>r.json());
+  const o=d.order;
+  document.getElementById('order-detail-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+      <div style="display:flex;justify-content:space-between"><span>Order ID</span><strong>${o.order_id}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Game</span><span>${o.game_name}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Item</span><span>${o.package_name}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>User ID</span><span>${o.customer_no}${o.zone_id?' / '+o.zone_id:''}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Total</span><strong style="color:var(--accent)">${fmt(o.total)}</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Metode</span><span>${o.payment_method}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Pembayaran</span><span class="badge ${pb[o.payment_status]||'bg-amber'}">${o.payment_status}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Top Up</span><span class="badge ${pt[o.topup_status]||'bg-amber'}">${o.topup_status}</span></div>
+      ${o.sn?`<div style="display:flex;justify-content:space-between"><span>SN</span><strong>${o.sn}</strong></div>`:''}
+      ${o.customer_wa?`<div style="display:flex;justify-content:space-between"><span>WA Pembeli</span><span>${o.customer_wa}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between"><span>Waktu</span><span>${new Date(o.created_at).toLocaleString('id-ID')}</span></div>
+    </div>
+    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px">UPDATE STATUS MANUAL</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select class="search-inp" id="upd-pay" style="flex:1"><option value="">Bayar...</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option><option value="expired">Expired</option></select>
+        <select class="search-inp" id="upd-topup" style="flex:1"><option value="">Top Up...</option><option value="success">Success</option><option value="processing">Processing</option><option value="pending">Pending</option><option value="failed">Failed</option></select>
+        <input class="search-inp" id="upd-sn" placeholder="SN (opsional)" style="flex:2">
+        <button class="btn pri sm" onclick="updateOrderStatus()">Update</button>
+      </div>
+    </div>`;
+  document.getElementById('order-modal').classList.add('open');
+}
+
+async function updateOrderStatus(){
+  const pay=document.getElementById('upd-pay').value;
+  const topup=document.getElementById('upd-topup').value;
+  const sn=document.getElementById('upd-sn').value;
+  try{
+    const d=await fetch(`/api/orders/admin/${currentOrderId}/status`,{method:'PUT',headers:H,body:JSON.stringify({payment_status:pay||null,topup_status:topup||null,sn:sn||null})}).then(r=>r.json());
+    if(d.success){toast('Status diupdate');loadOrders();document.getElementById('order-modal').classList.remove('open');}
+    else toast(d.message||'Gagal',false);
+  }catch(e){toast('Error',false);}
+}
+
+async function retryTopup(){
+  if(!confirm('Proses ulang top up untuk order ini?'))return;
+  try{
+    const d=await fetch(`/api/orders/admin/${currentOrderId}/retry`,{method:'POST',headers:H}).then(r=>r.json());
+    toast(d.success?`Berhasil: ${d.status}`:d.message||'Gagal',d.success);
+    if(d.success)loadOrders();
+  }catch(e){toast('Error',false);}
+}
+
+// GAMES
+async function loadGames(){
+  const d=await fetch('/api/games/admin/all',{headers:H}).then(r=>r.json());
+  ALL_GAMES_ADMIN=d.games||[];
+  document.getElementById('games-tbody').innerHTML=ALL_GAMES_ADMIN.length?ALL_GAMES_ADMIN.map(g=>`
+    <tr>
+      <td><div style="width:36px;height:36px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden">${g.icon_url?`<img src="${g.icon_url}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}<span>${g.icon||'🎮'}</span></div></td>
+      <td><strong>${g.name}</strong></td>
+      <td><code style="font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px">${g.code}</code></td>
+      <td>${g.category}</td>
+      <td>${g.is_trending?'<span class="badge bg-amber">🔥 Ya</span>':'<span class="badge bg-gray">Tidak</span>'}</td>
+      <td>${g.is_active?'<span class="badge bg-green">Aktif</span>':'<span class="badge bg-red">Nonaktif</span>'}</td>
+      <td>
+        <button class="btn sm" onclick="openGameModal(${g.id})">Edit</button>
+        <button class="btn sm danger" onclick="deleteGame(${g.id},'${g.name}')">Hapus</button>
+        <button class="btn sm" onclick="openPackagesByGame(${g.id},'${g.code}')">Paket</button>
+      </td>
+    </tr>`).join(''):
+    '<tr class="empty-row"><td colspan="7">Belum ada game</td></tr>';
+  // Update dropdown di pkg modal
+  const sel=document.getElementById('pm-game_id');
+  const selFilter=document.getElementById('filter-game-pkg');
+  [sel,selFilter].forEach(s=>{if(!s)return;const cur=s.value;s.innerHTML='<option value="">'+( s===sel?'Pilih Game...':'Semua Game')+'</option>';ALL_GAMES_ADMIN.forEach(g=>s.innerHTML+=`<option value="${g.id}" data-code="${g.code}">${g.name}</option>`);s.value=cur;});
+}
+
+function openGameModal(id){
+  const g=ALL_GAMES_ADMIN.find(x=>x.id===id);
+  document.getElementById('game-modal-title').textContent=g?'Edit Game':'Tambah Game';
+  const fields=['id','code','name','category','icon','icon_url','banner_url','instructions','sort_order'];
+  fields.forEach(f=>{ const el=document.getElementById('gm-'+f); if(el) el.value=g?.(g[f]??'')??''; });
+  document.getElementById('gm-is_active').checked=g?!!g.is_active:true;
+  document.getElementById('gm-is_trending').checked=g?!!g.is_trending:false;
+  if(!g)document.getElementById('gm-id').value='';
+  document.getElementById('game-modal').classList.add('open');
+}
+
+async function saveGame(){
+  const id=document.getElementById('gm-id').value;
+  const body={code:document.getElementById('gm-code').value,name:document.getElementById('gm-name').value,category:document.getElementById('gm-category').value,icon:document.getElementById('gm-icon').value,icon_url:document.getElementById('gm-icon_url').value,banner_url:document.getElementById('gm-banner_url').value,instructions:document.getElementById('gm-instructions').value,sort_order:document.getElementById('gm-sort_order').value,is_active:document.getElementById('gm-is_active').checked,is_trending:document.getElementById('gm-is_trending').checked};
+  try{
+    const url=id?`/api/games/admin/${id}`:'/api/games/admin';
+    const d=await fetch(url,{method:id?'PUT':'POST',headers:H,body:JSON.stringify(body)}).then(r=>r.json());
+    if(d.success){toast(d.message);document.getElementById('game-modal').classList.remove('open');loadGames();}
+    else toast(d.message||'Gagal',false);
+  }catch(e){toast('Error',false);}
+}
+
+async function deleteGame(id,name){
+  if(!confirm(`Hapus game "${name}"? Semua paketnya juga akan terhapus.`))return;
+  const d=await fetch(`/api/games/admin/${id}`,{method:'DELETE',headers:H}).then(r=>r.json());
+  if(d.success){toast('Game dihapus');loadGames();}else toast(d.message||'Gagal',false);
+}
+
+function openPackagesByGame(id,code){
+  document.getElementById('filter-game-pkg').value=id;
+  showPage('packages');
+}
+
+async function syncDigiflazz(){
+  toast('Sinkronisasi...',true);
+  try{const d=await fetch('/api/games/admin/sync-digiflazz',{method:'POST',headers:H}).then(r=>r.json());toast(d.success?`${d.count} produk ditemukan`:d.message,d.success);}
+  catch(e){toast('Error',false);}
+}
+
+// PACKAGES
+async function loadPackages(){
+  const gameId=document.getElementById('filter-game-pkg').value;
+  const url='/api/packages/admin'+(gameId?'?game_id='+gameId:'');
+  const d=await fetch(url,{headers:H}).then(r=>r.json());
+  document.getElementById('pkg-tbody').innerHTML=(d.packages||[]).length?(d.packages||[]).map(p=>`
+    <tr>
+      <td style="font-size:12px">${p.game_name}</td>
+      <td><strong>${p.name}</strong></td>
+      <td><code style="font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px">${p.sku}</code></td>
+      <td>${fmt(p.base_price)}</td>
+      <td><strong>${fmt(p.sell_price)}</strong></td>
+      <td>${p.is_flash?'<span class="badge bg-amber">⚡ Ya</span>':'—'}</td>
+      <td>${p.is_active?'<span class="badge bg-green">Aktif</span>':'<span class="badge bg-red">Nonaktif</span>'}</td>
+      <td>
+        <button class="btn sm" onclick="openPkgModal(${p.id})">Edit</button>
+        <button class="btn sm danger" onclick="deletePkg(${p.id})">Hapus</button>
+      </td>
+    </tr>`).join(''):
+    '<tr class="empty-row"><td colspan="8">Belum ada paket</td></tr>';
+}
+
+function openPkgModal(id){
+  if(!ALL_GAMES_ADMIN.length){toast('Muat data game dulu',false);return;}
+  const p=(id&&document.querySelectorAll('#pkg-tbody tr'))||null;
+  document.getElementById('pkg-modal-title').textContent=id?'Edit Paket':'Tambah Paket';
+  if(!id){['id','name','sku','base_price','sell_price','notes','sort_order'].forEach(f=>{const el=document.getElementById('pm-'+f);if(el)el.value=f.includes('price')||f==='sort_order'?'0':'';});document.getElementById('pm-is_active').checked=true;document.getElementById('pm-is_flash').checked=false;}
+  document.getElementById('pkg-modal').classList.add('open');
+}
+
+function onPmGameChange(){
+  const sel=document.getElementById('pm-game_id');
+  const opt=sel.options[sel.selectedIndex];
+  if(opt)document.getElementById('pm-game_code')?.setAttribute('data-code',opt.dataset.code||'');
+}
+
+async function savePackage(){
+  const id=document.getElementById('pm-id').value;
+  const gameEl=document.getElementById('pm-game_id');
+  const gameOpt=gameEl.options[gameEl.selectedIndex];
+  const body={game_id:gameEl.value,game_code:gameOpt?.dataset?.code||'',name:document.getElementById('pm-name').value,sku:document.getElementById('pm-sku').value,base_price:parseFloat(document.getElementById('pm-base_price').value)||0,sell_price:parseFloat(document.getElementById('pm-sell_price').value)||0,notes:document.getElementById('pm-notes').value,sort_order:parseInt(document.getElementById('pm-sort_order').value)||0,is_active:document.getElementById('pm-is_active').checked,is_flash:document.getElementById('pm-is_flash').checked};
+  try{
+    const url=id?`/api/packages/admin/${id}`:'/api/packages/admin';
+    const d=await fetch(url,{method:id?'PUT':'POST',headers:H,body:JSON.stringify(body)}).then(r=>r.json());
+    if(d.success){toast(d.message);document.getElementById('pkg-modal').classList.remove('open');loadPackages();}
+    else toast(d.message||'Gagal',false);
+  }catch(e){toast('Error',false);}
+}
+
+async function deletePkg(id){
+  if(!confirm('Hapus paket ini?'))return;
+  const d=await fetch(`/api/packages/admin/${id}`,{method:'DELETE',headers:H}).then(r=>r.json());
+  if(d.success){toast('Paket dihapus');loadPackages();}else toast(d.message||'Gagal',false);
+}
+
+// BANNERS
+async function loadBanners(){
+  const d=await fetch('/api/banners/admin',{headers:H}).then(r=>r.json());
+  document.getElementById('banners-tbody').innerHTML=(d.banners||[]).length?(d.banners||[]).map(b=>`
+    <tr>
+      <td><img src="${b.image_url}" style="width:120px;height:50px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"></td>
+      <td>${b.title||'—'}</td>
+      <td style="font-size:12px;max-width:150px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${b.link_url||'—'}</td>
+      <td>${b.sort_order}</td>
+      <td>${b.is_active?'<span class="badge bg-green">Aktif</span>':'<span class="badge bg-red">Nonaktif</span>'}</td>
+      <td>
+        <button class="btn sm" onclick="openBannerModal(${b.id})">Edit</button>
+        <button class="btn sm danger" onclick="deleteBanner(${b.id})">Hapus</button>
+      </td>
+    </tr>`).join(''):
+    '<tr class="empty-row"><td colspan="6">Belum ada banner</td></tr>';
+}
+
+let ALL_BANNERS=[];
+async function openBannerModal(id){
+  if(id&&!ALL_BANNERS.length){const d=await fetch('/api/banners/admin',{headers:H}).then(r=>r.json());ALL_BANNERS=d.banners||[];}
+  const b=ALL_BANNERS.find(x=>x.id===id);
+  document.getElementById('banner-modal-title').textContent=b?'Edit Banner':'Tambah Banner';
+  ['id','title','image_url','link_url','sort_order'].forEach(f=>{const el=document.getElementById('bm-'+f);if(el)el.value=b?.(b[f]??'')??'';});
+  document.getElementById('bm-is_active').checked=b?!!b.is_active:true;
+  document.getElementById('banner-modal').classList.add('open');
+}
+
+async function saveBanner(){
+  const id=document.getElementById('bm-id').value;
+  const body={title:document.getElementById('bm-title').value,image_url:document.getElementById('bm-image_url').value,link_url:document.getElementById('bm-link_url').value,sort_order:parseInt(document.getElementById('bm-sort_order').value)||0,is_active:document.getElementById('bm-is_active').checked};
+  try{
+    const url=id?`/api/banners/admin/${id}`:'/api/banners/admin';
+    const d=await fetch(url,{method:id?'PUT':'POST',headers:H,body:JSON.stringify(body)}).then(r=>r.json());
+    if(d.success){toast(d.message);document.getElementById('banner-modal').classList.remove('open');ALL_BANNERS=[];loadBanners();}
+    else toast(d.message||'Gagal',false);
+  }catch(e){toast('Error',false);}
+}
+
+async function deleteBanner(id){
+  if(!confirm('Hapus banner ini?'))return;
+  ALL_BANNERS=[];
+  const d=await fetch(`/api/banners/admin/${id}`,{method:'DELETE',headers:H}).then(r=>r.json());
+  if(d.success){toast('Banner dihapus');loadBanners();}else toast(d.message||'Gagal',false);
+}
+
+// SETTINGS
+async function loadAllSettings(){
+  const d=await fetch('/api/settings/admin',{headers:H}).then(r=>r.json());
+  if(!d.success)return;
+  const s=d.settings;
+  const textKeys=['site_name','site_tagline','footer_text','admin_wa','site_logo','digiflazz_username','digiflazz_api_key','tokopay_merchant_id','tokopay_secret_key','tokopay_base_url','fonnte_token'];
+  textKeys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.value=s[k]||'';});
+  const selKeys=['digiflazz_mode'];
+  selKeys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.value=s[k]||'development';});
+  const chkKeys=['wa_notif_admin','wa_notif_buyer'];
+  chkKeys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)el.checked=s[k]==='1';});
+}
+
+async function saveSettings(){
+  const body={site_name:document.getElementById('s-site_name').value,site_tagline:document.getElementById('s-site_tagline').value,footer_text:document.getElementById('s-footer_text').value,admin_wa:document.getElementById('s-admin_wa').value,site_logo:document.getElementById('s-site_logo').value,wa_notif_admin:document.getElementById('s-wa_notif_admin').checked?'1':'0',wa_notif_buyer:document.getElementById('s-wa_notif_buyer').checked?'1':'0'};
+  const d=await fetch('/api/settings/admin',{method:'POST',headers:H,body:JSON.stringify(body)}).then(r=>r.json());
+  toast(d.success?'Pengaturan disimpan':d.message||'Gagal',d.success);
+}
+
+async function saveApiSettings(){
+  const body={digiflazz_username:document.getElementById('s-digiflazz_username').value,digiflazz_api_key:document.getElementById('s-digiflazz_api_key').value,digiflazz_mode:document.getElementById('s-digiflazz_mode').value,tokopay_merchant_id:document.getElementById('s-tokopay_merchant_id').value,tokopay_secret_key:document.getElementById('s-tokopay_secret_key').value,tokopay_base_url:document.getElementById('s-tokopay_base_url').value,fonnte_token:document.getElementById('s-fonnte_token').value};
+  const d=await fetch('/api/settings/admin',{method:'POST',headers:H,body:JSON.stringify(body)}).then(r=>r.json());
+  toast(d.success?'API Keys disimpan':d.message||'Gagal',d.success);
+}
+
+async function changePassword(){
+  const o=document.getElementById('old-pass').value;
+  const n=document.getElementById('new-pass').value;
+  const c=document.getElementById('confirm-pass').value;
+  if(!o||!n||!c){toast('Lengkapi semua field',false);return;}
+  if(n!==c){toast('Password baru tidak cocok',false);return;}
+  const d=await fetch('/api/auth/change-password',{method:'POST',headers:H,body:JSON.stringify({oldPassword:o,newPassword:n})}).then(r=>r.json());
+  if(d.success){toast('Password berhasil diubah');['old-pass','new-pass','confirm-pass'].forEach(id=>document.getElementById(id).value='');}
+  else toast(d.message||'Gagal',false);
+}
+
+function logout(){if(confirm('Keluar dari admin?')){localStorage.removeItem('admin_token');location.href='/login';}}
+
+// Init
+loadDashboard();
+loadGames();
+</script>
+</body>
+</html>

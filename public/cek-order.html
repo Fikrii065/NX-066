@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cek Order — TopUp Game</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#6c5ce7;--bg:#f4f4f8;--surface:#fff;--border:#e4e4ee;--text:#0d0d1a;--text2:#4a4a6a;--text3:#9090b0;--green:#00c47a;--red:#ff4757;--orange:#ff6b35}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;position:sticky;top:0;z-index:100}
+.nav-in{max-width:600px;margin:0 auto;display:flex;align-items:center;height:52px;gap:12px}
+.back{font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit}
+.back:hover{color:var(--accent)}
+.page{max-width:600px;margin:0 auto;padding:24px 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px}
+.title{font-size:18px;font-weight:800;margin-bottom:4px}
+.sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.inp-row{display:flex;gap:8px;margin-bottom:16px}
+.inp{flex:1;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;outline:none;color:var(--text);background:var(--bg)}
+.inp:focus{border-color:var(--accent)}
+.cek-btn{padding:12px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;white-space:nowrap}
+.result{margin-top:4px}
+.order-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.order-header{background:var(--accent);color:#fff;padding:16px 20px}
+.order-id{font-size:12px;opacity:.8;margin-bottom:4px}
+.order-game{font-size:16px;font-weight:800}
+.order-pkg{font-size:13px;opacity:.85;margin-top:2px}
+.order-body{padding:16px 20px}
+.orow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.orow:last-child{border-bottom:none}
+.badge{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700}
+.bg-green{background:rgba(0,196,122,.15);color:var(--green)}
+.bg-red{background:rgba(255,71,87,.15);color:var(--red)}
+.bg-amber{background:rgba(255,152,0,.15);color:#ff9800}
+.bg-blue{background:rgba(108,92,231,.15);color:var(--accent)}
+.total-row{padding:14px 20px;background:#f8f8ff;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:16px}
+.total-row span:last-child{color:var(--accent)}
+.sn-box{background:rgba(0,196,122,.06);border:1px solid rgba(0,196,122,.2);border-radius:10px;padding:12px 16px;margin-top:12px;font-size:13px}
+.sn-label{font-size:11px;color:var(--green);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.sn-val{font-weight:700;word-break:break-all}
+.pay-link{display:block;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-weight:700;font-family:inherit;font-size:14px;text-align:center;text-decoration:none;margin-top:14px;cursor:pointer}
+.home-btn{display:block;text-align:center;margin-top:12px;color:var(--text3);font-size:13px;text-decoration:none;font-weight:600}
+.home-btn:hover{color:var(--accent)}
+.empty-state{text-align:center;padding:40px;color:var(--text3)}
+.empty-state .emoji{font-size:48px;margin-bottom:12px}
+
+[data-theme="dark"]{--bg:#0f0f1a;--surface:#1a1a2e;--border:#2a2a3e;--text:#e8e8f0;--text2:#9090b0;--text3:#5a5a7a;--accent-bg:rgba(108,92,231,.15)}
+[data-theme="dark"] nav,[data-theme="dark"] .card,[data-theme="dark"] .order-card,[data-theme="dark"] .page{background:var(--surface)}
+[data-theme="dark"] body{background:var(--bg)}
+
+</style>
+<style>
+[data-theme="light"]{--bg:#f4f4f8;--surface:#fff;--border:#e4e4ee;--text:#0d0d1a;--text2:#4a4a6a;--text3:#9090b0;--accent:#6c5ce7;--accent2:#a29bfe;--accent-bg:#f0eeff}
+[data-theme="dark"]{--bg:#0f0f1a;--surface:#1a1a2e;--border:#2a2a3e;--text:#f0f0ff;--text2:#a0a0c0;--text3:#6060a0;--accent:#7c6df0;--accent2:#a29bfe;--accent-bg:rgba(108,92,231,.15)}
+
+[data-theme="dark"]{--bg:#0f0f1a;--surface:#1a1a2e;--border:#2a2a3e;--text:#e8e8f0;--text2:#9090b0;--text3:#5a5a7a;--accent-bg:rgba(108,92,231,.15)}
+[data-theme="dark"] nav,[data-theme="dark"] .card,[data-theme="dark"] .order-card,[data-theme="dark"] .page{background:var(--surface)}
+[data-theme="dark"] body{background:var(--bg)}
+
+</style>
+<script src="/theme.js"></script>
+<script>(function(){const s=localStorage.getItem('theme')||'light';if(s==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a href="/" class="back">← Beranda</a>
+    <div style="font-size:14px;font-weight:700;flex:1">Cek Status Pesanan</div>
+  <button class="btn" id="theme-toggle" onclick="toggleTheme()" style="margin-left:auto;padding:6px 10px;font-size:14px;border:1.5px solid var(--border);border-radius:8px;background:transparent;cursor:pointer" title="Ganti tema">☀️</button>
+  </div>
+</nav>
+<div class="page">
+  <div class="card">
+    <div class="title">🔍 Cek Pesanan</div>
+    <div class="sub">Masukkan Order ID untuk melihat status pesanan kamu</div>
+    <div class="inp-row">
+      <input class="inp" type="text" id="inp" placeholder="Contoh: TXN260428XXXX" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')cek()">
+      <button class="cek-btn" onclick="cek()">Cek</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+</div>
+<script>
+const fmt=n=>'Rp '+Math.round(n||0).toLocaleString('id-ID');
+const pb={'paid':'bg-green','unpaid':'bg-amber','expired':'bg-red','failed':'bg-red'};
+const pt={'success':'bg-green','processing':'bg-blue','pending':'bg-amber','failed':'bg-red'};
+
+async function cek(){
+  const id=document.getElementById('inp').value.trim().toUpperCase();
+  const res=document.getElementById('result');
+  if(!id){res.innerHTML='<div style="color:var(--red);font-size:13px">Masukkan Order ID</div>';return;}
+  res.innerHTML='<div style="color:var(--text3);font-size:13px;padding:16px 0">Mencari...</div>';
+  try{
+    const d=await fetch('/api/orders/'+id).then(r=>r.json());
+    if(!d.success){res.innerHTML='<div class="empty-state"><div class="emoji">😕</div><div>Order tidak ditemukan</div></div>';return;}
+    const o=d.order;
+    res.innerHTML=`
+      <div class="order-card">
+        <div class="order-header">
+          <div class="order-id">Order ID: ${o.order_id}</div>
+          <div class="order-game">${o.game_name}</div>
+          <div class="order-pkg">${o.package_name}</div>
+        </div>
+        <div class="order-body">
+          <div class="orow"><span>User ID</span><strong>${o.customer_no}${o.zone_id?' / '+o.zone_id:''}</strong></div>
+          <div class="orow"><span>Metode</span><span>${o.payment_method}</span></div>
+          <div class="orow"><span>Pembayaran</span><span class="badge ${pb[o.payment_status]||'bg-amber'}">${o.payment_status}</span></div>
+          <div class="orow"><span>Status Top Up</span><span class="badge ${pt[o.topup_status]||'bg-amber'}">${o.topup_status}</span></div>
+          <div class="orow"><span>Tanggal</span><span>${new Date(o.created_at).toLocaleString('id-ID')}</span></div>
+        </div>
+        <div class="total-row"><span>Total</span><span>${fmt(o.total)}</span></div>
+      </div>
+      ${o.sn?`<div class="sn-box"><div class="sn-label">✅ Serial Number (SN)</div><div class="sn-val">${o.sn}</div></div>`:''}
+      ${o.payment_status==='unpaid'&&o.pay_url?`<a href="${o.pay_url}" class="pay-link" target="_blank">Lanjutkan Pembayaran →</a>`:''}
+      <a href="/" class="home-btn">← Kembali ke Beranda</a>`;
+  }catch(e){res.innerHTML='<div style="color:var(--red);font-size:13px">Gagal memuat data</div>';}
+}
+
+// Auto cek dari URL
+const id=new URLSearchParams(location.search).get('id');
+if(id){document.getElementById('inp').value=id.toUpperCase();cek();}
+</script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TopUp Game</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111118;--surface:#1c1c26;--surface2:#23232f;--border:#2a2a38;
+  --text:#f0f0f8;--text2:#9090b0;--text3:#5a5a7a;
+  --accent:#ff6b1a;--accent2:#ff8c42;--purple:#7c5cbf;
+  --green:#00c47a;--red:#ff4757;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+img{display:block}
+
+/* ── NAVBAR ── */
+.navbar{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.nb-top{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.nb-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nb-logo-ic{width:36px;height:36px;background:linear-gradient(135deg,#ff6b1a,#ff8c42);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff}
+.nb-logo-text{font-size:13px;font-weight:900;line-height:1;color:var(--text)}
+.nb-logo-text span{color:var(--accent);display:block}
+.nb-search{flex:1;position:relative;max-width:480px}
+.nb-search input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:9px 16px 9px 38px;font-family:inherit;font-size:13px;color:var(--text);outline:none;transition:.2s}
+.nb-search input:focus{border-color:var(--accent)}
+.nb-search input::placeholder{color:var(--text3)}
+.nb-search-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5}
+.nb-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.flag{font-size:18px}
+.nb-menu{max-width:1200px;margin:0 auto;padding:0 16px;display:flex;gap:0;border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.nb-menu::-webkit-scrollbar{display:none}
+.nb-menu-item{display:flex;align-items:center;gap:5px;padding:9px 14px;font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;flex-shrink:0}
+.nb-menu-item:hover,.nb-menu-item.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nb-menu-item .ic{font-size:14px}
+.btn-masuk{padding:6px 14px;border:1px solid var(--border);border-radius:16px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;background:transparent;font-family:inherit;transition:.15s}
+.btn-masuk:hover{border-color:var(--accent);color:var(--accent)}
+.btn-daftar{padding:6px 14px;background:var(--accent);border:none;border-radius:16px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit}
+
+/* ── SLIDER ── */
+.slider-section{max-width:1200px;margin:0 auto;padding:16px 16px 0}
+.slider-wrap{position:relative;border-radius:16px;overflow:hidden}
+.slider-track{display:flex;transition:transform .4s ease}
+.slide{flex-shrink:0;width:100%;aspect-ratio:16/6;background:linear-gradient(135deg,#1a0a2e 0%,#2d1060 50%,#1a0a2e 100%);position:relative;overflow:hidden;cursor:pointer}
+@media(max-width:600px){.slide{aspect-ratio:16/9}}
+.slide img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.slide-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:32px 40px;background:linear-gradient(90deg,rgba(0,0,0,.7) 0%,transparent 70%)}
+.slide-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:10px;width:fit-content;text-transform:uppercase;letter-spacing:.5px}
+.slide-title{font-size:clamp(18px,4vw,32px);font-weight:900;letter-spacing:-1px;line-height:1.1;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.slide-title span{color:var(--accent)}
+.slide-sub{font-size:clamp(10px,2vw,14px);color:rgba(255,255,255,.7);margin-top:8px}
+.slide-tags{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.slide-tag{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:#fff}
+.sl-btn{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:5;transition:.2s}
+.sl-btn:hover{background:rgba(0,0,0,.8)}
+.sl-btn.prev{left:10px}.sl-btn.next{right:10px}
+.sl-dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.sl-dot{width:6px;height:6px;border-radius:3px;background:var(--border);cursor:pointer;transition:.3s}
+.sl-dot.active{width:20px;background:var(--accent)}
+
+/* ── SECTION ── */
+.section{max-width:1200px;margin:0 auto;padding:24px 16px 0}
+.sec-head{margin-bottom:14px}
+.sec-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
+.sec-sub{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* ── TRENDING ── */
+.trending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(min-width:600px){.trending-grid{grid-template-columns:repeat(3,1fr)}}
+.trend-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer;transition:.2s;overflow:hidden}
+.trend-card:hover{border-color:var(--accent);background:var(--surface2)}
+.trend-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;position:relative}
+.trend-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.trend-info{min-width:0}
+.trend-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trend-pub{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* ── CATEGORY TABS ── */
+.cat-wrap{display:flex;align-items:center;gap:6px;margin-bottom:16px}
+.cat-scroll{flex:1;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text2);transition:.15s;font-family:inherit;white-space:nowrap}
+.cat-tab:hover{border-color:var(--accent);color:var(--accent)}
+.cat-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cat-arrow{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.cat-arrow:hover{background:var(--accent2)}
+
+/* ── GAME GRID ── */
+.game-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:480px){.game-grid{grid-template-columns:repeat(2,1fr);gap:8px}}
+@media(min-width:481px) and (max-width:700px){.game-grid{grid-template-columns:repeat(3,1fr)}}
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s}
+.game-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,107,26,.2)}
+.game-thumb{aspect-ratio:1;background:var(--surface2);position:relative;overflow:hidden}
+.game-thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.game-card:hover .game-thumb img{transform:scale(1.05)}
+.game-thumb-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px}
+.game-info{padding:8px 10px 10px}
+.game-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.game-pub{font-size:10px;color:var(--text2);margin-top:2px}
+.hot-badge{position:absolute;top:6px;right:6px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px}
+
+/* SHOW MORE */
+.show-more{text-align:center;margin-top:20px;padding-bottom:4px}
+.show-more-btn{padding:10px 32px;border:1px solid var(--border);background:transparent;border-radius:20px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;transition:.15s}
+.show-more-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── ARTIKEL ── */
+.artikel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.art-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s}
+.art-card:hover{border-color:var(--accent)}
+.art-thumb{height:90px;background:linear-gradient(135deg,var(--accent),var(--purple));position:relative;overflow:hidden}
+.art-thumb img{width:100%;height:100%;object-fit:cover}
+.art-info{padding:10px}
+.art-cat{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.art-title{font-size:11px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.art-date{font-size:10px;color:var(--text3);margin-top:4px}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 16px;margin-top:32px}
+.footer-in{max-width:1200px;margin:0 auto}
+.footer-logo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.footer-desc{font-size:12px;color:var(--text2);line-height:1.6;max-width:360px;margin-bottom:16px}
+.footer-bottom{border-top:1px solid var(--border);padding-top:14px;font-size:11px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+
+/* CS BUTTON */
+.cs-btn{position:fixed;bottom:20px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:24px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;z-index:300;box-shadow:0 4px 16px rgba(255,107,26,.4);font-family:inherit}
+
+/* CEK ORDER MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px;animation:up .25s ease}
+@media(min-width:600px){.overlay{align-items:center;padding:20px}.modal{border-radius:20px}}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.mtitle{font-size:16px;font-weight:800;margin-bottom:14px}
+.inp-row{display:flex;gap:8px}
+.inp{flex:1;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;color:var(--text);background:var(--surface2);outline:none;transition:.15s}
+.inp:focus{border-color:var(--accent)}
+.cek-btn{padding:12px 20px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px}
+.cek-res{margin-top:12px;font-size:13px}
+.obox{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:8px}
+.orow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.orow:last-child{border-bottom:none}
+.badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.bg-g{background:rgba(0,196,122,.15);color:var(--green)}
+.bg-r{background:rgba(255,71,87,.15);color:var(--red)}
+.bg-a{background:rgba(255,152,0,.15);color:#ff9800}
+.bg-b{background:rgba(124,92,191,.15);color:var(--purple)}
+
+/* SHIMMER */
+.shimmer{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:12px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nb-top">
+    <div class="nb-logo">
+      <div class="nb-logo-ic">TG</div>
+      <div class="nb-logo-text">TOPUP<span>GAME</span></div>
+    </div>
+    <div class="nb-search">
+      <span class="nb-search-ic">🔍</span>
+      <input type="text" placeholder="Cari Game atau Voucher" id="search-inp" oninput="doSearch()">
+    </div>
+    <div class="nb-right">
+      <span class="flag">🇮🇩</span>
+      <span style="font-size:11px;color:var(--text2);font-weight:600">ID / IDR</span>
+    </div>
+  </div>
+  <div class="nb-menu" id="nb-menu">
+    <div class="nb-menu-item active" onclick="scrollTop()"><span class="ic">🏠</span>Beranda</div>
+    <div class="nb-menu-item" onclick="openCek()"><span class="ic">📋</span>Cari Pesanan</div>
+    <div class="nb-menu-item"><span class="ic">🛡️</span>Daftar Layanan</div>
+    <div class="nb-menu-item" id="hubungi-btn"><span class="ic">💬</span>Hubungi Kami</div>
+    <div class="nb-menu-item"><span class="ic">🏆</span>Leaderboard</div>
+    <div class="nb-menu-item"><span class="ic">🧮</span>Kalkulator</div>
+    <div style="flex:1"></div>
+    <button class="btn-masuk" onclick="location.href='/login'">Masuk</button>
+    <button class="btn-daftar" onclick="location.href='/login'">Daftar</button>
+  </div>
+</div>
+
+<!-- BANNER SLIDER -->
+<div class="slider-section">
+  <div class="slider-wrap" id="slider-wrap">
+    <div class="slider-track" id="slider-track">
+      <!-- Default slide kalau belum ada banner -->
+      <div class="slide">
+        <div class="slide-content">
+          <div class="slide-badge">⚡ Proses Instan</div>
+          <div class="slide-title">TOP UP GAME & PULSA<br><span>MURAH & TERPERCAYA</span></div>
+          <div class="slide-sub">Aman • Murah • Cepat • Terpercaya</div>
+          <div class="slide-tags">
+            <div class="slide-tag">🎮 Mobile Legends</div>
+            <div class="slide-tag">🔥 Free Fire</div>
+            <div class="slide-tag">⚔️ Valorant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="sl-btn prev" id="sl-prev" onclick="slideMove(-1)" style="display:none">‹</button>
+    <button class="sl-btn next" id="sl-next" onclick="slideMove(1)" style="display:none">›</button>
+  </div>
+  <div class="sl-dots" id="sl-dots"><div class="sl-dot active"></div></div>
+</div>
+
+<!-- TRENDING -->
+<div class="section" id="trending-sec" style="display:none">
+  <div class="sec-head">
+    <div class="sec-title">🔥 TRENDING</div>
+    <div class="sec-sub">Berikut adalah beberapa produk yang paling populer saat ini.</div>
+  </div>
+  <div class="trending-grid" id="trending-grid"></div>
+</div>
+
+<!-- SEMUA PRODUK -->
+<div class="section">
+  <div class="cat-wrap">
+    <button class="cat-arrow" id="cat-prev" onclick="scrollCat(-1)">‹</button>
+    <div class="cat-scroll" id="cat-scroll">
+      <button class="cat-tab active" data-cat="" onclick="filterCat(this,'')">Games</button>
+      <button class="cat-tab" data-cat="pulsa" onclick="filterCat(this,'pulsa')">Pulsa</button>
+      <button class="cat-tab" data-cat="ewallet" onclick="filterCat(this,'ewallet')">E-Money</button>
+      <button class="cat-tab" data-cat="voucher" onclick="filterCat(this,'voucher')">Voucher</button>
+      <button class="cat-tab" data-cat="streaming" onclick="filterCat(this,'streaming')">App Premium</button>
+      <button class="cat-tab" data-cat="lainnya" onclick="filterCat(this,'lainnya')">Lainnya</button>
+    </div>
+    <button class="cat-arrow" id="cat-next" onclick="scrollCat(1)">›</button>
+  </div>
+
+  <div class="game-grid" id="game-grid">
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+    <div class="shimmer" style="height:160px"></div>
+  </div>
+
+  <div class="show-more" id="show-more" style="display:none">
+    <button class="show-more-btn" onclick="toggleAll()" id="show-more-btn">Tampilkan Lainnya...</button>
+  </div>
+</div>
+
+<!-- ARTIKEL -->
+<div class="section" id="artikel-sec">
+  <div class="sec-head">
+    <div class="sec-title">📰 ARTIKEL TERBARU & BERITA GAME</div>
+    <div class="sec-sub">Dapatkan informasi terbaru seputar dunia game!</div>
+  </div>
+  <div class="artikel-grid">
+    <div class="art-card">
+      <div class="art-thumb" style="background:linear-gradient(135deg,#ff6b1a,#ff8c42)"></div>
+      <div class="art-info">
+        <div class="art-cat">Tips & Trick</div>
+        <div class="art-title">Cara Top Up Mobile Legends Paling Hemat 2025</div>
+        <div class="art-date">4 Mei 2025</div>
+      </div>
+    </div>
+    <div class="art-card">
+      <div class="art-thumb" style="background:linear-gradient(135deg,#7c5cbf,#a29bfe)"></div>
+      <div class="art-info">
+        <div class="art-cat">Promo</div>
+        <div class="art-title">Promo Ramadan: Diskon Up to 20% Semua Produk</div>
+        <div class="art-date">3 Mei 2025</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-in">
+    <div class="footer-logo">
+      <div class="nb-logo-ic" style="width:30px;height:30px;font-size:14px">TG</div>
+      <div class="nb-logo-text" style="font-size:12px">TOPUP<span>GAME</span></div>
+    </div>
+    <div class="footer-desc">Platform top up game terpercaya. Proses instan, harga terjangkau, layanan 24/7.</div>
+    <div class="footer-bottom">
+      <span id="footer-text">© 2025 TopUp Game. Semua hak dilindungi.</span>
+      <span style="color:var(--text3)">v2.0</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CS Button -->
+<button class="cs-btn" onclick="openCS()">🎧 CUSTOMER SERVICE</button>
+
+<!-- Cek Order Modal -->
+<div class="overlay" id="modal-cek" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle">📋 Cari Pesanan</div>
+    <div class="inp-row">
+      <input class="inp" type="text" id="cek-inp" placeholder="Masukkan Order ID..." oninput="this.value=this.value.toUpperCase()">
+      <button class="cek-btn" onclick="cekOrder()">Cari</button>
+    </div>
+    <div class="cek-res" id="cek-res"></div>
+  </div>
+</div>
+
+<script>
+const fmt = n => 'Rp ' + Math.round(n||0).toLocaleString('id-ID');
+let ALL = [], currentCat = '', searchQ = '', showAll = false;
+const LIMIT = 12;
+const CAT_LABELS = {'':'Games','game':'Games','pulsa':'Pulsa','ewallet':'E-Money','voucher':'Voucher','streaming':'App Premium','lainnya':'Lainnya'};
+
+// ── SLIDER ──────────────────────────────────────────────────────────────
+let slides = [], slIdx = 0, slTimer;
+async function loadBanners() {
+  try {
+    const d = await fetch('/api/banners').then(r => r.json());
+    const banners = (d.banners || []).filter(b => b.image_url);
+    if (!banners.length) return;
+    slides = banners;
+    const track = document.getElementById('slider-track');
+    track.innerHTML = banners.map(b => `
+      <div class="slide" onclick="${b.link_url ? `location.href='${b.link_url}'` : ''}">
+        <img src="${b.image_url}" onerror="this.style.display='none'">
+        ${b.title ? `<div class="slide-content"><div class="slide-badge">⚡ Promo</div><div class="slide-title">${b.title}</div></div>` : ''}
+      </div>`).join('');
+    const dots = document.getElementById('sl-dots');
+    dots.innerHTML = banners.map((_,i) => `<div class="sl-dot${i===0?' active':''}" onclick="slideTo(${i})"></div>`).join('');
+    if (banners.length > 1) {
+      document.getElementById('sl-prev').style.display = '';
+      document.getElementById('sl-next').style.display = '';
+    }
+    startSlider();
+  } catch(e) {}
+}
+function slideTo(i) {
+  slIdx = (i + slides.length) % slides.length;
+  document.getElementById('slider-track').style.transform = `translateX(-${slIdx * 100}%)`;
+  document.querySelectorAll('.sl-dot').forEach((d,j) => d.classList.toggle('active', j === slIdx));
+  clearInterval(slTimer); startSlider();
+}
+function slideMove(d) { slideTo(slIdx + d); }
+function startSlider() { if(slides.length > 1) slTimer = setInterval(() => slideTo(slIdx + 1), 5000); }
+
+// ── GAMES ────────────────────────────────────────────────────────────────
+async function loadGames() {
+  try {
+    const d = await fetch('/api/games').then(r => r.json());
+    ALL = d.games || [];
+    renderTrending();
+    renderGrid();
+    loadSettings();
+  } catch(e) {
+    document.getElementById('game-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">Gagal memuat produk</div>`;
+  }
+}
+
+function renderTrending() {
+  const trending = ALL.filter(g => g.is_trending).slice(0, 6);
+  if (!trending.length) return;
+  const el = document.getElementById('trending-grid');
+  el.innerHTML = trending.map(g => `
+    <a href="/order?game=${g.code}" class="trend-card">
+      <div class="trend-thumb">
+        ${g.icon_url ? `<img src="${g.icon_url}" loading="lazy">` : ''}
+        ${g.icon || '🎮'}
+      </div>
+      <div class="trend-info">
+        <div class="trend-name">${g.name}</div>
+        <div class="trend-pub">${g.category || 'game'}</div>
+      </div>
+    </a>`).join('');
+  document.getElementById('trending-sec').style.display = '';
+}
+
+function filterCat(el, cat) {
+  currentCat = cat; showAll = false;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function doSearch() {
+  searchQ = document.getElementById('search-inp').value.toLowerCase();
+  showAll = false; renderGrid();
+}
+
+function scrollCat(dir) {
+  const el = document.getElementById('cat-scroll');
+  el.scrollBy({ left: dir * 120, behavior: 'smooth' });
+}
+
+function renderGrid() {
+  let list = ALL.filter(g => {
+    const matchCat = !currentCat || g.category === currentCat || (currentCat === '' && true);
+    const matchQ = !searchQ || g.name.toLowerCase().includes(searchQ) || (g.code||'').toLowerCase().includes(searchQ);
+    return matchCat && matchQ;
+  });
+
+  const grid = document.getElementById('game-grid');
+  const sm = document.getElementById('show-more');
+
+  if (!list.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">Tidak ada produk ditemukan 😕</div>`;
+    sm.style.display = 'none'; return;
+  }
+
+  const shown = showAll ? list : list.slice(0, LIMIT);
+  grid.innerHTML = shown.map(g => `
+    <a href="/order?game=${g.code}" class="game-card">
+      <div class="game-thumb">
+        ${g.icon_url ? `<img src="${g.icon_url}" loading="lazy" onerror="this.style.display='none'">` : ''}
+        <div class="game-thumb-emoji">${g.icon || '🎮'}</div>
+        ${g.is_trending ? '<div class="hot-badge">🔥</div>' : ''}
+      </div>
+      <div class="game-info">
+        <div class="game-name">${g.name}</div>
+        <div class="game-pub">${g.category || 'game'}</div>
+      </div>
+    </a>`).join('');
+
+  if (list.length > LIMIT) {
+    sm.style.display = '';
+    document.getElementById('show-more-btn').textContent = showAll ? 'Tampilkan Lebih Sedikit ↑' : `Tampilkan Lainnya... (${list.length - LIMIT})`;
+  } else {
+    sm.style.display = 'none';
+  }
+}
+
+function toggleAll() { showAll = !showAll; renderGrid(); if (!showAll) document.querySelector('.section').scrollIntoView({ behavior: 'smooth' }); }
+
+async function loadSettings() {
+  try {
+    const d = await fetch('/api/settings').then(r => r.json());
+    if (d.settings) {
+      if (d.settings.site_name) {
+        document.querySelector('.nb-logo-text').innerHTML = d.settings.site_name.toUpperCase().replace(' ','<span style="color:var(--accent);display:block">') + '</span>';
+      }
+      if (d.settings.footer_text) document.getElementById('footer-text').textContent = d.settings.footer_text;
+    }
+  } catch(e) {}
+}
+
+// ── CEK ORDER ──────────────────────────────────────────────────────────
+function openCek() { document.getElementById('modal-cek').classList.add('open'); }
+async function cekOrder() {
+  const id = document.getElementById('cek-inp').value.trim().toUpperCase();
+  const res = document.getElementById('cek-res');
+  if (!id) { res.innerHTML = '<span style="color:var(--red)">Masukkan Order ID</span>'; return; }
+  res.innerHTML = '<span style="color:var(--text2)">Mencari...</span>';
+  try {
+    const d = await fetch('/api/orders/' + id).then(r => r.json());
+    if (!d.success) { res.innerHTML = '<span style="color:var(--red)">Order tidak ditemukan</span>'; return; }
+    const o = d.order;
+    const pb = {paid:'bg-g',unpaid:'bg-a',expired:'bg-r',failed:'bg-r'};
+    const pt = {success:'bg-g',processing:'bg-b',pending:'bg-a',failed:'bg-r'};
+    res.innerHTML = `<div class="obox">
+      <div class="orow"><span>Order ID</span><strong>${o.order_id}</strong></div>
+      <div class="orow"><span>Game</span><span>${o.game_name}</span></div>
+      <div class="orow"><span>Item</span><span>${o.package_name}</span></div>
+      <div class="orow"><span>Total</span><strong>${fmt(o.total)}</strong></div>
+      <div class="orow"><span>Pembayaran</span><span class="badge ${pb[o.payment_status]||'bg-a'}">${o.payment_status}</span></div>
+      <div class="orow"><span>Top Up</span><span class="badge ${pt[o.topup_status]||'bg-a'}">${o.topup_status}</span></div>
+      ${o.sn ? `<div class="orow"><span>SN</span><strong>${o.sn}</strong></div>` : ''}
+    </div>`;
+  } catch(e) { res.innerHTML = '<span style="color:var(--red)">Gagal memuat data</span>'; }
+}
+
+function openCS() {
+  fetch('/api/settings').then(r=>r.json()).then(d => {
+    const wa = d.settings?.admin_wa || '';
+    if (wa) window.open(`https://wa.me/${wa}`, '_blank');
+    else alert('Customer service belum dikonfigurasi');
+  }).catch(() => alert('Customer service belum dikonfigurasi'));
+}
+function scrollTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// Init
+loadBanners();
+loadGames();
+</script>
+</body>
+</html>
